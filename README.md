@@ -10,6 +10,18 @@ sudo pip install flask-sqlalchemy
 
 ----Database Configuration----
 
-To be continued...
+sudo apt-get install mysql-server
 
+When prompted for information, type in user info.
 
+To setup;
+
+mysql -u username -p
+
+Enter your password.
+
+Run:
+
+source dbcreate.sql;
+
+This will create the database called cardb that will be manipulated by sqlalchemy.
