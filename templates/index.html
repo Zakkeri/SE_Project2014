@@ -1,6 +1,10 @@
 {% extends 'layout.html' %}
 {% block title %}
+{% if session['username'] %}
+Welcome {{ session['username'] }}
+{% else %}
 Please log in to get started.
+{% endif %}
 {% endblock %}
 {% block toplinks %}
             <li class="active"><a href="/">Home</a></li>

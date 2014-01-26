@@ -12,10 +12,10 @@ Please log in to get started.
 
 {% block mainbody %} 
     		
-      <form class="form-signin" role="form">
+      <form name="login" class="form-signin" role="form" action="/login" method="POST">
         <h2 class="form-signin-heading">Please sign in</h2>
-        <input type="text" class="form-control" placeholder="Username" required autofocus>
-        <input type="password" class="form-control" placeholder="Password" required>
+        <input name="username" type="text" class="form-control" placeholder="Username" required autofocus>
+        <input name="password" type="password" class="form-control" placeholder="Password" required>
         <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
       </form>
 {% endblock %}
