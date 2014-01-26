@@ -33,9 +33,6 @@ def login():
     if 'username' in session:
         abort(401)
 
-    success = 0 # Represents whether the login was sucessful
-                # Effects the templating system based on its value
-
     if request.method == "POST": # Check for HTTP POST Request
 
         checkuser = request.form['username']
@@ -49,7 +46,6 @@ def login():
             #We don't want to store passwords in plaintext in the database
             if password == user_exists.password:
 
-                success = 1 # Value is set to 1 if the correct password is entered
                 session['username'] = user_exists.uname
 
                 if user_exists.isadmin:
