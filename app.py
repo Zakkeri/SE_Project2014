@@ -56,6 +56,18 @@ def login():
 
     return render_template('login.html')
 
+@app.route('/logout')
+def logout():
+
+    #Make sure there is a logged in user
+    if 'username' not in session:
+        abort(401)
+
+    #Clear session dictionary of user info
+    session.clear()
+
+    return redirect(url_for("home"))
+
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     return render_template('register.html')
