@@ -70,7 +70,32 @@ def logout():
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
-    return render_template('register.html')
+
+    #Don't allow signed in users to acces this page
+    if 'username' in session: abort(401)
+    
+    if request.method == "POST":
+
+        checkuser = request.form['username']
+        password = request.form['password']
+        checkpass = request.form['check']
+
+        #Check if user already exists
+        user_exists = User.query.filter_by(uname=checkuser).first()
+
+        if not user_exists and password == checkpass:
+            #If user is not found then go ahead and create the user
+            #using the supplied form data
+             
+            #Do not allow the new user to be an admin
+            newuser = User(checkuser, password, 0)            
+
+            db.session.add(newuser)
+            db.session.commit()
+
+            return render_template('index.html', msg="Registration Successful")
+
+    return render_template('register.html', msg="Error during registration")
 
 if __name__ == "__main__":
     app.run()
