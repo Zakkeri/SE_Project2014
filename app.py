@@ -89,13 +89,16 @@ def register():
              
             #Do not allow the new user to be an admin
             newuser = User(checkuser, password, 0)            
+		
+            try:
+                db.session.add(newuser)
+                db.session.commit()
 
-            db.session.add(newuser)
-            db.session.commit()
+                return render_template('index.html', msg="Registration Successful")
+            except:
+                return render_template('register.html', msg="Error during registration.")
 
-            return render_template('index.html', msg="Registration Successful")
-
-    return render_template('register.html', msg="Error during registration")
+    return render_template('register.html', msg="")
 
 if __name__ == "__main__":
     app.run()

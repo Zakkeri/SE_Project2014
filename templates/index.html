@@ -1,7 +1,7 @@
 {% extends 'layout.html' %}
 {% block title %}
 {% if session['username'] %}
-    Welcome {{ session['username'] }}
+   Welcome {{ session['username'] }}
 {% else %}
    Please log in to get started.
 {% endif %}
@@ -16,6 +16,6 @@
             {% endif %}
 {% endblock %}
 {% block mainbody %}
-    
-    {{ msg }}
- 
+    <br><br>
+    <h1>{{ msg }}</h1>
+{% endblock %} 
