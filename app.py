@@ -68,6 +68,20 @@ def logout():
 
     return redirect(url_for("home"))
 
+@app.route('/roles', methods=['GET', 'POST'])
+def roles():
+    
+    try:
+        if session['isadmin'] == False: abort(401)
+    except:
+        return redirect(url_for("home"))
+
+    return render_template('roles.html')
+
+
+
+
+
 @app.route('/register', methods=['GET', 'POST'])
 def register():
 
