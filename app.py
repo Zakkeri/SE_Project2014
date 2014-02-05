@@ -1,7 +1,9 @@
 import sys
+import binascii
 import os
 from flask import Flask, request, session, url_for, \
     abort, render_template, flash, redirect, Response
+from utilities import *
 from dbmodels import * #Importing db interface from sqlalchemy
 
 app = Flask(__name__)
@@ -19,7 +21,9 @@ db.create_all()
 if User.query.filter_by(uname="admin").first():
     pass
 else:
-    admin = User("admin", "test", 1)
+    salt = getsalt()
+    passhash = createhash(salt,"test")
+    admin = User("admin", salt, passhash, "Admin", 1)
     db.session.add(admin)
     db.session.commit()
 
@@ -44,9 +48,10 @@ def login():
 
             #This logic will need to be changed for security reasons
             #We don't want to store passwords in plaintext in the database
-            if password == user_exists.password:
+            if createhash(user_exists.salt,password) == user_exists.password:
 
                 session['username'] = user_exists.uname
+                session['role'] = user_exists.role
 
                 if user_exists.isadmin:
                     session['isadmin'] = True
@@ -100,9 +105,10 @@ def register():
         if not user_exists and password == checkpass:
             #If user is not found then go ahead and create the user
             #using the supplied form data
-             
-            #Do not allow the new user to be an admin
-            newuser = User(checkuser, password, 0)            
+            salt = getsalt() 
+            passhash = createhash(salt,password)
+            #Do not allow the new user to be an admin default to guest
+            newuser = User(checkuser, salt, passhash, "Guest", 0)            
 		
             db.session.add(newuser)
             db.session.commit()
