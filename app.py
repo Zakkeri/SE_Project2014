@@ -75,13 +75,34 @@ def logout():
 
 @app.route('/roles', methods=['GET', 'POST'])
 def roles():
+
     
     try:
-        if session['isadmin'] == False: abort(401)
+        if session['isadmin'] == False: 
+            abort(401)
     except:
         return redirect(url_for("home"))
 
-    return render_template('roles.html')
+    username = request.args.get("username")
+    newrole = request.args.get("newrole")
+
+
+    if username and newrole:
+        
+        if newrole not in ["Admin", "Guest", "Sales"]:
+            abort(401)
+
+        user_exists = User.query.filter_by(uname=username).first()
+
+        if not user_exists:
+            abort(401)
+
+        user_exists.role = newrole
+
+        db.session.commit()
+
+
+    return render_template('roles.html', User=User)
 
 
 

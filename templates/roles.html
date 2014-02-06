@@ -32,6 +32,25 @@
                 <th>Username</th>
                 <th>Role</th>
             </tr>
+        </thead>
+        {% for user in User.query.all() %}
+        <tr>
+            <td>{{ user.uname }}</td>
+            <td>
+                <div class="btn-group">
+                  <button class="btn btn-default btn-sm dropdown-toggle" type="button" data-toggle="dropdown">
+                      {{ user.role }} <span class="caret"></span>
+                  </button>
+                    <ul class="dropdown-menu">
+                         <li><a href="/roles?username={{ user.uname }}&newrole=Admin">Admin</a></li>
+                         <li><a href="/roles?username={{ user.uname }}&newrole=Sales">Sales</a></li>
+                         <li><a href="/roles?username={{ user.uname }}&newrole=Guest">Guest</a></li>
+                    </ul>
+                </div>
+            </td>
+        </tr>
+        {% endfor %}
+        
         </table>
     </div>
 
