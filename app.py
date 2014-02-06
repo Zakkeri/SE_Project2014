@@ -75,7 +75,6 @@ def logout():
 
 @app.route('/roles', methods=['GET', 'POST'])
 def roles():
-
     
     try:
         if session['isadmin'] == False: 
@@ -85,7 +84,6 @@ def roles():
 
     username = request.args.get("username")
     newrole = request.args.get("newrole")
-
 
     if username and newrole:
         
@@ -101,12 +99,7 @@ def roles():
 
         db.session.commit()
 
-
     return render_template('roles.html', User=User)
-
-
-
-
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
