@@ -2,7 +2,7 @@ from flask import Flask
 from flask.ext.sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:test@127.0.0.1/cardb'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:jimn42@127.0.0.1/cardb'
 db = SQLAlchemy(app)
 
 class User(db.Model):
