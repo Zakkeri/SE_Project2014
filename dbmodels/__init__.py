@@ -2,7 +2,7 @@ from flask import Flask
 from flask.ext.sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:jimn42@127.0.0.1/cardb'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:test@127.0.0.1/cardb'
 db = SQLAlchemy(app)
 
 class User(db.Model):
@@ -29,3 +29,42 @@ class User(db.Model):
     def __repr__(self):
         return '<User %r>' % self.uname
 
+class Car(db.Model):
+    """Class to represent the car inventory layout in the database.
+       This will be used for all relations regarding cars
+        
+        VIN | MAKE | MODEL | YEAR | RETAIL"""
+
+    vin = db.Column(db.String(20), primary_key=True, unique=True)
+    make = db.Column(db.String(30))
+    model = db.Column(db.String(30))
+    year = db.Column(db.String(4))
+    retail = db.Column(db.String(10))
+    
+    def __init__(self, vin, make, model, year, retail):
+        self.vin = vin
+        self.make = make
+        self.model = model
+        self.year = year
+        self.retail = retail 
+
+    def __repr__(self):
+        return '<Car %r>' % self.vin
+     
+class CarPics(db.Model):
+    """Class that holds pictures of all cars.
+       
+        VIN | PICTURENAME
+    """
+
+    vin = db.Column(db.String(20), db.ForeignKey('car.vin'))
+    picname = db.Column(db.String(30), primary_key=True, unique=True)
+
+    def __init__(self, vin, picname):
+        self.vin = vin
+        self.picname = picname
+
+    def __repr__ (self):
+        return '<CarPic %r>' % self.picname
+
+    

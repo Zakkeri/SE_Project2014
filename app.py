@@ -94,8 +94,15 @@ def roles():
 
         if not user_exists:
             abort(401)
+        
+        if user_exists.role == "Admin" and newrole != "Admin":
+            user_exists.isadmin = 0
 
         user_exists.role = newrole
+
+        if user_exists.role == "Admin":
+            user_exists.isadmin = 1
+            
 
         db.session.commit()
 
