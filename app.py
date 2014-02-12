@@ -9,6 +9,7 @@ from dbmodels import * #Importing db interface from sqlalchemy
 app = Flask(__name__)
 app.debug = True
 app.config.from_object(__name__)
+app.config['UPLOAD_FOLDER'] = "/images"
 app.config.from_envvar('FLASKR_SETTINGS', silent = True)
 
 app.secret_key = os.urandom(24)
@@ -180,7 +181,8 @@ def carmanage():
         if car_exists:
             db.session.delete(car_exists)
             db.session.commit()
-        
+    
+       
         
 
     return render_template("carmanage.html", action=action, Car=Car)
