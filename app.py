@@ -103,7 +103,6 @@ def roles():
         if user_exists.role == "Admin":
             user_exists.isadmin = 1
             
-
         db.session.commit()
 
     return render_template('roles.html', User=User)
@@ -112,7 +111,7 @@ def roles():
 def register():
 
     #Don't allow signed in users to acces this page
-    if 'username' in session: abort(401)
+    if 'username' in session: redirect(url_for("home"))
     
     if request.method == "POST":
 
@@ -130,13 +129,68 @@ def register():
             passhash = createhash(salt,password)
             #Do not allow the new user to be an admin default to guest
             newuser = User(checkuser, salt, passhash, "Guest", 0)            
-		
             db.session.add(newuser)
             db.session.commit()
 
             return render_template('index.html', msg="Registration Successful")
 
     return render_template('register.html', msg="")
+
+#Page for car management accessible by admins and sales
+@app.route("/carmanage", methods=['GET','POST'])
+def carmanage():
+    
+    if 'username' not in session: redirect(url_for("home"))
+
+    #Only allow Admins and Sales Users for accessing
+    if session["role"] != "Admin" and session["role"] != "Sales":
+        redirect(url_for("home"))
+
+    #Need to have: Add, Modify, Delete subviews
+
+    action = request.args.get("action")
+
+    if action == "add":
+        try:
+            if request.method == "POST":
+                vin = request.form["vin"]
+                make = request.form["make"]
+                model = request.form["model"]
+                year = request.form["year"]
+                retail = request.form["retail"] 
+
+                car_exists = Car.query.filter_by(vin=vin).first()
+
+                if not car_exists:
+                    
+                    newcar = Car(vin, make, model, year, retail) 
+                    db.session.add(newcar)
+                    db.session.commit()
+        
+                return render_template("carmanage.html", Car=Car, action="")
+        except:
+            pass
+
+    if action == "delete":
+        
+        vin = request.args.get("vin")
+
+        car_exists = Car.query.filter_by(vin=vin).first()
+
+        if car_exists:
+            db.session.delete(car_exists)
+            db.session.commit()
+        
+        
+
+    return render_template("carmanage.html", action=action, Car=Car)
+
+#Page for viewing and searching for cars in the inventory
+@app.route("/carview", methods=['GET'])
+def carview():
+
+    #Need to have: Search view
+    pass
 
 if __name__ == "__main__":
     app.run()

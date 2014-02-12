@@ -1,23 +1,4 @@
-{% extends 'layout.html' %}
-{% block title %}
-{% if session['username'] %}
-   Welcome {{ session['username'] }}
-{% else %}
-   Please log in to get started.
-{% endif %}
-{% endblock %}
-{% block toplinks %}
-            <li class="active"><a href="/">Home</a></li>
-            {% if not session['username'] %}
-            <li><a href="/login">Login</a></li>
-            <li><a href="/register">Register</a></li>
-            {% else %}
-                {% if session['isadmin'] %}
-                <li><a href="/roles">Manage Roles</a></li>
-                {% endif %}
-                <li><a href="/logout">Logout</a></li>
-            {% endif %}
-{% endblock %}
+{% extends 'layout2.html' %}
 {% block mainbody %}
     <br><br>
     <h1>{{ msg }}</h1>
