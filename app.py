@@ -1,4 +1,3 @@
-#tfufdghjk
 import sys
 import binascii
 import os
