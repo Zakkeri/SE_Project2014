@@ -39,6 +39,7 @@ class CarInformation(db_base):
 	comp_secu = sqlalchemy.orm.relationship('CompSecurity')
 	comp_extr = sqlalchemy.orm.relationship('CompExterior')
 	comp_intr = sqlalchemy.orm.relationship('CompInterior')
+	comp_audo = sqlalchemy.orm.relationship('CompAudio')
 	comp_luxr = sqlalchemy.orm.relationship('CompLuxury')
 	comp_pack = sqlalchemy.orm.relationship('CompPackage')
 
@@ -151,6 +152,7 @@ def generate_car(current_session):
 	test_car.comp_secu = [CompSecurity(secu_type = randstr(), secu_desc = randstr()) for i in range(random.randint(1,3))]
 	test_car.comp_extr = [CompExterior(extr_type = randstr(), extr_desc = randstr()) for i in range(random.randint(1,3))]
 	test_car.comp_intr = [CompInterior(intr_type = randstr(), intr_desc = randstr()) for i in range(random.randint(1,3))]
+	test_car.comp_audo = [CompAudio(audo_type = randstr(), audo_desc = randstr()) for i in range(random.randint(1,3))]
 	test_car.comp_luxr = [CompLuxury(luxr_type = randstr(), luxr_desc = randstr()) for i in range(random.randint(1,3))]
 	test_car.comp_pack = [CompPackage(pack_type = randstr(), pack_desc = randstr()) for i in range(random.randint(1,3))]
 	current_session.add(test_car)
@@ -159,7 +161,7 @@ if __name__ == '__main__':
 	# Create the table in the database
 	db_base.metadata.bind = db_engine
 	db_base.metadata.create_all()
-	
+
 	# Initial the tables with some data
 	init_session = db_session()
 	for count in range(10): generate_car(init_session)

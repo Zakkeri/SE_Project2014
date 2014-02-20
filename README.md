@@ -3,11 +3,19 @@
 1000: Add installation instructions for Windows. [Jim]<br/>
 1001: Initial car_db.py for all car information tables. [Jim]<br/>
 1002: Generate car information tables. [Jim]<br/>
+1003: Add installation instructions for car DB. [Jim] <br/>
 ============================================================<br/>
 </p>
 
+[Installation Instructions for Car DB]<br/>
+&nbsp;1. Start the MySQL Server<br/>
+&nbsp;2. Create a car_db Schema<br/>
+&nbsp;3. Change line 13: 'mysql://<USER>:<PASS>@localhost:3306/car_db'<br/>
+&nbsp;4. Run car_db.py in 32-bit Python 2.7 with sqlalchemy and MySQL-Python installed.<br/>
+&nbsp;x. Server uses UTF-8 encoding and InnoDB type tables.
+
 [Car Database in car_db.py]<br/>
-&nbsp;! Database is not yet integrated with the project.
+&nbsp;! Database is not yet integrated with the project.<br/>
 &nbsp;* Car inventory and information tables support all the requirements.<br/>
 &nbsp;* Car inventory forms many-to-one relationship with car information.<br/>
 &nbsp;* Car information forms a one-to-many relationship with all components.<br/>
