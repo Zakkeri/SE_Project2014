@@ -1,8 +1,18 @@
 <p>Changelog<br/>
 ============================================================<br/>
-1000: Add installation instructions for Windows.	[Jim]<br/>
+1000: Add installation instructions for Windows. [Jim]<br/>
+1001: Initial car_db.py for all car information tables. [Jim]<br/>
+1002: Generate car information tables. [Jim]<br/>
 ============================================================<br/>
 </p>
+
+[Car Database in car_db.py]<br/>
+&nbsp;! Database is not yet integrated with the project.
+&nbsp;* Car inventory and information tables support all the requirements.<br/>
+&nbsp;* Car inventory forms many-to-one relationship with car information.<br/>
+&nbsp;* Car information forms a one-to-many relationship with all components.<br/>
+&nbsp;* Running the script at top-level generates random entries and tables.<br/>
+
 [Installation Instructions for Windows]<br/>
 ! If you need help on the installation, then bring computer to class !<br/>
 1. Download the Python 2.7.6 (32-bit): http://www.python.org/download/releases/2.7.6/<br/>

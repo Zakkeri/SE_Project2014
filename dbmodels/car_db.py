@@ -3,7 +3,9 @@ file: car_db.py
 date: 2/18/14
 desc: built the tables for the database
 '''
+import random
 import sqlalchemy
+import sqlalchemy.orm
 import sqlalchemy.ext.declarative
 
 # database engine, declarative base, and session factory
@@ -12,6 +14,7 @@ db_engine = sqlalchemy.create_engine(
 	isolation_level = 'SERIALIZABLE',
 	echo = True)
 db_base = sqlalchemy.ext.declarative.declarative_base()
+db_session = sqlalchemy.orm.sessionmaker()
 
 # database tables
 class CarInformation(db_base):
@@ -69,7 +72,6 @@ class CompPerformance(db_base):
 	perf_type = sqlalchemy.Column(sqlalchemy.String(255))
 	perf_desc = sqlalchemy.Column(sqlalchemy.String(255))
 	car_pid = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey('car_information.car_id'))
-
 class CompHandling(db_base):
 	__tablename__ = 'comp_handling'
 	__table_args__ = {'mysql_engine':'InnoDB', 'mysql_charset':'utf8'}
@@ -134,6 +136,31 @@ class CompPackage(db_base):
 	pack_desc = sqlalchemy.Column(sqlalchemy.String(255))
 	car_pid = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey('car_information.car_id'))
 
-# Create the table in the database
-db_base.metadata.bind = db_engine
-db_base.metadata.create_all()
+# Generator Set Functions
+def randstr():
+	return ''.join([chr(random.randint(0,25) + 65) for i in range(10)])
+
+def generate_car(current_session):
+	test_car = CarInformation(	car_make = randstr(), car_model = randstr(), car_year = randstr(),
+								car_retail = randstr(), car_maintenance = randstr(), car_warranty = randstr(), 
+								car_premium = randstr());
+	test_car.comp_perf = [CompPerformance(perf_type = randstr(), perf_desc = randstr()) for i in range(random.randint(1,3))]
+	test_car.comp_hand = [CompHandling(hand_type = randstr(), hand_desc = randstr()) for i in range(random.randint(1,3))]
+	test_car.comp_inst = [CompInstrument(inst_type = randstr(), inst_desc = randstr()) for i in range(random.randint(1,3))]
+	test_car.comp_safe = [CompSafety(safe_type = randstr(), safe_desc = randstr()) for i in range(random.randint(1,3))]
+	test_car.comp_secu = [CompSecurity(secu_type = randstr(), secu_desc = randstr()) for i in range(random.randint(1,3))]
+	test_car.comp_extr = [CompExterior(extr_type = randstr(), extr_desc = randstr()) for i in range(random.randint(1,3))]
+	test_car.comp_intr = [CompInterior(intr_type = randstr(), intr_desc = randstr()) for i in range(random.randint(1,3))]
+	test_car.comp_luxr = [CompLuxury(luxr_type = randstr(), luxr_desc = randstr()) for i in range(random.randint(1,3))]
+	test_car.comp_pack = [CompPackage(pack_type = randstr(), pack_desc = randstr()) for i in range(random.randint(1,3))]
+	current_session.add(test_car)
+
+if __name__ == '__main__':
+	# Create the table in the database
+	db_base.metadata.bind = db_engine
+	db_base.metadata.create_all()
+	
+	# Initial the tables with some data
+	init_session = db_session()
+	for count in range(10): generate_car(init_session)
+	init_session.commit()
