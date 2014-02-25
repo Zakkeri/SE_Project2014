@@ -141,11 +141,13 @@ def register():
 @app.route("/carmanage", methods=['GET','POST'])
 def carmanage():
     
-    if 'username' not in session: redirect(url_for("home"))
+    if "role" not in session:
+        abort(401)
 
+    print session["role"]
     #Only allow Admins and Sales Users for accessing
-    if session["role"] != "Admin" and session["role"] != "Sales":
-        redirect(url_for("home"))
+    if session["role"] not in ["Admin", "Sales"]:
+        return redirect(url_for("home"))
 
     #Need to have: Add, Modify, Delete subviews
 
@@ -188,6 +190,7 @@ def carmanage():
                 if not car_exists:
                     pass
 
+                #This will eventually have to cascade also
                 car_exists.vin = vin
                 car_exists.make = make
                 car_exists.model = model
