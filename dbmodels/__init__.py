@@ -8,6 +8,8 @@ db = SQLAlchemy(app)
 class User(db.Model):
     """Class to represent the Users table.  This table
        contains all user data in the application.
+
+       Table name will be "user"       
        
        UID | Username | Password | IsAdmin
     """
@@ -32,6 +34,8 @@ class User(db.Model):
 class Car(db.Model):
     """Class to represent the car inventory layout in the database.
        This will be used for all relations regarding cars
+
+       Table name will be "car"
         
         VIN | MAKE | MODEL | YEAR | RETAIL"""
 
@@ -51,6 +55,31 @@ class Car(db.Model):
     def __repr__(self):
         return '<Car %r>' % self.vin
      
+#class CompPerformance(db.Model):
+#    """Class that holds performance data for a car if available.
+#
+#       VIN | Type | Description"""
+#    pass
+
+#class CompHandling(db.MOdel):
+#    """Class that holds handling data for a car if available.
+#
+#       VIN | Type | Description"""
+#    pass
+
+#class CompInstrument(db.Model):
+#    """Class that holds instrument data for a car if available.
+#    
+#       VIN | Type | Description"""
+#    pass
+
+
+
+
+
+
+
+
 class CarPics(db.Model):
     """Class that holds pictures of all cars.
        
@@ -65,6 +94,4 @@ class CarPics(db.Model):
         self.picname = picname
 
     def __repr__ (self):
-        return '<CarPic %r>' % self.picname
-
-    
+        return '<CarPic %r>' % self.picname 

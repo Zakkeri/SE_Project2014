@@ -172,8 +172,48 @@ def carmanage():
         except:
             pass
 
-    if action == "delete":
-        
+    elif action == "modify":
+        try:
+            
+            #Actual update post request
+            if request.method == "POST":
+                vin = request.form["vin"]
+                make = request.form["make"]
+                model = request.form["model"]
+                year = request.form["year"]
+                retail = request.form["retail"]
+
+                car_exists = Car.query.filter_by(vin=vin).first()
+                
+                if not car_exists:
+                    pass
+
+                car_exists.vin = vin
+                car_exists.make = make
+                car_exists.model = model
+                car_exists.year = year
+                car_exists.retail = retail
+                
+                db.session.commit()            
+                
+                #return to main car management page
+                return render_template("carmanage.html", Car=Car, action="", car="")
+
+            #get request to populate post form
+            elif request.method == "GET":
+                vin = request.args.get("vin")
+
+                car_exists = Car.query.filter_by(vin=vin).first()
+
+                if car_exists:
+                    return render_template("carmanage.html", car=car_exists, action=action)
+            
+        except:
+            pass
+
+    #This will eventually have to cascade across all database tables
+    elif action == "delete":
+           
         vin = request.args.get("vin")
 
         car_exists = Car.query.filter_by(vin=vin).first()
@@ -181,8 +221,6 @@ def carmanage():
         if car_exists:
             db.session.delete(car_exists)
             db.session.commit()
-    
-       
         
 
     return render_template("carmanage.html", action=action, Car=Car)
