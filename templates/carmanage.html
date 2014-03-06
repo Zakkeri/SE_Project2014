@@ -9,6 +9,7 @@
     <form name="addcar" action="/carmanage?action=add" method="POST"> 
     
         <form class="form-horizontal" role="form">
+      <fieldset>
       <div class="form-group">
         <div class="col-sm-10">
           <input type="text" class="form-control" name="vin" placeholder="Vin Number">
@@ -39,6 +40,7 @@
           <button type="submit" class="btn btn-default">Add Car</button>
         </div>
       </div>
+    </fieldset>
       
     </form>
 
@@ -72,6 +74,7 @@
           <input type="text" class="form-control" name="retail" value={{ car.retail }} placeholder="Retail Price">
         </div>
       </div>
+      <br><br>
       <div class="form-group">
         <div class="col-sm-offset-2 col-sm-10">
           <button type="submit" class="btn btn-default">Modify Car</button>

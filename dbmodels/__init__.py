@@ -55,30 +55,24 @@ class Car(db.Model):
     def __repr__(self):
         return '<Car %r>' % self.vin
      
-#class CompPerformance(db.Model):
-#    """Class that holds performance data for a car if available.
-#
-#       VIN | Type | Description"""
-#    pass
+class CarFeatures(db.Model):
+    """Class that holds performance data for a car if available.
 
-#class CompHandling(db.MOdel):
-#    """Class that holds handling data for a car if available.
-#
-#       VIN | Type | Description"""
-#    pass
+       VIN | feat_type | Description"""
 
-#class CompInstrument(db.Model):
-#    """Class that holds instrument data for a car if available.
-#    
-#       VIN | Type | Description"""
-#    pass
+    vin = db.Column(db.String(20), db.ForeignKey('car.vin'), primary_key = True)
+    feat_type = db.Column(db.String(40), primary_key = True)
 
+    descr = db.Column(db.String(1000))
 
+    def __init__(self, vin, feat_type, descr):
 
+        self.vin = vin
+        self.feat_type = feat_type
+        self.descr = descr
 
-
-
-
+    def __repr__(self):
+        return '<Car %r>' % self.vin
 
 class CarPics(db.Model):
     """Class that holds pictures of all cars.

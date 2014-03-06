@@ -144,7 +144,6 @@ def carmanage():
     if "role" not in session:
         abort(401)
 
-    print session["role"]
     #Only allow Admins and Sales Users for accessing
     if session["role"] not in ["Admin", "Sales"]:
         return redirect(url_for("home"))
