@@ -137,6 +137,52 @@ def register():
 
     return render_template('register.html', msg="")
 
+@app.route("/addfeatures", methods=['GET', 'POST'])
+def addfeatures():
+   
+    #If an anonymous user browses this page abort 
+    if "role" not in session:
+        abort(401)
+    
+    #Make sure the only users that can access addfeatures are 
+    #Admins and Sales
+    if session["role"] not in ["Admin", "Sales"]:
+        return redirect(url_for("home"))
+  
+    if request.method == "GET":  
+        #Expects a vin during get request, this vin will be the 
+        #car in inventory which is queried and modifiable
+        vin = request.args.get("vin")
+
+        #Make sure there is an existing car in the car inventory
+        #table for the supplied GET vin argument
+        car_exists = Car.query.filter_by(vin=vin).first()
+
+        #Make sure there is a VIN Get argument as well as 
+        #a matching car row in database
+        if not vin or not car_exists:
+            abort(404)
+
+        #Now we need to check if we have any existing data
+        #in the CarFeatures table for our queried car 
+        car_feats_list = CarFeatures.query.filter_by(vin=vin)
+
+        #Constructs a dictionary of available features that can be loaded
+        #into view by template using something like feats_dict['performance']
+        feats_dict = {feat.feat_type:feat.descr for feat in car_feats_list}
+
+       
+        #Need to implement POST logic for when user supplies
+        #features data for a car in POST form
+
+        #If there are no existing car_feats then we will supply to
+        #Template anyway cause we have logic in template that expects this
+        return render_template('addfeature.html', vin=car_exists.vin, feats=feats_dict) 
+
+    #Actually recieve the message from the web view and process accordingly updating or 
+    #creating entries in the CarFeatures table
+    if request.method == "POST":
+
 #Page for car management accessible by admins and sales
 @app.route("/carmanage", methods=['GET','POST'])
 def carmanage():
