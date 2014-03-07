@@ -2,7 +2,7 @@
 {% block mainbody %}
     <br><br><br><br>
 
-    <form class="form-group col-lg-4" method="POST">
+    <form class="form-group col-lg-4" method="POST" action="/addfeatures?vin={{ vin }}">
     <fieldset>
 
     <legend>AddFeatures for {{ vin }}</legend>
@@ -105,6 +105,12 @@
         <p class="help-block">Enter in extra package features</p>
       </div>
     </div>  
+    <div class="form-group">
+        <div class="col-lg-4">
+          <button type="submit" class="btn btn-default">Add/Mod Features</button>
+        </div>
+      </div>
+
   </fieldset>
   </form>
 {% endblock %}

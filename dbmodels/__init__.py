@@ -60,8 +60,8 @@ class CarFeatures(db.Model):
 
        VIN | feat_type | Description"""
 
-    vin = db.Column(db.String(20), db.ForeignKey('car.vin'), primary_key = True)
-    feat_type = db.Column(db.String(40), primary_key = True)
+    vin = db.Column(db.String(20), db.ForeignKey('car.vin'), primary_key=True)
+    feat_type = db.Column(db.String(40), primary_key=True)
 
     descr = db.Column(db.String(1000))
 
