@@ -20,7 +20,8 @@
     <div class="control-group">
       <label class="control-label" for="textinput">Handling</label>
       <div class="controls">
-        <textarea name="handling" placeholder="{% if 'handling' in feats_dict %}{{ feats_dict['handling'] }}{% endif %}" class="form-control" type="text">
+        <textarea name="handling" placeholder="Handling" class="form-control" type="text">
+{% if 'handling' in feats %}{{ feats['handling'] }}{% endif %}
         </textarea>
         <p class="help-block">Enter in handling features</p>
       </div>
@@ -29,7 +30,8 @@
     <div class="control-group">
       <label class="control-label" for="textinput">Instrumentation and Controls</label>
       <div class="controls">
-        <textarea name="instrument" placeholder="{% if 'instrument' in feats_dict %}{{ feats_dict['instrument'] }}{% endif %}" class="form-control" type="text">
+        <textarea name="instrument" placeholder="Instrumentation and Controls" class="form-control" type="text">
+{% if 'instrument' in feats %}{{ feats['instrument'] }}{% endif %}
         </textarea>
         <p class="help-block">Enter in instrumentation and controls features.</p>
       </div>
@@ -38,7 +40,8 @@
     <div class="control-group">
       <label class="control-label" for="textinput">Safety and Security</label>
       <div class="controls">
-        <textarea name="safety" placeholder="{% if 'safety' in feats_dict %}{{ feats_dict['safety'] }}{% endif %}" class="form-control" type="text">
+        <textarea name="safety" placeholder="Safety and Security" class="form-control" type="text">
+{% if 'safety' in feats %}{{ feats['safety'] }}{% endif %}
         </textarea>
         <p class="help-block">Enter in safety and security features.</p>
       </div>
@@ -47,7 +50,8 @@
     <div class="control-group">
       <label class="control-label" for="textinput">Exterior Design</label>
       <div class="controls">
-        <textarea name="extdesign" placeholder="{% if 'extdesign' in feats_dict %}{{ feats_dict['extdesign'] }}{% endif %}" class="form-control" type="text">
+        <textarea name="extdesign" placeholder="Exterior Design" class="form-control" type="text">
+{% if 'extdesign' in feats %}{{ feats['extdesign'] }}{% endif %}
         </textarea>
         <p class="help-block">Enter in exterior design features</p>
       </div>
@@ -56,7 +60,8 @@
     <div class="control-group">
       <label class="control-label" for="textinput">Interior Design</label>
       <div class="controls">
-        <textarea name="intdesign" placeholder="{% if 'intdesign' in feats_dict %}{{ feats_dict['intdesign'] }}{% endif %}" class="form-control" type="text">
+        <textarea name="intdesign" placeholder="Interior Design" class="form-control" type="text">
+{% if 'intdesign' in feats %}{{ feats['intdesign'] }}{% endif %}
         </textarea>
         <p class="help-block">Enter in interior design features</p>
       </div>
@@ -65,7 +70,8 @@
     <div class="control-group">
       <label class="control-label" for="textinput">Audio System</label>
       <div class="controls">
-        <textarea name="audio" placeholder="{% if 'audio' in feats_dict %}{{ feats_dict['audio'] }}{% endif %}" class="form-control" type="text">
+        <textarea name="audio" placeholder="Audio System" class="form-control" type="text">
+{% if 'audio' in feats %}{{ feats['audio'] }}{% endif %}
         </textarea>
         <p class="help-block">Enter in audio system features</p>
       </div>
@@ -74,7 +80,8 @@
     <div class="control-group">
       <label class="control-label" for="textinput">Comfort and Convenience</label>
       <div class="controls">
-        <textarea name="comfort" placeholder="{% if 'comfort' in feats_dict %}{{ feats_dict['comfort'] }}{% endif %}" class="form-control" type="text">
+        <textarea name="comfort" placeholder="Comfort and Convenience" class="form-control" type="text">
+{% if 'comfort' in feats %}{{ feats['comfort'] }}{% endif %}
         </textarea>
         <p class="help-block">Enter in comfort and convenience features</p>
       </div>
@@ -83,7 +90,8 @@
     <div class="control-group">
       <label class="control-label" for="textinput">Maintenance Programs</label>
       <div class="controls">
-        <textarea name="maintenance" placeholder="{% if 'maintenance' in feats_dict %}{{ feats_dict['maintenance'] }}{% endif %}" class="form-control" type="text">
+        <textarea name="maintenance" placeholder="Maintenance Programs" class="form-control" type="text">
+{% if 'maintenance' in feats %}{{ feats['maintenance'] }}{% endif %}
         </textarea>
         <p class="help-block">Enter in maintenance program features</p>
       </div>
@@ -92,16 +100,18 @@
     <div class="control-group">
       <label class="control-label" for="textinput">Warranties</label>
       <div class="controls">
-        <textarea name="warranties" placeholder="{% if 'warranties' in feats_dict %}{{ feats_dict['warranties'] }}{% endif %}" class="form-control" type="text">
+        <textarea name="warranties" placeholder="Warranties" class="form-control" type="text">
+{% if 'warranties' in feats %}{{ feats['warranties'] }}{% endif %}
         </textarea>
         <p class="help-block">Enter in warranty features</p>
       </div>
     </div>
 
     <div class="control-group">
-      <label class="control-label" for="textinput">Extra Package</label>
+      <label class="control-label" for="textinput">Extra Packages</label>
       <div class="controls">
-        <textarea name="extras" placeholder="{% if 'extras' in feats_dict %}{{ feats_dict['extras'] }}{% endif %}" class="form-control" type="text">
+        <textarea name="extras" placeholder="Extra Packages" class="form-control" type="text">
+{% if 'extras' in feats %}{{ feats['extras'] }}{% endif %}
         </textarea>
         <p class="help-block">Enter in extra package features</p>
       </div>

@@ -223,10 +223,10 @@ def addfeatures():
                     #ugly hack to cycle through rows in query to find correct one to modify
                     for x in car_feats_list:
                         if x.feat_type == names[index]:
-                            x.descr = feats[index].strip().lstrip()
+                            x.descr = feats[index].strip()
 
                 elif feats[index].strip() != "" and names[index] not in feats_list:
-                    newrow = CarFeatures(car_exists.vin, names[index], feats[index].strip().lstrip())
+                    newrow = CarFeatures(car_exists.vin, names[index], feats[index].strip())
                     db.session.add(newrow)
 
 
