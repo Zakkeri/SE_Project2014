@@ -172,7 +172,7 @@ def addfeatures():
         #Constructs a dictionary of available features that can be loaded
         #into view by template using something like feats_dict['performance']
         feats_dict = {feat.feat_type:feat.descr for feat in car_feats_list}
-       
+        print feats_dict 
         #Need to implement POST logic for when user supplies
         #features data for a car in POST form
 
@@ -191,17 +191,17 @@ def addfeatures():
         try:
             #Retreive all potential features forms from POST
             #request, if any are blank simply ignore them
-            perf = request.form["performance"]
-            hand = request.form["handling"]
-            instr = request.form["instrument"]
-            safety = request.form["safety"]
-            ext = request.form["extdesign"]
-            intd = request.form["intdesign"]
-            audio = request.form["audio"]   
-            comfort = request.form["comfort"]
-            maint = request.form["maintenance"]
-            warr = request.form["warranties"]
-            extra = request.form["extras"] 
+            perf = request.form["performance"].encode('utf-8')
+            hand = request.form["handling"].encode('utf-8')
+            instr = request.form["instrument"].encode('utf-8')
+            safety = request.form["safety"].encode('utf-8')
+            ext = request.form["extdesign"].encode('utf-8')
+            intd = request.form["intdesign"].encode('utf-8')
+            audio = request.form["audio"].encode('utf-8')   
+            comfort = request.form["comfort"].encode('utf-8')
+            maint = request.form["maintenance"].encode('utf-8')
+            warr = request.form["warranties"].encode('utf-8')
+            extra = request.form["extras"].encode('utf-8') 
 
             #Saves us some lines of code by allowing us to use a for loop in the following block of code
             feats = [perf, hand, instr, safety, ext, intd, audio, comfort, maint, warr, extra]
@@ -220,8 +220,7 @@ def addfeatures():
                 #for the car with the specific feature type from POST request, modify the 
                 #entry in the database 
                 if feats[index].strip() != "" and names[index] in feats_list:#car_feats_list.filter_by(feat_type=names[index]):
-                    print type(car_feats_list)
-                    #ugly hack
+                    #ugly hack to cycle through rows in query to find correct one to modify
                     for x in car_feats_list:
                         if x.feat_type == names[index]:
                             x.descr = feats[index]
