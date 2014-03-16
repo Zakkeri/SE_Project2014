@@ -30,30 +30,6 @@ class User(db.Model):
 
     def __repr__(self):
         return '<User %r>' % self.uname
-
-class Car(db.Model):
-    """Class to represent the car inventory layout in the database.
-       This will be used for all relations regarding cars
-
-       Table name will be "car"
-        
-        VIN | MAKE | MODEL | YEAR | RETAIL"""
-
-    vin = db.Column(db.String(20), primary_key=True, unique=True)
-    make = db.Column(db.String(30))
-    model = db.Column(db.String(30))
-    year = db.Column(db.String(4))
-    retail = db.Column(db.String(10))
-    
-    def __init__(self, vin, make, model, year, retail):
-        self.vin = vin
-        self.make = make
-        self.model = model
-        self.year = year
-        self.retail = retail 
-
-    def __repr__(self):
-        return '<Car %r>' % self.vin
      
 class CarFeatures(db.Model):
     """Class that holds performance data for a car if available.
@@ -70,6 +46,33 @@ class CarFeatures(db.Model):
         self.vin = vin
         self.feat_type = feat_type
         self.descr = descr
+
+    def __repr__(self):
+        return '<Car %r>' % self.vin
+
+
+class Car(db.Model):
+    """Class to represent the car inventory layout in the database.
+       This will be used for all relations regarding cars
+
+       Table name will be "car"
+        
+        VIN | MAKE | MODEL | YEAR | RETAIL"""
+
+    vin = db.Column(db.String(20), primary_key=True, unique=True)
+    make = db.Column(db.String(30))
+    model = db.Column(db.String(30))
+    year = db.Column(db.String(4))
+    retail = db.Column(db.String(10))
+
+    features = db.relationship("CarFeatures", backref="Car", cascade="all,delete")
+    
+    def __init__(self, vin, make, model, year, retail):
+        self.vin = vin
+        self.make = make
+        self.model = model
+        self.year = year
+        self.retail = retail 
 
     def __repr__(self):
         return '<Car %r>' % self.vin
