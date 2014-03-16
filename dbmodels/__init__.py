@@ -84,7 +84,7 @@ class CarPics(db.Model):
     """
 
     vin = db.Column(db.String(20), db.ForeignKey('car.vin'))
-    picname = db.Column(db.String(30), primary_key=True, unique=True)
+    picname = db.Column(db.String(100), primary_key=True, unique=True)
 
     def __init__(self, vin, picname):
         self.vin = vin

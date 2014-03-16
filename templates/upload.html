@@ -1,0 +1,18 @@
+{% extends 'layout2.html' %}
+
+{% block mainbody %}
+    <br><br><br><br> 
+
+    {% if success == 1 %}
+       <h3>Upload successful</h3> 
+    {% endif %}
+
+    <h1>Upload file for {{ car.vin }}</h1>
+
+    <form action="/upload?vin={{ car.vin }}" method=POST enctype=multipart/form-data>
+        <p>
+            <input type=file name=file>
+            <input type=submit value=Upload>
+        </p>
+    </form>
+{% endblock %}

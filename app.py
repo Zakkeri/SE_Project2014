@@ -3,13 +3,17 @@ import binascii
 import os
 from flask import Flask, request, session, url_for, \
     abort, render_template, flash, redirect, Response
+from werkzeug.utils import secure_filename
 from utilities import *
 from dbmodels import * #Importing db interface from sqlalchemy
 
 app = Flask(__name__)
 app.debug = True
 app.config.from_object(__name__)
-app.config['UPLOAD_FOLDER'] = "/images"
+
+ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif', '.bmp', '.tiff'])
+
+app.config['UPLOAD_FOLDER'] = "images/"
 app.config.from_envvar('FLASKR_SETTINGS', silent = True)
 
 app.secret_key = os.urandom(24)
@@ -330,12 +334,100 @@ def carmanage():
 
     return render_template("carmanage.html", action=action, Car=Car)
 
+@app.route("/upload", methods=['GET', 'POST'])
+def upload():
+
+    if "role" not in session:
+        abort(401)
+
+    #Only allow Admins and Sales Users for accessing
+    if session["role"] not in ["Admin", "Sales"]:
+        return redirect(url_for("home"))
+
+
+    try:
+       #if GET request 
+       if request.method == "GET":
+            vin = request.args.get("vin")
+
+            car_exists = Car.query.filter_by(vin=vin).first() 
+
+            if not car_exists:
+                return redirect(url_for("home"))
+      
+            return render_template("upload.html", car=car_exists)
+
+       if request.method == "POST":
+
+            vin = request.args.get("vin")
+
+            car_exists = Car.query.filter_by(vin=vin).first()
+
+            if not car_exists:
+                return redirect(url_for("home"))
+
+            file = request.files['file']
+            if file and file.filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS:
+                filename = secure_filename(vin + file.filename)
+
+                #check if filename is already in database
+                file_exists = CarPics.query.filter_by(vin=vin,picname=filename).first()
+                print file_exists 
+                if not file_exists:
+                    new_pic = CarPics(vin=vin, picname=filename) 
+                    db.session.add(new_pic)
+                    db.session.commit()
+
+                file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+                return render_template("upload.html", car=car_exists, success=1)
+
+            return render_template("upload.html", car=car_exists, success=0)
+                
+                 
+    except Exception, e:
+        print e
+        return render_template(url_for("home"))
+        
+
+
 #Page for viewing and searching for cars in the inventory
 @app.route("/carview", methods=['GET'])
 def carview():
+    
+    if "role" not in session:
+        abort(401)
 
-    #Need to have: Search view
-    pass
+    #Only allow Admins and Sales Users for accessing
+    if session["role"] not in ["Admin", "Sales"]:
+        return redirect(url_for("home"))
+
+    #Split supplied keywords from GET request into individual words
+    kwds = request.args.get("keywords")
+
+
+    if not kwds:
+        return render_template("carview.html")
+
+    #keywords from HTTP Get Request
+    kwds = kwds.split(" ") 
+    #List of cars to be displayed, in vin form
+    cars = []
+    #Search through relevant tables Car and CarFeatures
+    #Terrible O(n^2) search
+
+    for word in kwds:
+        #Search through Car Table
+        for car in Car.query.all():
+            if word.lower() == car.vin.lower() or word.lower() == car.make.lower() or word.lower() == car.model.lower() or word == car.year.lower() or word.lower() == car.retail.lower():
+                cars.append(car.vin)     
+                    
+        #Search through CarFeatures Table
+        for feat in CarFeatures.query.all():
+            if word in feat.descr and feat.vin not in cars:
+                cars.append(car.vin)
+
+    #Will need to pass in rows from Car table and CarFeatures to display in template
+    return render_template("carview.html")
 
 if __name__ == "__main__":
     app.run()
