@@ -421,15 +421,16 @@ def carview():
         #Search through Car Table
         for car in Car.query.all():
             if word.lower() == car.vin.lower() or word.lower() == car.make.lower() or word.lower() == car.model.lower() or word == car.year.lower() or word.lower() == car.retail.lower():
-                vins.append(car.vin)     
+                if car.vin not in vins:
+                    vins.append(car.vin)    
                     
         #Search through CarFeatures Table
         for feat in CarFeatures.query.all():
             if word.lower() in feat.descr.lower() and feat.vin not in vins:
-                vins.append(car.vin)
+                vins.append(feat.vin)
 
     #Will need to pass in rows from Car table and CarFeatures to display in template
-    return render_template("carview.html", Car=Car, CarPics=CarPics, vins=vins, results=len(vins))
+    return render_template("carview.html", Car=Car, CarPics=CarPics, vins=vins, len=len(vins))
 
 if __name__ == "__main__":
     app.run()
