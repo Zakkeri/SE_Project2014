@@ -24,13 +24,51 @@ class MyTest(TestCase):
 
 class SomeTest(MyTest):
     
-    def test_something(self):
+    #Tests that an anonymous user can not access certain pages
+    def test_guest_access(self):
 
-        response = self.client.get("/carview")
+        #Test that guests can access home page
+        response = self.client.get("/")
+        assert response.status == "200 OK"
+
+        #Test that guests can access login page
+        response = self.client.get("/login")
+        assert response.status == "200 OK"
+
+        #Test that guests can access registration page
+        response = self.client.get("/register")
+        assert response.status == "200 OK"
+
+        #Test that guests can not access logout page
+        response = self.client.get("/logout")
+        assert response.status != "200 OK"
+
+        #Test that guests can not access roles page
+        response = self.client.get("/roles")
+        assert response.status != "200 OK"
+
+        #Test that guests can not access addfeatures
+        response = self.client.get("/addfeatures")
+        assert response.status != "200 OK"  
+
+        #Test that guests can not access carmanage page
+        response = self.client.get("/carmanage")
+        assert response.status != "200 OK" 
+    
+        #Test that guests can not access upload page
+        response = self.client.get("/upload")
+        assert response.status != "200 OK"
+
+        ##
+        #Still need to ask group about guest accessing carview
+        ## 
+
         
-        print response
 
-        assert response
+        
+
+
+        
 
 if __name__ == "__main__":
     unittest.main()
