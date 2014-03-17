@@ -13,7 +13,7 @@ app.config.from_object(__name__)
 
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif', '.bmp', '.tiff'])
 
-app.config['UPLOAD_FOLDER'] = "images/"
+app.config['UPLOAD_FOLDER'] = "static/images/"
 app.config.from_envvar('FLASKR_SETTINGS', silent = True)
 
 app.secret_key = os.urandom(24)
@@ -411,23 +411,25 @@ def carview():
     #keywords from HTTP Get Request
     kwds = kwds.split(" ") 
     #List of cars to be displayed, in vin form
-    cars = []
+    vins = []
+    
     #Search through relevant tables Car and CarFeatures
     #Terrible O(n^2) search
-
+    #Probably can be heavily modified with little impact, we should just be able to pass car objects to 
+    #template and load results that way
     for word in kwds:
         #Search through Car Table
         for car in Car.query.all():
             if word.lower() == car.vin.lower() or word.lower() == car.make.lower() or word.lower() == car.model.lower() or word == car.year.lower() or word.lower() == car.retail.lower():
-                cars.append(car.vin)     
+                vins.append(car.vin)     
                     
         #Search through CarFeatures Table
         for feat in CarFeatures.query.all():
-            if word in feat.descr and feat.vin not in cars:
-                cars.append(car.vin)
+            if word.lower() in feat.descr.lower() and feat.vin not in vins:
+                vins.append(car.vin)
 
     #Will need to pass in rows from Car table and CarFeatures to display in template
-    return render_template("carview.html")
+    return render_template("carview.html", Car=Car, CarPics=CarPics, vins=vins, results=len(vins))
 
 if __name__ == "__main__":
     app.run()
