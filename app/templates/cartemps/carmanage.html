@@ -133,7 +133,7 @@
         <div class="panel-body">
         <p>Here you can modify cars in inventory.<br>
         
-           To add a car: <a href="/carmanage?action=add">Add a car.</a> 
+           To add a car: <a href="/caradd">Add a car.</a> 
 
         </p>
         </div>
@@ -162,10 +162,10 @@
                       Select... <span class="caret"></span>
                   </button>
                     <ul class="dropdown-menu">
-                         <li><a href="/carmanage?action=modify&vin={{ car.vin }}">Modify</a></li>
+                         <li><a href="/carmod?vin={{ car.vin }}">Modify</a></li>
                          <li><a href="/addfeatures?vin={{ car.vin }}">Add/Modify Features</a></li>
                          <li><a href="/upload?vin={{ car.vin }}">Upload Pictures</a></li>
-                         <li><a href="/carmanage?action=delete&vin={{ car.vin }}">Delete</a></li>
+                         <li><a href="/cardel?vin={{ car.vin }}">Delete</a></li>
                     </ul>
                 </div>
             </td>

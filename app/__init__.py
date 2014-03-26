@@ -1,15 +1,25 @@
+"""
+The app package contains all code to run the car management
+application.
+
+This intialization file creates the actual app object and
+loads/registers views to the app.
+
+The actual application is run in the parent directory's run.py
+file.
+
+Configuration options are placed in the "app.cfg" file
+"""
+
 from flask import Flask
 from flask.ext.sqlalchemy import SQLAlchemy
 from os import urandom
 
 app = Flask(__name__)
 app.debug = True
-app.config.from_object(__name__)
+app.config.from_pyfile("app.cfg")
 
 ALLOWED_EXTENSIONS = set(['png', 'jpg','jpeg', 'gif', 'bmp', 'tiff'])
-
-app.config['UPLOAD_FOLDER'] = "static/images/"
-app.config.from_envvar('FLASKR_SETTINGS', silent = True)
 
 app.secret_key = urandom(24)
 

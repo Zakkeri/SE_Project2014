@@ -1,7 +1,8 @@
 from app import app
+from app.db import init_db
 import sys
 
-if len(sys.argv) == 1: 
+if len(sys.argv) == 1:
     app.run("127.0.0.1", debug=True)
 
 #This if block will create and initialize the database
@@ -10,5 +11,4 @@ if len(sys.argv) == 1:
 #Typically, a user will do: python run.py init
 #and then just python run.py to run
 if sys.argv[1] == "init":
-    from app.db import *
     init_db()

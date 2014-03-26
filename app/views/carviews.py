@@ -6,7 +6,7 @@ from app import app
 
 #Page for car management accessible by admins and sales
 #Maybe should figure out how to paginate for more than 30 entries in a table
-@app.route("/carmanage", methods=['GET','POST'])
+@app.route("/carmanage", methods=['GET'])
 def carmanage():
     
     if "role" not in session:
@@ -16,34 +16,69 @@ def carmanage():
     if session["role"] not in ["Admin", "Sales"]:
         return redirect(url_for("home"))
 
-    #Need to have: Add, Modify, Delete subviews
+    #Could possibly do pagination here, would be super awesome
+    return render_template("cartemps/carmanage.html", Car=Car)
 
-    action = request.args.get("action")
+#Page for adding a car to inventory
+@app.route("/caradd", methods=['GET', 'POST'])
+def caradd():
 
-    if action == "add":
-        try:
-            if request.method == "POST":
-                vin = request.form["vin"]
-                make = request.form["make"]
-                model = request.form["model"]
-                year = request.form["year"]
-                retail = request.form["retail"] 
+    if "role" not in session:
+        abort(401)
 
-                car_exists = Car.query.filter_by(vin=vin).first()
+    #Only allow Admins and Sales Users for accessing
+    if session["role"] not in ["Admin", "Sales"]:
+        return redirect(url_for("home"))
+ 
+    if request.method == "GET":
+        return render_template("cartemps/caradd.html")
 
-                if not car_exists:
-                    
-                    newcar = Car(vin, make, model, year, retail) 
-                    db.session.add(newcar)
-                    db.session.commit()
-        
-                return render_template("cartemps/carmanage.html", Car=Car, action="")
-        except:
-            pass
+    try:
+        if request.method == "POST":
+            vin = request.form["vin"]
+            make = request.form["make"]
+            model = request.form["model"]
+            year = request.form["year"]
+            retail = request.form["retail"] 
 
-    elif action == "modify":
-        try:
-            
+            car_exists = Car.query.filter_by(vin=vin).first()
+
+            if not car_exists:
+                
+                newcar = Car(vin, make, model, year, retail) 
+                db.session.add(newcar)
+                db.session.commit()
+    
+            return render_template("cartemps/carmanage.html", Car=Car)
+    except:
+        pass
+
+
+#Page for modifying a car in inventory
+@app.route("/carmod", methods=['GET', 'POST'])
+def carmod():
+    """Page logic to modify a car's basic information in the
+       inventory.  Will accept a GET or POST request and the 
+       template and logic behave differently based on which
+       request type it is.
+
+       If a get request, the queried car's information is pre-
+       loaded in a form to make it easier for a user to modify
+       the information as they will not have to enter in every
+       field over again
+
+       Still need to add a check for changing the vin as this
+       would probably break stuff
+    """
+
+    if "role" not in session:
+        abort(401)
+
+    #Only allow Admins and Sales Users for accessing
+    if session["role"] not in ["Admin", "Sales"]:
+        return redirect(url_for("home"))
+
+    try:
             #Actual update post request
             if request.method == "POST":
                 vin = request.form["vin"]
@@ -53,11 +88,13 @@ def carmanage():
                 retail = request.form["retail"]
 
                 car_exists = Car.query.filter_by(vin=vin).first()
-                
+               
+                #If there is an error in the query return to management page 
                 if not car_exists:
-                    pass
+                    return render_template("cartemps/carmanage.html", Car=Car)
 
                 #This will eventually have to cascade also
+                #VIN should probably be checked also
                 car_exists.vin = vin
                 car_exists.make = make
                 car_exists.model = model
@@ -67,33 +104,52 @@ def carmanage():
                 db.session.commit()            
                 
                 #return to main car management page
-                return render_template("cartemps/carmanage.html", Car=Car, action="", car="")
+                return render_template("cartemps/carmanage.html", Car=Car)
 
             #get request to populate post form
             elif request.method == "GET":
+
                 vin = request.args.get("vin")
+
+                #If not vin GET argument
+                if not vin: redirect(url_for("carmanage"))
 
                 car_exists = Car.query.filter_by(vin=vin).first()
 
                 if car_exists:
-                    return render_template("cartemps/carmanage.html", car=car_exists, action=action)
+                    return render_template("cartemps/carmod.html", car=car_exists)
             
-        except:
-            pass
+    except:
+        pass
 
-    #This will eventually have to cascade across all database tables
-    elif action == "delete":
-           
-        vin = request.args.get("vin")
 
-        car_exists = Car.query.filter_by(vin=vin).first()
+#page for deleing a car from inventory
+@app.route("/cardel", methods=["GET"])
+def cardel():
+    """Page logic to delete a car from inventory.
+       Need to ensure that this cascades deleting
+       inventory info, features info, and pictures
+    """
 
-        if car_exists:
-            db.session.delete(car_exists)
-            db.session.commit()
-        
+    if "role" not in session:
+        abort(401)
 
-    return render_template("cartemps/carmanage.html", action=action, Car=Car)
+    #Only allow Admins and Sales Users for accessing
+    if session["role"] not in ["Admin", "Sales"]:
+        return redirect(url_for("home"))
+
+    vin = request.args.get("vin")
+
+    if not vin:
+        return redirect(url_for("carmanage"))
+
+    car = Car.query.filter_by(vin=vin).first()
+
+    if car:
+        db.session.delete(car_exists)
+        db.session.commit()
+
+    return redirect(url_for("carmanage"))
 
 #Page for viewing and searching for cars in the inventory
 @app.route("/carview", methods=['GET'])

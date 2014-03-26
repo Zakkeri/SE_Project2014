@@ -19,10 +19,19 @@ def login():
     if request.method == "POST": # Check for HTTP POST Request
 
         checkuser = request.form['username']
+        if len(checkuser) > 45 or checkuser == "":
+            return redirect(url_for("login"))
+
         password = request.form['password']
+        if len(password) > 128 or password == "":
+            return redirect(url_for("login"))
 
-        user_exists = User.query.filter_by(uname=checkuser).first()
-
+        #Added try/except after triggering exception with random input
+        try:
+            user_exists = User.query.filter_by(uname=checkuser).first()
+        except:
+            user_exists = None
+       
         if user_exists:
 
             #This logic will need to be changed for security reasons
@@ -38,7 +47,9 @@ def login():
                     session['isadmin'] = False
                 return redirect(url_for("home"))
 
-    return render_template('accountemps/login.html')
+        return redirect(url_for("login"))
+
+    return render_template("accounttemps/login.html")
 
 @app.route('/logout')
 def logout():
@@ -84,7 +95,7 @@ def roles():
             
         db.session.commit()
 
-    return render_template('accountemps/roles.html', User=User)
+    return render_template('accounttemps/roles.html', User=User)
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
@@ -113,5 +124,5 @@ def register():
 
             return render_template('index.html', msg="Registration Successful")
 
-    return render_template('account_temps/register.html', msg="")
+    return render_template('accounttemps/register.html', msg="")
 
