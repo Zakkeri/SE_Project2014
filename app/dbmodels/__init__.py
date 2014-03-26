@@ -30,18 +30,18 @@ class User(db.Model):
     def __repr__(self):
         return '<User %r>' % self.uname
      
-'''
-class CarFeatures(db_base):
+
+class CarFeatures(db.Model):
     """Class that holds performance data for a car if available.
 
        VIN | feat_type | Description"""
 
     __tablename__ = "car_features"
 
-    vin = Column(String(20), ForeignKey('car.vin'), primary_key=True)
-    feat_type = Column(String(40), primary_key=True)
+    vin = db.Column(db.String(20), db.ForeignKey('car.vin'), primary_key=True)
+    feat_type = db.Column(db.String(40), primary_key=True)
 
-    descr = Column(String(1000))
+    descr = db.Column(db.String(1000))
 
     def __init__(self, vin, feat_type, descr):
 
@@ -53,7 +53,7 @@ class CarFeatures(db_base):
         return '<Car %r>' % self.vin
 
 
-class Car(db_base):
+class Car(db.Model):
     """Class to represent the car inventory layout in the database.
        This will be used for all relations regarding cars
 
@@ -63,13 +63,13 @@ class Car(db_base):
 
     __tablename__ = "car"
 
-    vin = Column(String(20), primary_key=True, unique=True)
-    make = Column(String(30))
-    model = Column(String(30))
-    year = Column(String(4))
-    retail = Column(String(10))
+    vin = db.Column(db.String(20), primary_key=True, unique=True)
+    make = db.Column(db.String(30))
+    model = db.Column(db.String(30))
+    year = db.Column(db.String(4))
+    retail = db.Column(db.String(10))
 
-    features = relationship("CarFeatures", backref="Car", cascade="all,delete")
+    features = db.relationship("CarFeatures", backref="Car", cascade="all,delete")
     
     def __init__(self, vin, make, model, year, retail):
         self.vin = vin
@@ -81,7 +81,7 @@ class Car(db_base):
     def __repr__(self):
         return '<Car %r>' % self.vin
 
-class CarPics(db_base):
+class CarPics(db.Model):
     """Class that holds pictures of all cars.
        
         VIN | PICTURENAME
@@ -89,8 +89,8 @@ class CarPics(db_base):
 
     __tablename__ = "car_pics"
 
-    vin = Column(String(20), ForeignKey('car.vin'))
-    picname = Column(String(500), primary_key=True, unique=True)
+    vin = db.Column(db.String(20), db.ForeignKey('car.vin'))
+    picname = db.Column(String(500), primary_key=True, unique=True)
 
     def __init__(self, vin, picname):
         self.vin = vin
@@ -98,4 +98,4 @@ class CarPics(db_base):
 
     def __repr__ (self):
         return '<CarPic %r>' % self.picname 
-'''
+

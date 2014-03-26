@@ -17,4 +17,6 @@ app.secret_key = urandom(24)
 #much easier to logically seperate components and over all
 #make our project more modular and easier to read rather 
 #than retain the one app.py file
-from views import *
+from views.accountviews import *
+from views.carviews import *
+from views.orderviews import *

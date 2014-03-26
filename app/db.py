@@ -9,6 +9,10 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:test@127.0.0.1/cardb'
 db = SQLAlchemy(app)
 
 def init_db():
+    '''Functioning for creating and intializing all ORM models
+       from dbmodels package, as well as placing the inital 
+       admin user into the database
+    ''' 
     from app.dbmodels import User
 
     db.create_all()
