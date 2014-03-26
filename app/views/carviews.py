@@ -37,7 +37,7 @@ def carmanage():
                     db.session.add(newcar)
                     db.session.commit()
         
-                return render_template("carmanage.html", Car=Car, action="")
+                return render_template("cartemps/carmanage.html", Car=Car, action="")
         except:
             pass
 
@@ -67,7 +67,7 @@ def carmanage():
                 db.session.commit()            
                 
                 #return to main car management page
-                return render_template("carmanage.html", Car=Car, action="", car="")
+                return render_template("cartemps/carmanage.html", Car=Car, action="", car="")
 
             #get request to populate post form
             elif request.method == "GET":
@@ -76,7 +76,7 @@ def carmanage():
                 car_exists = Car.query.filter_by(vin=vin).first()
 
                 if car_exists:
-                    return render_template("carmanage.html", car=car_exists, action=action)
+                    return render_template("cartemps/carmanage.html", car=car_exists, action=action)
             
         except:
             pass
@@ -93,7 +93,7 @@ def carmanage():
             db.session.commit()
         
 
-    return render_template("carmanage.html", action=action, Car=Car)
+    return render_template("cartemps/carmanage.html", action=action, Car=Car)
 
 #Page for viewing and searching for cars in the inventory
 @app.route("/carview", methods=['GET'])
@@ -111,7 +111,7 @@ def carview():
 
 
     if not kwds:
-        return render_template("carview.html")
+        return render_template("cartemps/carview.html")
 
     #keywords from HTTP Get Request
     kwds = kwds.split(" ") 
@@ -136,7 +136,7 @@ def carview():
 
     #Will need to pass in rows from Car table and CarFeatures to display in template
     #should probably figure out how to paginate this
-    return render_template("carview.html", Car=Car, CarPics=CarPics, vins=vins, len=len(vins))
+    return render_template("cartemps/carview.html", Car=Car, CarPics=CarPics, vins=vins, len=len(vins))
 
 @app.route("/addfeatures", methods=['GET', 'POST'])
 def addfeatures():
@@ -178,7 +178,7 @@ def addfeatures():
 
         #If there are no existing car_feats then we will supply to
         #Template anyway cause we have logic in template that expects this
-        return render_template('addfeature.html', vin=car_exists.vin, feats=feats_dict) 
+        return render_template('cartemps/addfeature.html', vin=car_exists.vin, feats=feats_dict) 
 
     #Actually recieve the message from the web view and process accordingly updating or 
     #creating entries in the CarFeatures table
@@ -261,7 +261,7 @@ def upload():
             if not car_exists:
                 return redirect(url_for("home"))
       
-            return render_template("upload.html", car=car_exists)
+            return render_template("cartemps/upload.html", car=car_exists)
 
        if request.method == "POST":
 
@@ -284,9 +284,9 @@ def upload():
                     db.session.commit()
 
                 file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-                return render_template("upload.html", car=car_exists, success=1)
+                return render_template("cartemps/upload.html", car=car_exists, success=1)
 
-            return render_template("upload.html", car=car_exists, success=0)
+            return render_template("cartemps/upload.html", car=car_exists, success=0)
                 
                  
     except Exception, e:

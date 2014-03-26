@@ -12,4 +12,4 @@ def ordermanage():
     if session["role"] not in ["Admin", "Sales"]:
         return redirect(url_for("home"))
 
-    return render_template("ordermanage.html")
+    return render_template("ordertemps/ordermanage.html")

@@ -38,7 +38,7 @@ def login():
                     session['isadmin'] = False
                 return redirect(url_for("home"))
 
-    return render_template('login.html')
+    return render_template('accountemps/login.html')
 
 @app.route('/logout')
 def logout():
@@ -84,7 +84,7 @@ def roles():
             
         db.session.commit()
 
-    return render_template('roles.html', User=User)
+    return render_template('accountemps/roles.html', User=User)
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
@@ -113,5 +113,5 @@ def register():
 
             return render_template('index.html', msg="Registration Successful")
 
-    return render_template('register.html', msg="")
+    return render_template('account_temps/register.html', msg="")
 
