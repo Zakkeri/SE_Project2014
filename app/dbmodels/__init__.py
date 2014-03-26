@@ -1,9 +1,7 @@
-from flask import Flask
-from flask.ext.sqlalchemy import SQLAlchemy
-
-app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:test@127.0.0.1/cardb'
-db = SQLAlchemy(app)
+from sqlalchemy import Column, Integer, String,\
+Boolean, ForeignKey
+from sqlalchemy.orm import relationship, backref
+from app.db import db
 
 class User(db.Model):
     """Class to represent the Users table.  This table
@@ -13,6 +11,7 @@ class User(db.Model):
        
        UID | Username | Password | IsAdmin
     """
+    __tablename__ = "user"
 
     uid = db.Column(db.Integer, primary_key=True, autoincrement=True)
     uname = db.Column(db.String(45), unique=True)
@@ -31,15 +30,18 @@ class User(db.Model):
     def __repr__(self):
         return '<User %r>' % self.uname
      
-class CarFeatures(db.Model):
+'''
+class CarFeatures(db_base):
     """Class that holds performance data for a car if available.
 
        VIN | feat_type | Description"""
 
-    vin = db.Column(db.String(20), db.ForeignKey('car.vin'), primary_key=True)
-    feat_type = db.Column(db.String(40), primary_key=True)
+    __tablename__ = "car_features"
 
-    descr = db.Column(db.String(1000))
+    vin = Column(String(20), ForeignKey('car.vin'), primary_key=True)
+    feat_type = Column(String(40), primary_key=True)
+
+    descr = Column(String(1000))
 
     def __init__(self, vin, feat_type, descr):
 
@@ -51,7 +53,7 @@ class CarFeatures(db.Model):
         return '<Car %r>' % self.vin
 
 
-class Car(db.Model):
+class Car(db_base):
     """Class to represent the car inventory layout in the database.
        This will be used for all relations regarding cars
 
@@ -59,13 +61,15 @@ class Car(db.Model):
         
         VIN | MAKE | MODEL | YEAR | RETAIL"""
 
-    vin = db.Column(db.String(20), primary_key=True, unique=True)
-    make = db.Column(db.String(30))
-    model = db.Column(db.String(30))
-    year = db.Column(db.String(4))
-    retail = db.Column(db.String(10))
+    __tablename__ = "car"
 
-    features = db.relationship("CarFeatures", backref="Car", cascade="all,delete")
+    vin = Column(String(20), primary_key=True, unique=True)
+    make = Column(String(30))
+    model = Column(String(30))
+    year = Column(String(4))
+    retail = Column(String(10))
+
+    features = relationship("CarFeatures", backref="Car", cascade="all,delete")
     
     def __init__(self, vin, make, model, year, retail):
         self.vin = vin
@@ -77,14 +81,16 @@ class Car(db.Model):
     def __repr__(self):
         return '<Car %r>' % self.vin
 
-class CarPics(db.Model):
+class CarPics(db_base):
     """Class that holds pictures of all cars.
        
         VIN | PICTURENAME
     """
 
-    vin = db.Column(db.String(20), db.ForeignKey('car.vin'))
-    picname = db.Column(db.String(500), primary_key=True, unique=True)
+    __tablename__ = "car_pics"
+
+    vin = Column(String(20), ForeignKey('car.vin'))
+    picname = Column(String(500), primary_key=True, unique=True)
 
     def __init__(self, vin, picname):
         self.vin = vin
@@ -92,3 +98,4 @@ class CarPics(db.Model):
 
     def __repr__ (self):
         return '<CarPic %r>' % self.picname 
+'''
