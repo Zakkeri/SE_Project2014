@@ -100,7 +100,7 @@ class AccountsUnitTesting(MyTest):
         #Barrage login functionality with completely
         #random input of random length over and over
         #"Fuzzing"
-        for x in range(1000):
+        for x in range(1001):
             response = self.client.post("/login", data=dict(username=urandom(randint(0, 300)),
                                                             password=urandom(randint(0,300))),
                                                             follow_redirects=True)
