@@ -1,3 +1,14 @@
+"""
+The carviews module contains all views that are relevant
+to the car inventory system.  These do not include views
+that are associated with user accounts, orders, or main-
+tenance.  
+
+Each function is a seperate route on the webserver with a
+one-to-one mapping of page to function with the possiblity
+of either a GET or POST request in many situations.
+"""
+
 from flask import render_template, request, session, \
                   abort, redirect, url_for
 from app.dbmodels import Car, CarPics, CarFeatures
@@ -8,6 +19,13 @@ from app import app
 #Maybe should figure out how to paginate for more than 30 entries in a table
 @app.route("/carmanage", methods=['GET'])
 def carmanage():
+    """This function's sole purpose is to serve up the management
+       table for cars in inventory.
+        
+       The management interface gives the ability of uploading pictures,
+       adding cars, modifying cars, deleting cars, and adding features to
+       cars
+    """
     
     if "role" not in session:
         abort(401)
@@ -22,6 +40,17 @@ def carmanage():
 #Page for adding a car to inventory
 @app.route("/caradd", methods=['GET', 'POST'])
 def caradd():
+    """This function implements the logic for a user
+       to be able to add a car to the inventory system.
+
+       Only a Sales or Admin user can do this.
+
+       A form must be filled out that asks for some basic
+       information about the car.  There is a post request
+       that is processed by this function with the characteristics
+       and a new entry is placed in the car inventory table if
+       the supplied vin is unique in the table.
+    """
 
     if "role" not in session:
         abort(401)
@@ -154,7 +183,21 @@ def cardel():
 #Page for viewing and searching for cars in the inventory
 @app.route("/carview", methods=['GET'])
 def carview():
-    
+    """This function satisfies the requirement for a user
+       being able to search for specific cars in inventory
+       that have certain features.
+
+       The search algorithm can definitely tweaked a lot better
+       as I wrote it rapidly.
+
+       The central idea is for a user to be able to type in words
+       into a search bar and retrieve entries in the car inventory 
+       system that are most closely related to those words.
+
+       So far, we have cars only that are in inventory and not in 
+       maintenance being returned.  Each result is accompanied by a 
+       thumbnailed picture and the basic information of the car.
+    """ 
     if "role" not in session:
         abort(401)
 
@@ -196,6 +239,17 @@ def carview():
 
 @app.route("/addfeatures", methods=['GET', 'POST'])
 def addfeatures():
+    """This function implements the logic to add features
+       which will be attached to a given car in inventory.
+
+       The first step is to check if the car actually exists
+       in inventory that matches the vin supplied as a GET
+       argument.
+
+       If it does an entry will be made in the CarFeatures
+       table for every type of feature that the user chooses
+       to fill out for the given car.
+    """
    
     #If an anonymous user browses this page abort 
     if "role" not in session:
@@ -298,6 +352,10 @@ def addfeatures():
 
 @app.route("/upload", methods=['GET', 'POST'])
 def upload():
+    """This function implements the necessary operations
+       top upload a file for a given car in the inventory
+       system
+    """
 
     if "role" not in session:
         abort(401)
