@@ -38,7 +38,7 @@ class CarFeatures(db.Model):
 
     __tablename__ = "car_features"
 
-    vin = db.Column(db.String(20), db.ForeignKey('car.vin'), primary_key=True)
+    vin = db.Column(db.String(20), db.ForeignKey('car.vin', onupdate="cascade"), primary_key=True)
     feat_type = db.Column(db.String(40), primary_key=True)
 
     descr = db.Column(db.String(1000))
@@ -63,13 +63,14 @@ class Car(db.Model):
 
     __tablename__ = "car"
 
-    vin = db.Column(db.String(20), primary_key=True, unique=True)
+    vin = db.Column(db.String(20), primary_key=True, unique=True, onupdate="cascade")
     make = db.Column(db.String(30))
     model = db.Column(db.String(30))
     year = db.Column(db.String(4))
     retail = db.Column(db.String(10))
 
-    features = db.relationship("CarFeatures", backref="Car", cascade="all,delete")
+    features = db.relationship("CarFeatures", backref="Car", cascade="all")
+    pics = db.relationship("CarPics", backref="Car", cascade="all")
     
     def __init__(self, vin, make, model, year, retail):
         self.vin = vin
@@ -89,7 +90,7 @@ class CarPics(db.Model):
 
     __tablename__ = "car_pics"
 
-    vin = db.Column(db.String(20), db.ForeignKey('car.vin'))
+    vin = db.Column(db.String(20), db.ForeignKey('car.vin', onupdate="cascade"))
     picname = db.Column(String(500), primary_key=True, unique=True)
 
     def __init__(self, vin, picname):

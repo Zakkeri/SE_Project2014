@@ -124,9 +124,12 @@ def carmod():
         return redirect(url_for("home"))
 
     try:
+
+            vin = request.args.get("vin")
+
             #Actual update post request
             if request.method == "POST":
-                vin = request.form["vin"]
+                new_vin = request.form["vin"]
                 make = request.form["make"]
                 model = request.form["model"]
                 year = request.form["year"]
@@ -138,14 +141,30 @@ def carmod():
                 if not car_exists:
                     return redirect(url_for("carmanage", page=1))
 
+                #Manual cascade due to MySQL enforcing referential integrity
+                #a little bit too seriously.  Can't figure out how to change
+                #settings to get update cascades to work directly.
+                ''' 
+                if vin != new_vin:
+                    car_feats = Car.query.filter_by(vin=vin)
+                    car_pics = Car.query.filter_by(vin=vin)
+                    for car in car_feats:
+                        car.vin = new_vin
+                    for car in car_pics:
+                        car.vin = new_vin
+                    db.session.commit()
+                    db.session.flush()
+                '''
                 #This will eventually have to cascade also
                 #VIN should probably be checked also
-                car_exists.vin = vin
+                #When changing the vin need to ensure cascading
+                #to other vin dependent tables
+                car_exists.vin = new_vin
                 car_exists.make = make
                 car_exists.model = model
                 car_exists.year = year
                 car_exists.retail = retail
-                
+
                 db.session.commit()            
                 
                 #return to main car management page
@@ -154,7 +173,6 @@ def carmod():
             #get request to populate post form
             elif request.method == "GET":
 
-                vin = request.args.get("vin")
 
                 #If not vin GET argument
                 if not vin: redirect(url_for("carmanage"))
@@ -164,8 +182,9 @@ def carmod():
                 if car_exists:
                     return render_template("cartemps/carmod.html", car=car_exists)
             
-    except:
-        pass
+    except Exception, e:
+        print e
+        return redirect(url_for("home"))
 
 
 #page for deleing a car from inventory
