@@ -18,7 +18,8 @@ from app import app
 #Page for car management accessible by admins and sales
 #Maybe should figure out how to paginate for more than 30 entries in a table
 @app.route("/carmanage", methods=['GET'])
-def carmanage():
+@app.route("/carmanage/<int:page>", methods=['GET'])
+def carmanage(page = 1):
     """This function's sole purpose is to serve up the management
        table for cars in inventory.
         
@@ -33,9 +34,24 @@ def carmanage():
     #Only allow Admins and Sales Users for accessing
     if session["role"] not in ["Admin", "Sales"]:
         return redirect(url_for("home"))
+    
+    #Another cool feature would be to sort by make/model/year/vin/etc
+    sort = request.args.get("sort")
 
-    #Could possibly do pagination here, would be super awesome
-    return render_template("cartemps/carmanage.html", Car=Car)
+    if sort == "vin":
+        block = Car.query.order_by("vin desc").paginate(page, 10, False)
+    elif sort == "make":
+        block = Car.query.order_by("make desc").paginate(page, 10, False)
+    elif sort == "model":
+        block = Car.query.order_by("model desc").paginate(page, 10, False)
+    elif sort == "year":
+        block = Car.query.order_by("year desc").paginate(page, 10, False)
+    elif sort == "retail":
+        block = Car.query.order_by("retail desc").paginate(page, 10, False) 
+    else:
+        block = Car.query.paginate(page, 10, False)
+
+    return render_template("cartemps/carmanage.html", cars=block)
 
 #Page for adding a car to inventory
 @app.route("/caradd", methods=['GET', 'POST'])
@@ -78,9 +94,9 @@ def caradd():
                 db.session.add(newcar)
                 db.session.commit()
     
-            return render_template("cartemps/carmanage.html", Car=Car)
+            return redirect(url_for("carmanage", page=1))
     except:
-        pass
+        return redirect(url_for("carmanage", page=1))
 
 
 #Page for modifying a car in inventory
@@ -120,7 +136,7 @@ def carmod():
                
                 #If there is an error in the query return to management page 
                 if not car_exists:
-                    return render_template("cartemps/carmanage.html", Car=Car)
+                    return redirect(url_for("carmanage", page=1))
 
                 #This will eventually have to cascade also
                 #VIN should probably be checked also
@@ -133,7 +149,7 @@ def carmod():
                 db.session.commit()            
                 
                 #return to main car management page
-                return render_template("cartemps/carmanage.html", Car=Car)
+                return redirect(url_for("carmanage", page=1))
 
             #get request to populate post form
             elif request.method == "GET":
@@ -170,15 +186,15 @@ def cardel():
     vin = request.args.get("vin")
 
     if not vin:
-        return redirect(url_for("carmanage"))
+        return redirect(url_for("carmanage", page=1))
 
     car = Car.query.filter_by(vin=vin).first()
 
     if car:
-        db.session.delete(car_exists)
+        db.session.delete(car)
         db.session.commit()
 
-    return redirect(url_for("carmanage"))
+    return redirect(url_for("carmanage",page=1))
 
 #Page for viewing and searching for cars in the inventory
 @app.route("/carview", methods=['GET'])
