@@ -6,3 +6,4 @@
 *.gif
 *.bmp
 *.png
+whoosh_index/*

@@ -1,7 +1,9 @@
 from sqlalchemy import Column, Integer, String,\
 Boolean, ForeignKey
 from sqlalchemy.orm import relationship, backref
+
 from app.db import db
+from app import app
 
 class User(db.Model):
     """Class to represent the Users table.  This table
@@ -37,6 +39,7 @@ class CarFeatures(db.Model):
        VIN | feat_type | Description"""
 
     __tablename__ = "car_features"
+    __searchable__ = ['descr']
 
     vin = db.Column(db.String(20), db.ForeignKey('car.vin', onupdate="cascade"), primary_key=True)
     feat_type = db.Column(db.String(40), primary_key=True)
@@ -62,22 +65,25 @@ class Car(db.Model):
         VIN | MAKE | MODEL | YEAR | RETAIL"""
 
     __tablename__ = "car"
+    __searchable__ = ["make", "model", "year", "retail"]
 
     vin = db.Column(db.String(20), primary_key=True, unique=True, onupdate="cascade")
     make = db.Column(db.String(30))
     model = db.Column(db.String(30))
     year = db.Column(db.String(4))
     retail = db.Column(db.String(10))
+    avail_purchase = db.Column(db.Boolean)
 
     features = db.relationship("CarFeatures", backref="Car", cascade="all")
     pics = db.relationship("CarPics", backref="Car", cascade="all")
     
-    def __init__(self, vin, make, model, year, retail):
+    def __init__(self, vin, make, model, year, retail,avail_purchase=True):
         self.vin = vin
         self.make = make
         self.model = model
         self.year = year
         self.retail = retail 
+        self.avail_purchase = avail_purchase
 
     def __repr__(self):
         return '<Car %r>' % self.vin

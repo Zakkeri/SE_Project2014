@@ -89,7 +89,6 @@ def caradd():
             car_exists = Car.query.filter_by(vin=vin).first()
 
             if not car_exists:
-                
                 newcar = Car(vin, make, model, year, retail) 
                 db.session.add(newcar)
                 db.session.commit()
@@ -141,20 +140,6 @@ def carmod():
                 if not car_exists:
                     return redirect(url_for("carmanage", page=1))
 
-                #Manual cascade due to MySQL enforcing referential integrity
-                #a little bit too seriously.  Can't figure out how to change
-                #settings to get update cascades to work directly.
-                ''' 
-                if vin != new_vin:
-                    car_feats = Car.query.filter_by(vin=vin)
-                    car_pics = Car.query.filter_by(vin=vin)
-                    for car in car_feats:
-                        car.vin = new_vin
-                    for car in car_pics:
-                        car.vin = new_vin
-                    db.session.commit()
-                    db.session.flush()
-                '''
                 #This will eventually have to cascade also
                 #VIN should probably be checked also
                 #When changing the vin need to ensure cascading
@@ -256,21 +241,22 @@ def carview():
     #Terrible O(n^2) search
     #Probably can be heavily modified with little impact, we should just be able to pass car objects to 
     #template and load results that way
-    for word in kwds:
+    '''for word in kwds:
         #Search through Car Table
         for car in Car.query.all():
             if word.lower() == car.vin.lower() or word.lower() == car.make.lower() or word.lower() == car.model.lower() or word == car.year.lower() or word.lower() == car.retail.lower():
                 if car.vin not in vins:
                     vins.append(car.vin)    
-                    
+             
         #Search through CarFeatures Table
         for feat in CarFeatures.query.all():
             if word.lower() in feat.descr.lower() and feat.vin not in vins:
-                vins.append(feat.vin)
+                vins.append(feat.vin)'''
 
     #Will need to pass in rows from Car table and CarFeatures to display in template
     #should probably figure out how to paginate this
-    return render_template("cartemps/carview.html", Car=Car, CarPics=CarPics, vins=vins, len=len(vins))
+    #return render_template("cartemps/carview.html", Car=Car, CarPics=CarPics, vins=vins, len=len(vins))
+    pass
 
 @app.route("/addfeatures", methods=['GET', 'POST'])
 def addfeatures():
