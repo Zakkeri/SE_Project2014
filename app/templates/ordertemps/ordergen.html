@@ -3,12 +3,9 @@
 <div class="container">
     <div class="row">
         <div class="col-md-6">
-         <form class="form-horizontal">
-                <!-- Address form -->
+         <form class="form-horizontal" action="/ordergen" method="POST" >
          
                 <h2>Customer Information</h2>
-         
-                <!-- full-name input-->
                 <div class="control-group">
                     <label class="control-label">Full Name</label>
                     <div class="controls">
@@ -17,7 +14,6 @@
                         <p class="help-block"></p>
                     </div>
                 </div>
-                <!-- address-line1 input-->
                 <div class="control-group">
                     <label class="control-label">Address Line 1</label>
                     <div class="controls">
@@ -26,7 +22,6 @@
                         <p class="help-block">Street address, P.O. box, company name, c/o</p>
                     </div>
                 </div>
-                <!-- address-line2 input-->
                 <div class="control-group">
                     <label class="control-label">Address Line 2</label>
                     <div class="controls">
@@ -35,7 +30,6 @@
                         <p class="help-block">Apartment, suite , unit, building, floor, etc.</p>
                     </div>
                 </div>
-                <!-- city input-->
                 <div class="control-group">
                     <label class="control-label">City / Town</label>
                     <div class="controls">
@@ -43,7 +37,6 @@
                         <p class="help-block"></p>
                     </div>
                 </div>
-                <!-- region input-->
                 <div class="control-group">
                     <label class="control-label">State / Province / Region</label>
                     <div class="controls">
@@ -52,7 +45,6 @@
                         <p class="help-block"></p>
                     </div>
                 </div>
-                <!-- postal-code input-->
                 <div class="control-group">
                     <label class="control-label">Zip / Postal Code</label>
                     <div class="controls">
@@ -61,7 +53,6 @@
                         <p class="help-block"></p>
                     </div>
                 </div>
-                <!-- country select -->
                 <div class="control-group">
                     <label class="control-label">Country</label>
                     <div class="controls">
@@ -317,7 +308,7 @@
                 <div class="control-group">
                     <label class="control-label">VIN Number</label>
                     <div class="controls">
-                        <input id="full-name" name="full-name" type="text" placeholder="VIN Number"
+                        <input id="vin" name="vin" type="text" placeholder="VIN Number"
                         class="input-xlarge">
                         <p class="help-block"></p>
                     </div>
@@ -327,7 +318,7 @@
                 <div class="control-group">
                     <label class="control-label">Sales Name</label>
                     <div class="controls">
-                        <input id="address-line1" name="address-line1" type="text" placeholder="Sales Name"
+                        <input id="sname" name="sname" type="text" placeholder="Sales Name"
                         class="input-xlarge">
                     </div>
                 </div>
@@ -335,7 +326,7 @@
                 <div class="control-group">
                     <label class="control-label">Final Sale Price</label>
                     <div class="controls">
-                        <input id="address-line2" name="address-line2" type="text" placeholder="Final Sale Price"
+                        <input id="price" name="price" type="text" placeholder="Final Sale Price"
                         class="input-xlarge">
                     </div>
                 </div>
@@ -343,10 +334,11 @@
                 <div class="control-group">
                     <label class="control-label">Delivery Date</label>
                     <div class="controls">
-                        <input id="city" name="city" type="text" placeholder="Delivery Date" class="input-xlarge">
-                        <p class="help-block"></p>
+                        <input id="address-line2" name="ddate" type="ddate" placeholder="Delivery Date"
+                        class="input-xlarge">
                     </div>
                 </div>
+                <br>
    <div class="form-group">
         <div class="col-md-6 col-offset-5">
           <button type="submit" class="btn btn-default">Create Order</button>

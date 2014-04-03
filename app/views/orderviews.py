@@ -20,6 +20,8 @@ field will be set to false.
 
 from flask import render_template, request, session, \
                   abort, redirect, url_for
+from app.dbmodels import CustomerInfo, OrderInfo, Car, db 
+from datetime import datetime
 from app import app
 
 @app.route("/orders")
@@ -34,7 +36,7 @@ def ordermanage():
 
     return render_template("ordertemps/ordermanage.html")
 
-@app.route("/ordergen")
+@app.route("/ordergen", methods=["GET", "POST"])
 def ordergen():
 
     if "role" not in session:
@@ -42,5 +44,60 @@ def ordergen():
 
     if session["role"] not in ["Admin", "Sales"]:
         return redirect(url_for("home"))
+
+    #If data is posted to this page
+    if request.method == "POST":
+
+        #Attempt to retreive customer data first
+        fname = request.form["full-name"]
+        addr1 = request.form["address-line1"]
+        addr2 = request.form["address-line2"]
+        city = request.form["city"]
+        state = request.form["region"]
+        zipcode = request.form["postal-code"]
+        country = request.form["country"]
+
+        #Query to check if new user creation is necessary
+        cust = CustomerInfo.query.filter_by(fname=fname,addr1=addr1).first() 
+        #If there was no customer with this name in address
+        #Go ahead and create the new customer
+        #Should validate data before doing this 
+        if not cust:
+            cust = CustomerInfo(fname, addr1, addr2, city, state,
+                                zipcode, country)
+            db.session.add(cust) 
+
+        #Next we need to retrieve the information relevant
+        #to the actual order and fill in the OrderInfo 
+        #table with the associated CID from above
+        print cust
+        cid = cust.cid
+
+        #Next need to retrieve order data
+        #Will eventually have to validate this data also 
+        vin = request.form["vin"]
+        sname = request.form["sname"]
+        price = request.form["price"]
+        ddate = request.form["ddate"]
+        
+        #Need to check if vin corresponds to actual vin in the
+        #database and if not need to spit error to render_template 
+        car_exists = Car.query.filter_by(vin=vin)
+
+        if not car_exists:
+            #return render_template("ordertemps/ordergen.html", 
+            #                         errror="
+            return redirect(url_for("ordergen"))
+
+        #"Remove" car from inventory availablilty
+        car_exists.avail_purchase = False
+
+        #Create new order
+        new_order = OrderInfo(cid, vin, sname, price, ddate, datetime.now()) 
+        db.session.add(new_order)
+        db.session.commit()
+        
+        #Return to ordermanage page
+        return redirect(url_for("ordergen"))
 
     return render_template("ordertemps/ordergen.html")

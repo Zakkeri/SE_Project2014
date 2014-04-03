@@ -71,7 +71,7 @@ class Car(db.Model):
     make = db.Column(db.String(30))
     model = db.Column(db.String(30))
     year = db.Column(db.String(4))
-    retail = db.Column(db.String(10))
+    retail = db.Column(db.String(30))
     avail_purchase = db.Column(db.Boolean)
 
     features = db.relationship("CarFeatures", backref="Car", cascade="all")
@@ -105,4 +105,70 @@ class CarPics(db.Model):
 
     def __repr__ (self):
         return '<CarPic %r>' % self.picname 
+
+class CustomerInfo(db.Model):
+    """Class that holds customer information table.
+
+        CID | Full Name | Addr1 | Addr2 | City | State | Country
+
+       Primary Key consists of cid,fullname, and addr1.  These values
+       will be checked upon order creation to see if the customer 
+       exists. If not then the customer will be added with new info. If
+       they do exist the cid is retrieve and a new order is created in
+       the order_info table
+    """
+    __tablename__ = "customer_info"
+
+    cid = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    fname = db.Column(db.String(100))
+    addr1 = db.Column(db.String(200))
+    addr2 = db.Column(db.String(200))
+    city = db.Column(db.String(200))
+    state = db.Column(db.String(200))
+    pcode = db.Column(db.String(6))
+    country=db.Column(db.String(2))
+
+    def __init__(self, fname, addr1, addr2, city, state, pcode, country):
+
+        self.fname = fname
+        self.addr1 = addr1
+        self.addr2 = addr2
+        self.city = city
+        self.state = state
+        self.pcode = pcode
+        self.country = country
+
+    def __repr__(self):
+        return '<CustomerInfo %r>' % self.cid
+
+class OrderInfo(db.Model):
+    """Class that hold a given sale information.
+        
+       OID | CID | VIN | Sales Name | Final Price | Delivery Date | Last Updated
+    """
+    __tablename__ = "order_info"
+
+    oid = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    cid = db.Column(db.Integer, db.ForeignKey("customer_info.cid", onupdate="cascade"))
+    vin = db.Column(db.String(20), db.ForeignKey("car.vin"))
+    sname = db.Column(db.String(100))
+    fprice = db.Column(db.String(30))
+    ddate = db.Column(db.String(20))
+    updated = db.Column(db.Date)
+
+    def __init__(self, oid, cid, vin, sname, fprice, ddate, updated):
+
+        self.oid = oid
+        self.cid = cid
+        self.vin = vin
+        self.sname = sname
+        self.fprice = fprice
+        self.ddate = ddate
+        self.update = update
+
+    def __repr__(self):
+        return '<OrderInfo %r>' % self.oid
+
+    
+
 
