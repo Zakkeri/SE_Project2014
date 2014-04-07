@@ -24,6 +24,7 @@
             </tr>
         </thead>
         {% for car in cars.items %}
+        {% if car.avail_purchase %}
         <tr>
             <td>{{ car.vin }}</td>
             <td>{{ car.make }}</td>
@@ -45,6 +46,7 @@
             </td>
  
         </tr>
+        {% endif %}
         {% endfor %}
         
         </table>

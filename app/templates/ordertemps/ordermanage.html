@@ -17,14 +17,36 @@
     <thead>
         <tr>
             <th>Vin</th>
-            <th>Customer Name<!-- may link to customer info page !--></th>
+            <th>Customer ID</th>
             <th>Sales Name</th>
             <th>Sale Price</th>
-            <th>Order Status</th>
             <th>Last Modified</th>
+            <th>Delivery Date</th>
             <th>Action</th>
         </tr>
     </thead>
-             
+    {% for order in orders.items %}
+    <tr>
+        <td>{{ order.vin }}</td>
+        <td>{{ order.cid }}</td>
+        <td>{{ order.sname }}</td>
+        <td>{{ order.fprice }}</td>
+        <td>{{ order.update }}</td>
+        <td>{{ order.ddate }}</td>
+    </tr>
+    {% endfor %}
 
-{% endblock %}
+    </table>
+    </div>
+        
+    <div class="col-lg-4 col-lg-offset-5"> 
+        <ul class="pagination">
+        {% if orders.has_prev %}
+            <li class="previous"><a href="{{ url_for("orders", page=orders.prev_num) }}">Previous</a></li>{% endif %}
+        {% if orders.has_next %}
+            <li class="next"><a href="{{ url_for("orders", page=orders.next_num) }}">Next</a></li>{% endif %}
+        </ul>
+        </div>
+        
+
+{% endblock %}             

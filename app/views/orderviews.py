@@ -24,8 +24,9 @@ from app.dbmodels import CustomerInfo, OrderInfo, Car, db
 from datetime import datetime
 from app import app
 
-@app.route("/orders")
-def ordermanage():
+@app.route("/orders", methods=['GET'])
+@app.route("/orders/<int:page>", methods=['GET'])
+def ordermanage(page = 1):
 
     if "role" not in session:
         return redirect(url_for("home"))
@@ -34,7 +35,11 @@ def ordermanage():
     if session["role"] not in ["Admin", "Sales"]:
         return redirect(url_for("home"))
 
-    return render_template("ordertemps/ordermanage.html")
+    #Pagination code, may add support for sorting
+    block = OrderInfo.query.paginate(page, 10, False)
+
+    return render_template("ordertemps/ordermanage.html", 
+                            orders=block)
 
 @app.route("/ordergen", methods=["GET", "POST"])
 def ordergen():
@@ -62,16 +67,18 @@ def ordergen():
         #If there was no customer with this name in address
         #Go ahead and create the new customer
         #Should validate data before doing this 
+        if cust:
+            #Next we need to retrieve the information relevant
+            #to the actual order and fill in the OrderInfo 
+            #table with the associated CID from above
+            cid = cust.cid
+
         if not cust:
             cust = CustomerInfo(fname, addr1, addr2, city, state,
                                 zipcode, country)
+            cid = cust.cid
             db.session.add(cust) 
-
-        #Next we need to retrieve the information relevant
-        #to the actual order and fill in the OrderInfo 
-        #table with the associated CID from above
-        print cust
-        cid = cust.cid
+            db.session.commit()
 
         #Next need to retrieve order data
         #Will eventually have to validate this data also 
@@ -82,12 +89,12 @@ def ordergen():
         
         #Need to check if vin corresponds to actual vin in the
         #database and if not need to spit error to render_template 
-        car_exists = Car.query.filter_by(vin=vin)
+        car_exists = Car.query.filter_by(vin=vin).first()
 
-        if not car_exists:
+        #if not car_exists:
             #return render_template("ordertemps/ordergen.html", 
             #                         errror="
-            return redirect(url_for("ordergen"))
+        #    return redirect(url_for("ordergen"))
 
         #"Remove" car from inventory availablilty
         car_exists.avail_purchase = False
@@ -98,6 +105,6 @@ def ordergen():
         db.session.commit()
         
         #Return to ordermanage page
-        return redirect(url_for("ordergen"))
+        return redirect(url_for("ordermanage"))
 
     return render_template("ordertemps/ordergen.html")
