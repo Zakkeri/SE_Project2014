@@ -24,6 +24,11 @@ from app.dbmodels import CustomerInfo, OrderInfo, Car, db
 from datetime import datetime
 from app import app
 
+global_cid = 1
+
+if CustomerInfo.query.first():
+    global_cid = CustomerInfo.query[::-1][0].cid + 1
+
 @app.route("/orders", methods=['GET'])
 @app.route("/orders/<int:page>", methods=['GET'])
 def ordermanage(page = 1):
@@ -55,6 +60,7 @@ def ordermanage(page = 1):
 @app.route("/ordergen", methods=["GET", "POST"])
 def ordergen():
     '''This page allows a user of sales/admin level
+
        to create an order and place the order in 
        the system.  
 
@@ -77,6 +83,7 @@ def ordergen():
                  placed in the Order History table for logging
                  purposes.
     '''
+    global global_cid
 
     if "role" not in session:
         return redirect(url_for("home"))
@@ -101,6 +108,7 @@ def ordergen():
         #If there was no customer with this name in address
         #Go ahead and create the new customer
         #Should validate data before doing this 
+        cid = None
         if cust:
             #Next we need to retrieve the information relevant
             #to the actual order and fill in the OrderInfo 
@@ -108,10 +116,11 @@ def ordergen():
             cid = cust.cid
 
         if not cust:
-            cust = CustomerInfo(fname, addr1, addr2, city, state,
+            cust = CustomerInfo(global_cid, fname, addr1, addr2, city, state,
                                 zipcode, country)
-            cid = cust.cid
+            global_cid += 1
             db.session.add(cust) 
+            cid = cust.cid 
             db.session.commit()
 
         #Next need to retrieve order data
@@ -144,4 +153,63 @@ def ordergen():
         #Return to ordermanage page
         return redirect(url_for("ordermanage"))
 
-    return render_template("ordertemps/ordergen.html")
+    return render_template("ordertemps/ordergen.html",cars=Car.query)
+
+@app.route("/orderproc", methods=["GET"])
+def orderproc():
+
+    if "role" not in session:
+        return redirect(url_for("home"))
+
+    if session["role"] not in ["Admin", "Sales"]:
+        return redirect(url_for("home"))
+
+    action = request.args.get("action")
+    if not action or action not in ["deliver", "cancel"]:
+        return redirect(url_for("ordermanage"))
+    oid = request.args.get("oid")
+    if not oid:
+        return redirect(url_for("ordermanage"))
+
+    order = OrderInfo.query.filter_by(oid=oid).first()
+
+    if not order:
+        return redirect(url_for("ordermanage"))
+
+
+    if action == "deliver":
+        
+        order.status = "Delivered"
+        order.update = datetime.now()
+        db.session.commit()
+
+    elif action == "cancel":
+        #If Cancelled make avail_purchase = True
+        #and update time of change as well as
+        #change status to Canceled    
+
+        car_exists = Car.query.filter_by(vin=order.vin).first()
+        if not car_exists:
+            return redirect(url_for("ordermanage"))
+
+        car_exists.avail_purchase = True
+
+        order.status = "Canceled"
+        order.update = datetime.now()
+        db.session.commit()
+        
+
+    return redirect(url_for("ordermanage"))
+
+@app.route("/orderhistory", methods=["GET"])
+@app.route("/orderhistory/<int:page>", methods=['GET'])
+def orderhistory(page = 1):
+    if "role" not in session:
+        return redirect(url_for("home"))
+
+    if session["role"] not in ["Admin", "Sales"]:
+        return redirect(url_for("home"))
+
+    block = OrderInfo.query.paginate(page, 10, False)
+
+    return render_template("ordertemps/orderhistory.html", orders=block)

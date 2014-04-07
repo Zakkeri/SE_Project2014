@@ -26,6 +26,7 @@
         </tr>
     </thead>
     {% for order in orders.items %}
+    {% if order.status == "Ready to Process" %}
     <tr>
         <td>{{ order.vin }}</td>
         <td>{{ order.cid }}</td>
@@ -33,7 +34,19 @@
         <td>{{ order.fprice }}</td>
         <td>{{ order.update }}</td>
         <td>{{ order.ddate }}</td>
+        <td>
+                <div class="btn-group">
+                  <button class="btn btn-default btn-sm dropdown-toggle" type="button" data-toggle="dropdown">
+                      Select... <span class="caret"></span>
+                  </button>
+                    <ul class="dropdown-menu">
+                         <li><a href="/orderproc?action=deliver&oid={{ order.oid }}">Process and Deliver</a></li>
+                         <li><a href="/orderproc?action=cancel&oid={{ order.oid }}">Cancel</a></li>
+                    </ul>
+                </div>
+        </td>
     </tr>
+    {% endif %}
     {% endfor %}
 
     </table>

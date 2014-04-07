@@ -305,12 +305,25 @@
        <h2>Sale Information</h2>
          
                 <!-- full-name input-->
-                <div class="control-group">
+                <!--- <div class="control-group">
                     <label class="control-label">VIN Number</label>
                     <div class="controls">
                         <input id="vin" name="vin" type="text" placeholder="VIN Number"
                         class="input-xlarge">
                         <p class="help-block"></p>
+                    </div>
+                </div> -->
+                <div class="control-group">
+                    <label class="control-label">VIN Number</label>
+                    <div class="controls">
+                        <select id="vin" name="vin" class="input-xlarge">
+                            <option value="" selected="selected">(Please Select A Vin)</option>
+                            {% for car in cars %}
+                            {% if car.avail_purchase %}
+                            <option value="{{ car.vin }}">{{ car.vin }}</option>
+                            {% endif %}
+                            {% endfor %}
+                        </select>
                     </div>
                 </div>
                 <br>

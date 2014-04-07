@@ -1,0 +1,54 @@
+{% extends 'layout2.html' %}
+{% block mainbody %}
+<br><br><br><br>
+
+<div class="panel panel-default">
+    <div class="panel-heading">Order Manager</div>
+    <div class="panel-body">
+    <p>Here you can view all cancelled and delivered car inventory orders<br>
+    </p>
+    </div>
+
+    <table class="table">
+    <thead>
+        <tr>
+            <th>Vin</th>
+            <th>Customer ID</th>
+            <th>Sales Name</th>
+            <th>Sale Price</th>
+            <th>Last Modified</th>
+            <th>Status</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    {% for order in orders.items %}
+    {% if order.status != "Ready to Process" %}
+    <tr>
+        <td>{{ order.vin }}</td>
+        <td>{{ order.cid }}</td>
+        <td>{{ order.sname }}</td>
+        <td>{{ order.fprice }}</td>
+        <td>{{ order.update }}</td>
+        <td>{{ order.status }}</td>
+        <td>{{ order.ddate }}</td>
+    </tr>
+    <!-- May want to add some type of logic here to reinstate a previously cancelled order
+         but probably not.
+    !-->
+    {% endif %}
+    {% endfor %}
+    </table>
+    </div>
+
+    <div class="col-lg-4 col-lg-offset-5"> 
+        <ul class="pagination">
+        {% if orders.has_prev %}
+            <li class="previous"><a href="{{ url_for("orders", page=orders.prev_num) }}">Previous</a></li>{% endif %}
+        {% if orders.has_next %}
+            <li class="next"><a href="{{ url_for("orders", page=orders.next_num) }}">Next</a></li>{% endif %}
+        </ul>
+    </div>
+        
+
+
+{% endblock %}
