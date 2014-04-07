@@ -152,7 +152,7 @@ class OrderInfo(db.Model):
 
     oid = db.Column(db.Integer, primary_key=True, autoincrement=True)
     cid = db.Column(db.Integer, db.ForeignKey("customer_info.cid", onupdate="cascade"), nullable=False)
-    vin = db.Column(db.String(20), db.ForeignKey("car.vin"), nullable=False, primary_key=True)
+    vin = db.Column(db.String(20), db.ForeignKey("car.vin", onupdate="cascade"), nullable=False, primary_key=True)
     sname = db.Column(db.String(100))
     fprice = db.Column(db.String(30))
     ddate = db.Column(db.String(20))
