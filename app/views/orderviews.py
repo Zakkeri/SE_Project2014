@@ -204,6 +204,15 @@ def orderproc():
 @app.route("/orderhistory", methods=["GET"])
 @app.route("/orderhistory/<int:page>", methods=['GET'])
 def orderhistory(page = 1):
+    '''Generates a list of past orders.
+       These past orders can either be delivered
+       or cancelled.
+        
+       As of now no functionality exists to reinstate
+       a cancelled a order.  A new order must be 
+       created.
+    '''
+
     if "role" not in session:
         return redirect(url_for("home"))
 

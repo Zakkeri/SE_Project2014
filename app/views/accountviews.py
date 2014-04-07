@@ -1,6 +1,6 @@
 from flask import render_template, request, session, \
                   abort, redirect, url_for
-from app.dbmodels import User
+from app.dbmodels import User, OrderInfo
 from app.util import getsalt, createhash
 from app.db import db
 from app import app
@@ -8,7 +8,16 @@ from app import app
 
 @app.route('/')
 def home():
-    return render_template('index.html')
+
+    if "role" not in session:
+        return render_template('index.html')
+    
+    if session["role"] in ["Admin", "Sales"]:
+   
+
+        count = OrderInfo.query.filter_by(status="Ready to Process").count()
+
+        return render_template('index.html', order_count=count)
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():

@@ -2,4 +2,9 @@
 {% block mainbody %}
     <br><br>
     <h1>{{ msg }}</h1>
+
+    {% if order_count %}
+    <h1>There are currently: {{ order_count }} new orders to process.</h1>
+    {% endif %}
+
 {% endblock %} 
