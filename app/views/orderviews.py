@@ -27,6 +27,17 @@ from app import app
 @app.route("/orders", methods=['GET'])
 @app.route("/orders/<int:page>", methods=['GET'])
 def ordermanage(page = 1):
+    '''This is the central console for sales/admins
+       users to manage orders for cars in inventories.
+
+       It provides an interface listing all current orders
+       that have not been cancelled or delivered.
+
+       It provides each user the option to cancel or deliver
+       an order.  Each function will move the order into the
+       order history table. If an order is cancelled the car
+       is marked as available to purchase again.
+    '''
 
     if "role" not in session:
         return redirect(url_for("home"))
@@ -43,6 +54,29 @@ def ordermanage(page = 1):
 
 @app.route("/ordergen", methods=["GET", "POST"])
 def ordergen():
+    '''This page allows a user of sales/admin level
+       to create an order and place the order in 
+       the system.  
+
+       An order is allowed only if it corresponds to
+       an existing car in inventory that is marked as
+       available to purchase.
+
+       When the order is placed the car will be marked
+       as not available for purchased and will not be 
+       listed in the car inventory management page.
+
+       TODO:
+       Order cancellation - When the order is cancelled
+       the car should be marked as available for purchased
+       again.
+
+       Actions - Actions should be Cancel Order and Deliver
+                 Order
+                 Once either is pressed the order will be 
+                 placed in the Order History table for logging
+                 purposes.
+    '''
 
     if "role" not in session:
         return redirect(url_for("home"))
@@ -89,12 +123,15 @@ def ordergen():
         
         #Need to check if vin corresponds to actual vin in the
         #database and if not need to spit error to render_template 
+        #Probably should also convert template to user entry for
+        #VINs into drop down that lists existing VINs, this will
+        #prevent a large number of errors from user input
         car_exists = Car.query.filter_by(vin=vin).first()
 
-        #if not car_exists:
+        if not car_exists:
             #return render_template("ordertemps/ordergen.html", 
             #                         errror="
-        #    return redirect(url_for("ordergen"))
+            return redirect(url_for("ordergen"))
 
         #"Remove" car from inventory availablilty
         car_exists.avail_purchase = False
