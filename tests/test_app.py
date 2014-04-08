@@ -94,7 +94,6 @@ class AccountsUnitTesting(MyTest):
 
         #Test with username and no password sent in post request
         response = self.client.post("/login", data=dict(username="Sales1"), follow_redirects=True)
-        print response.data
         assert "Welcome" not in response.data
 
         #Barrage login functionality with completely
