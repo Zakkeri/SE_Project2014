@@ -26,7 +26,7 @@
         {% for car in cars.items %}
         {% if car.avail_purchase %}
         <tr>
-            <td>{{ car.vin }}</td>
+            <td><a href="{{ url_for("indicar") }}?vin={{ car.vin }}">{{ car.vin }}</a></td>
             <td>{{ car.make }}</td>
             <td>{{ car.model }}</td>
             <td>{{ car.year }}</td>

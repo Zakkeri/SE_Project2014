@@ -28,7 +28,7 @@
     {% for order in orders.items %}
     {% if order.status == "Ready to Process" %}
     <tr>
-        <td>{{ order.vin }}</td>
+        <td><a href="{{ url_for("indicar") }}?vin={{ order.vin }}">{{ order.vin }}</a></td>
         <td>{{ order.cid }}</td>
         <td>{{ order.sname }}</td>
         <td>{{ order.fprice }}</td>

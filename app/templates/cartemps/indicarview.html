@@ -1,0 +1,115 @@
+{% extends 'layout2.html' %}
+{% block mainbody %}
+<br><br><br><br>
+  <div class="row">
+    <h1>Extended Information For Car: {{ car.vin }}</h1>
+  </div>
+  <div class='row'>
+    <div class='col-md-8'>
+      <div class="carousel slide media-carousel" id="media">
+        <div class="carousel-inner">
+          {% if panels <= 1 %}
+          <div class="item  active">
+            <div class="row">
+          {% for num in range(3) %}
+              <div class="col-md-4">
+                <a class="thumbnail" href="#"><img alt="" src="static/images/{{ pics[num].picname }}"></a>
+              </div>          
+          {% endfor %}
+            </div>
+          </div>
+           {% if extras %}
+            <div class="item">
+              <div class="row">
+                {% for num in range(extras) %}
+                <div class="col-md-4">
+                 <a class="thumbnail" href="#"><img alt="" src="static/images/{{ pics[panels*3 + num].picname }}"></a>
+                </div>          
+                {% endfor %}
+              </div>
+            </div>
+           {% endif %}
+          {% elif panels > 1 %}
+          <div class="item  active">
+            <div class="row">
+              <div class="col-md-4">
+                <a class="thumbnail" href="#"><img alt="" src="static/images/{{ pic[0].picname }}"></a>
+              </div>          
+              <div class="col-md-4">
+                <a class="thumbnail" href="#"><img alt="" src="static/images/{{ pic[1].picname }}"></a>
+              </div>
+              <div class="col-md-4">
+                <a class="thumbnail" href="#"><img alt="" src="static/image/{{ pic[2].picname }}"></a>
+              </div>        
+            </div>
+          </div>
+
+          {% for num in range(1,panels) %}
+          <div class="item">
+            <div class="row">
+              <div class="col-md-4">
+                <a class="thumbnail" href="#"><img alt="" src="static/images/{{ pic[num*3].picname }}"></a>
+              </div>          
+              <div class="col-md-4">
+                <a class="thumbnail" href="#"><img alt="" src="static/images/{{ pics[num*3 + 1].picname }}"></a>
+              </div>
+              <div class="col-md-4">
+                <a class="thumbnail" href="#"><img alt="" src="static/images/{{ pics[num*3 + 2].picname }}"></a>
+              </div>        
+            </div>
+          </div>
+         {% endfor %}
+        {% if extras %}
+        <div class="item">
+         <div class="row">
+        {% for num in range(extras) %}
+         <div class="col-md-4">
+                 <a class="thumbnail" href="#"><img alt="" src="static/images/{{ pics[panels*3 + num].picname }}"></a>
+         </div>          
+        {% endfor %}
+         </div>
+        </div>
+        {% endif %}
+       {% endif %}
+       </div>                          
+     </div>
+           <a data-slide="prev" href="#media" class="left carousel-control">‹</a>
+           <a data-slide="next" href="#media" class="right carousel-control">›</a>
+  </div>
+</div>
+<br><br>
+
+<h2>Basic Car Information</h2>
+    <div class="row">
+            <div class=".col-md-4">
+                <h4><b>Make:</b> {{ car.make }}</h4>
+            </div>
+    </div>
+    <div class="row">
+            <div class=".col-md-4">
+                <h4><b>Model:</b> {{ car.model }}</h4>
+            </div>
+    </div>
+    <div class="row">
+            <div class=".col-md-4">
+                <h4><b>Year:</b> {{ car.year }}</h4>
+            </div>
+    </div>
+    <div class="row">
+            <div class=".col-md-4">
+                <h4><b>Retail Price:</b> {{ car.retail }}</h4>
+            </div>
+    </div>
+<br>
+{% if feats.first() %}
+<h2>Car Features</h2>
+{% for feat in feats %}
+    <div class="row">
+            <div class=".col-md-4">
+                <h4><b>{{ feat.feat_type }}:</b><p>{{ feat.descr }}</p></h4>
+            </div>
+    </div>
+{% endfor %}
+{% endif %}
+
+{% endblock %}

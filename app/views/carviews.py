@@ -11,9 +11,13 @@ of either a GET or POST request in many situations.
 
 from flask import render_template, request, session, \
                   abort, redirect, url_for
+from werkzeug.utils import secure_filename
 from app.dbmodels import Car, CarPics, CarFeatures
 from app.db import db
 from app import app
+import os
+
+ALLOWED_EXTENSIONS = ["jpg", "tiff", "jpeg", "bmp", "gif"]
 
 #Page for car management accessible by admins and sales
 #Maybe should figure out how to paginate for more than 30 entries in a table
@@ -322,22 +326,22 @@ def addfeatures():
         try:
             #Retreive all potential features forms from POST
             #request, if any are blank simply ignore them
-            perf = request.form["performance"].encode('utf-8')
-            hand = request.form["handling"].encode('utf-8')
-            instr = request.form["instrument"].encode('utf-8')
-            safety = request.form["safety"].encode('utf-8')
-            ext = request.form["extdesign"].encode('utf-8')
-            intd = request.form["intdesign"].encode('utf-8')
-            audio = request.form["audio"].encode('utf-8')   
-            comfort = request.form["comfort"].encode('utf-8')
-            maint = request.form["maintenance"].encode('utf-8')
-            warr = request.form["warranties"].encode('utf-8')
-            extra = request.form["extras"].encode('utf-8') 
+            perf = request.form["Performance"].encode('utf-8')
+            hand = request.form["Handling"].encode('utf-8')
+            instr = request.form["Instrument"].encode('utf-8')
+            safety = request.form["Safety"].encode('utf-8')
+            ext = request.form["Extdesign"].encode('utf-8')
+            intd = request.form["Intdesign"].encode('utf-8')
+            audio = request.form["Audio"].encode('utf-8')   
+            comfort = request.form["Comfort"].encode('utf-8')
+            maint = request.form["Maintenance"].encode('utf-8')
+            warr = request.form["Warranties"].encode('utf-8')
+            extra = request.form["Extras"].encode('utf-8') 
 
             #Saves us some lines of code by allowing us to use a for loop in the following block of code
             feats = [perf, hand, instr, safety, ext, intd, audio, comfort, maint, warr, extra]
-            names = ["performance", "handling", "instrument", "safety", "extdesign", "intdesign", 
-                     "audio", "comfort", "maintenance", "warranties", "extras"]
+            names = ["Performance", "Handling", "Instrument", "Safety", "Extdesign", "Intdesign", 
+                     "Audio", "Comfort", "Maintenance", "Warranties", "Extras"]
 
 
             #Hack to retrieve feature types from feature objects
@@ -426,7 +430,31 @@ def upload():
                  
     except Exception, e:
         print e
-        return render_template(url_for("home"))
+        return redirect(url_for("home"))
         
 
+@app.route("/indicar", methods=["GET"])
+def indicar():
 
+    if "role" not in session:
+        return redirect(url_for("home"))
+
+    #Only allow Admins and Sales Users for accessing
+    if session["role"] not in ["Admin", "Sales", "Guest"]:
+        return redirect(url_for("home"))
+
+
+    vin = request.args.get("vin")
+
+    car_exists = Car.query.filter_by(vin=vin).first()
+    if not car_exists:
+        return redirect(url_for("home"))
+        
+    car_feats = CarFeatures.query.filter_by(vin=vin)
+    
+    car_pics = CarPics.query.filter_by(vin=vin)
+
+    sections, leftovers = divmod(car_pics.count(), 3)
+
+    return render_template("cartemps/indicarview.html", car=car_exists,feats=car_feats, 
+                            pics=car_pics, panels=sections, extras=leftovers)

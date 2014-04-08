@@ -19,7 +19,6 @@ app = Flask(__name__)
 app.debug = True
 app.config.from_pyfile("app.cfg")
 
-ALLOWED_EXTENSIONS = set(['png', 'jpg','jpeg', 'gif', 'bmp', 'tiff'])
 
 app.secret_key = urandom(24)
 
