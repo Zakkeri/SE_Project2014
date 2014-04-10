@@ -7,10 +7,10 @@ from app import app
 
 
 @app.route('/')
-def home():
+def home(msg=""):
 
     if "role" not in session:
-        return render_template('index.html')
+        return render_template('index.html',msg=msg)
     
     if session["role"] in ["Admin", "Sales"]:
    
@@ -18,6 +18,8 @@ def home():
         count = OrderInfo.query.filter_by(status="Ready to Process").count()
 
         return render_template('index.html', order_count=count)
+    
+    return render_template('index.html', msg=msg)
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -38,7 +40,7 @@ def login():
         #Added try/except after triggering exception with random input
         try:
             user_exists = User.query.filter_by(uname=checkuser).first()
-        except:
+        except Exception, e:
             user_exists = None
        
         if user_exists:
@@ -131,7 +133,7 @@ def register():
             db.session.add(newuser)
             db.session.commit()
 
-            return render_template('index.html', msg="Registration Successful")
+            return redirect(url_for("home",msg="Registration Sucessful"))
 
     return render_template('accounttemps/register.html', msg="")
 
