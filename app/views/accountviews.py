@@ -6,7 +6,12 @@ from app import app
 
 @app.route('/')
 def home(message = "Welcome to home page!"):
-    print message
+
+    # extract messages from redirect URLs
+    message = request.args.get('message', '')
+    if message == "":
+        message = "Welcome to our Car Management System."
+
     if "role" not in session:
         return render_template('index.html',order_count = 1, message=message)
     
@@ -106,31 +111,51 @@ def roles():
 
     return render_template('accounttemps/roles.html', User=User)
 
+# character sets for validating registration
+lower = [chr(i + 97) for i in range(26)]           # lower-case alphabet (ascii)
+upper = [chr(i + 65) for i in range(26)]           # upper-case alphabet (ascii)
+digit = [chr(i + 48) for i in range(10)]           # digits
+speci = [chr(i + 33) for i in range(14)]           # special char
+chars = set(lower + upper + digit)                 # username character set
+
 @app.route('/register', methods=['GET', 'POST'])
 def register():
 
-    # redirect sign in user to home page
+    # redirect signed in user to home page
     if 'username' in session: redirect(url_for("home"))
     
+    # user has submitted a registration form
     if request.method == "POST":
-
-        checkuser = request.form['username']
+        # extract form entries
+        username = request.form['username']
         password = request.form['password']
-        checkpass = request.form['check']
+        verified = request.form['check']
+        status = 0x0000
 
-        #Check if user already exists
-        user_exists = User.query.filter_by(uname=checkuser).first()
+        # validate registration
+        if not 5 <= len(username) <= 25:                         status += 0x0002  # username must be 5 - 25 characters long
+        if set(username) - chars:                                status += 0x0004  # username must contain only letters and digits
+        if not 5 <= len(password) <= 25:                         status += 0x0008  # password must be 5 - 25 characters long
+        if len(set(password) & set(digit)) < 1:                  status += 0x0010  # must contain digit character
+        if len(set(password) & set(upper)) < 1:                  status += 0x0020  # must contain capital character
+        if len(set(password) & set(speci)) < 1:                  status += 0x0040  # must contain special character
+        if password != verified:                                 status += 0x0080  # password is not verified
+        if User.query.filter_by(uname=username).first() != None: status += 0x0100  # username already exist
 
-        if not user_exists and password == checkpass:
-            #If user is not found then go ahead and create the user
-            #using the supplied form data
+        # create the user if it does not exist
+        if not status:
             salt = getsalt() 
             passhash = createhash(salt,password)
-            #Do not allow the new user to be an admin default to guest
-            newuser = User(checkuser, salt, passhash, "Guest", 0)            
+            newuser = User(username, salt, passhash, "Guest", 0)            
             db.session.add(newuser)
             db.session.commit()
+            return redirect(url_for("home", message="Registration Sucessful"))
+        # report password does not match
+        elif status & 0x0080: return redirect(url_for("register", message = "Passwords do not match."))
+        # report username already exist
+        elif status & 0x0100: return redirect(url_for("register", message = "Username already exist."))
+        # report validation error
+        else: return redirect(url_for("register", message = "Invalid username or password."))
 
-            return render_template('index.html', message = "Registration Successful")
-
+    # present user with initial registration
     return render_template('accounttemps/register.html')

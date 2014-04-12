@@ -8,7 +8,10 @@
     <meta name="author" content="">
     <link rel="shortcut icon" href="../docs-assets/ico/favicon.png">
 
-    <title>{% block title %}{% endblock %}</title>
+    <title>
+      {% block title %}
+      {% endblock %}
+    </title>
 
     <!-- Bootstrap core CSS -->
     <link href="{{ url_for('static', filename='css/bootstrap.css') }}" rel="stylesheet">
@@ -53,7 +56,6 @@
 
     <div class="container">
       {% block mainbody %}
-      <h1> Welcome to our management system! </h1>
       {% endblock %}
     </div><!-- /.container -->
 

@@ -10,12 +10,81 @@ Registration
 
 {% block addcss %} <link href="{{ url_for('static', filename='signin.css') }}" rel="stylesheet"> {% endblock %}
 
-{% block mainbody %}  		
-      <form name="register" class="form-signin" role="form" action="/register" method="POST">
-        <h2 class="form-signin-heading">Registration</h2>
-        <input name="username" type="text" class="form-control" placeholder="Username" required autofocus>
-        <input name="password" type="password" class="form-control" placeholder="Password" required>
-        <input name="check" type="password" class="form-control" placeholder="Retype Password" required>
-        <button class="btn btn-lg btn-primary btn-block" type="submit">Register</button>
-      </form>
+{% block mainbody %}
+    
+    <div class="row">
+        <div class="col-md-12">
+            <h3>Registration Form</h3>
+            <p class="text-left">Rules for entering your username and password are as follows:
+                <ol>
+                    <li>Username must be within 5 to 25 characters in length.</li>
+                    <li>Username can only contain letters and digits.</li>
+                    <li>Password must be within 5 to 25 characters in length.</li>
+                    <li>Password must contain at least one capital letter, digit, and special character.</li>
+                </ol>
+            </p>
+        </div>
+    </div>
+
+    <form     name = "register" 
+              class = "form-horizontal" 
+              role = "form"
+              method = "POST"
+              action = "/register">
+
+        <div class = "form-group">
+            <label class="col-sm-3 control-label">
+                <p class="text-left">
+                    Username:
+                </p>
+            </label>
+            <div class="col-sm-5">
+                <input  name = "username"
+                        type = "text" 
+                        class = "form-control" 
+                        placeholder = "Username" 
+                        required autofocus>
+            </div>
+        </div>
+
+        <div class = "form-group">
+            <label class="col-sm-3 control-label">
+                <p class="text-left">
+                    Password:
+                </p>
+            </label>
+            <div class="col-sm-5">
+                <input  name = "password"
+                        type = "password" 
+                        class = "form-control" 
+                        placeholder = "Password" 
+                        required autofocus>
+            </div>
+        </div>
+
+        <div class = "form-group">
+            <label class="col-sm-3 control-label">
+                <p class="text-left">
+                    Verify Password:
+                </p>
+            </label>
+            <div class="col-sm-5">
+                <input  name = "check"
+                        type = "password" 
+                        class = "form-control" 
+                        placeholder = "Retype Password" 
+                        required autofocus>
+            </div>
+        </div>
+        {% if request.args.get('message') %}
+            <p class="text-left">
+                <strong>{{request.args.get('message')}}</strong>
+            </p>
+        {% endif %}
+        <div class = "form-group">
+            <div class="col-sm-8">
+                <button type="submit" class="btn btn-sm btn-block btn-primary btn-default">Register</button>
+            </div>
+        </div>
+    </form>
 {% endblock %}
