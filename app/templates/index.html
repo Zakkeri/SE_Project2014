@@ -1,10 +1,12 @@
 {% extends 'layout2.html' %}
 {% block mainbody %}
     <br><br>
-    <h1>{{ msg }}</h1>
+    <h1>{{ message }}</h1>
 
     {% if order_count %}
     <h1>There are currently: {{ order_count }} new orders to process.</h1>
+    {% else %}
+    <h1>There are currently no orders to process.</h1>
     {% endif %}
 
 {% endblock %} 
