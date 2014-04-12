@@ -26,10 +26,10 @@ from app import app
 
 global_cid = 1
 
-#When initializing database may have to comment these next to
+#When initializing database may have to comment these next two
 #lines out as CustomerInfo name is not available yet
-if CustomerInfo.query.first():
-    global_cid = CustomerInfo.query[::-1][0].cid + 1
+#if CustomerInfo.query.first():
+#    global_cid = CustomerInfo.query[::-1][0].cid + 1
 
 @app.route("/orders", methods=['GET'])
 @app.route("/orders/<int:page>", methods=['GET'])

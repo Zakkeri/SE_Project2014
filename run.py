@@ -1,14 +1,21 @@
-from app import app
-from app.db import init_db
-import sys
+#==============================================================================
+# File: run.py
+# Auth: Andrew Calvano / Jim Ching
+# Desc: Start the Flask Application
+#
+# Changelog
+#	* Improved logic for checking argv, otherwise key error when ending app.
+#==============================================================================
+from app import app 				# __init__.py globals
+from app.db import init_db    # db.py globals
+from sys import argv
 
-if len(sys.argv) == 1:
-    app.run("127.0.0.1", debug=True)
-
-#This if block will create and initialize the database
-#so that the initial admin user with password test is
-#present from the very start of the application
-#Typically, a user will do: python run.py init
-#and then just python run.py to run
-if sys.argv[1] == "init":
-    init_db()
+if len(argv) >= 2:
+	# initialize the admin account
+	if argv[1] == 'init':
+		init_db()
+	else:
+		print 'Usage: \'python run.py\' or \'python run.py init\' only.'
+else:
+	# start the flask application
+	app.run('127.0.0.1', debug = True)

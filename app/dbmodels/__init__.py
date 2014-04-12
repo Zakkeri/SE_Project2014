@@ -93,9 +93,9 @@ class CarPics(db.Model):
     """
 
     __tablename__ = "car_pics"
-
+    picid = db.Column(db.Integer, primary_key = True, autoincrement = True)
+    picname = db.Column(db.String(500))
     vin = db.Column(db.String(20), db.ForeignKey('car.vin', onupdate="cascade"))
-    picname = db.Column(String(500), primary_key=True, unique=True)
 
     def __init__(self, vin, picname):
         self.vin = vin

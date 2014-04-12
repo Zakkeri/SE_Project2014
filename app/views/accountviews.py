@@ -1,10 +1,8 @@
-from flask import render_template, request, session, \
-                  abort, redirect, url_for
+from flask import render_template, request, session, abort, redirect, url_for
 from app.dbmodels import User, OrderInfo
 from app.util import getsalt, createhash
 from app.db import db
 from app import app
-
 
 @app.route('/')
 def home(msg=""):
@@ -136,4 +134,3 @@ def register():
             return redirect(url_for("home",msg="Registration Sucessful"))
 
     return render_template('accounttemps/register.html', msg="")
-
