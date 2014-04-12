@@ -1,11 +1,44 @@
 {% extends 'layout2.html' %}
 {% block mainbody %}
-   <h1>{{ message }}</h1>
-
-   {% if order_count %}
-      <h2>There are currently {{ order_count }} new orders to process.</h2>
+   {% if session['username'] in ['Admin','Sales'] %}
+      {% if order_count %}
+         <h2>There are currently {{ order_count }} new orders to process.</h2>
+      {% else %}
+         <h2>There are currently no orders to process.</h2>
+      {% endif %}
    {% else %}
-      <h2>There are currently no orders to process.</h2>
-   {% endif %}
+      <div class="row">
+         <div class="col-md-7">
+            <h3>Car Management System</h3>
+            <p class="text-left">
+               A simple web and database application for managing car inventories, car sales, and customer orders.
+            </p>
 
+            <h4>Team Hamilton</h4>
+            <p class="text-left">
+               To simulate a real-world software engineering scenario, each team member is assigned a role within the development team with responsibilities of an analyst, designer, programmer, tester, or trainer.
+            </p>
+            <dl class="dl-horizontal">
+              <dt>Denys Kukushkin</dt>
+              <dd>System designer and analyst responsible for coordinating the overall project and documentation.</dd> 
+              <dt>Kalan Brinkley</dt>
+              <dd>Database designer responsible for developing the database models and writing SQL queries.</dd>
+              <dt>Andrew Calvano</dt>
+              <dd>Software engineer responsible for the program design and implementation; using Flask, SqlAlchemy, Python, and BootStrap to develop the WSGI application.</dd>
+              <dt>Jim Ching</dt>
+              <dd>Software Engineer responsible for testing, delivery, and maintenance; using Flask, SqlAlchemy, Python, and BootStrap to support the WSGI application.</dd>
+            </dl>
+
+            <h4>System Features</h4>
+            <p class="text-left">
+               WSGI application implements all the system features by interacting with the database and providing application logic.
+            </p>
+            <ol>
+               <li>Manage the car inventory by adding, deleting, and searching the car database.</li>
+               <li>Manage customer orders by processing orders in the order database.</li>
+               <li>Manage car sales and history by querying the overall database.</li>
+            </ol>
+         </div>
+      </div>
+   {% endif %}
 {% endblock %} 

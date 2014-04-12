@@ -13,7 +13,7 @@ Registration
 {% block mainbody %}
     
     <div class="row">
-        <div class="col-md-12">
+        <div class="col-md-7">
             <h3>Registration Form</h3>
             <p class="text-left">Rules for entering your username and password are as follows:
                 <ol>
@@ -76,11 +76,13 @@ Registration
                         required autofocus>
             </div>
         </div>
+        
         {% if request.args.get('message') %}
             <p class="text-left">
                 <strong>{{request.args.get('message')}}</strong>
             </p>
         {% endif %}
+
         <div class = "form-group">
             <div class="col-sm-8">
                 <button type="submit" class="btn btn-sm btn-block btn-primary btn-default">Register</button>
