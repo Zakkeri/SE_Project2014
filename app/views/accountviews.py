@@ -4,11 +4,11 @@ from app.util import getsalt, createhash
 from app.db import db
 from app import app
 
-@app.route('/', methods = ['GET'])
-def home(message=""):
-
+@app.route('/')
+def home(message = "Welcome to home page!"):
+    print message
     if "role" not in session:
-        return render_template('index.html',message=message)
+        return render_template('index.html',order_count = 1, message=message)
     
     if session["role"] in ["Admin", "Sales"]:
    
@@ -17,7 +17,7 @@ def home(message=""):
 
         return render_template('index.html', order_count=count)
     
-    return render_template('index.html', message=message)
+    return render_template('index.html',order_count = 2,  message=message)
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -109,7 +109,7 @@ def roles():
 @app.route('/register', methods=['GET', 'POST'])
 def register():
 
-    #Don't allow signed in users to acces this page
+    # redirect sign in user to home page
     if 'username' in session: redirect(url_for("home"))
     
     if request.method == "POST":
@@ -131,6 +131,6 @@ def register():
             db.session.add(newuser)
             db.session.commit()
 
-            return redirect(url_for("home",msg="Registration Sucessful"))
+            return render_template('index.html', message = "Registration Successful")
 
-    return render_template('accounttemps/register.html', msg="Registration Failed")
+    return render_template('accounttemps/register.html')
