@@ -1,30 +1,19 @@
-'''
-All logic for order operations.
-
-ordermanage is an interface for sales and admins to process
-sales orders
-
-ordergen is an interface for sale and admins to create new
-orders based on cars in inventory. Once the order is created 
-the car will be removed in inventory unless the order is 
-cancelled. If the order is cancelled the car will be placed
-back into inventory as an available car to purchase. If the 
-order is delivered the car will be removed as an available
-car to purchase.
-
-If an order is cancelled or delivered it will be added to
-the car history table and will not be included in the
-listings of the carmanage page as its avail_purchase
-field will be set to false.
-'''
-
-from flask import render_template, request, session, \
-                  abort, redirect, url_for
+#==============================================================================
+# File: orderviews.py
+# Auth: Andrew Calvano / Jim Ching
+# Desc: Order management interface
+# Note: create and process orders, remove car from inventory unless cancelled,
+#       cancel or delivery will be added to car history table, avail_purchase
+#       will be set accordingly.
+#
+# Changelog
+#==============================================================================
+from flask import render_template, request, session, abort, redirect, url_for
 from app.dbmodels import CustomerInfo, OrderInfo, Car, db 
 from datetime import datetime
 from app import app
 
-global_cid = 1
+#global_cid = 1
 
 #When initializing database may have to comment these next two
 #lines out as CustomerInfo name is not available yet

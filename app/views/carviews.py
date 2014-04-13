@@ -1,7 +1,7 @@
 #==============================================================================
 # File: carviews.py
 # Auth: Andrew Calvano / Jim Ching
-# Desc: Car inventory management pages
+# Desc: Car inventory management interface
 #
 # Changelog
 #    * Minor improvements.
