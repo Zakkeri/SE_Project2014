@@ -92,7 +92,7 @@ class CustomerInfo(db.Model):
        they do exist the cid is retrieve and a new order is created in
        the order_info table"""
     __tablename__ = "customer_info"
-    cid = db.Column(db.Integer,  unique=True, primary_key=True)
+    cid = db.Column(db.Integer, primary_key = True, autoincrement = True)
     fname = db.Column(db.String(100))
     addr1 = db.Column(db.String(200))
     addr2 = db.Column(db.String(200))
@@ -102,8 +102,7 @@ class CustomerInfo(db.Model):
     country = db.Column(db.String(2))
     order_info = db.relationship("OrderInfo", backref="CustomerInfo", cascade="all")
 
-    def __init__(self, cid, fname, addr1, addr2, city, state, pcode, country):
-        self.cid = cid
+    def __init__(self, fname, addr1, addr2, city, state, pcode, country):
         self.fname = fname
         self.addr1 = addr1
         self.addr2 = addr2

@@ -77,7 +77,7 @@ def caradd():
                 retail = request.form["retail"] 
 
                 # validate the form
-                if len(vin) != 20:             message = 'VIN must be 20 characters long ({})'.format(len(vin))
+                if len(vin) != 17:             message = 'VIN must be 17 characters long ({})'.format(len(vin))
                 if not 1 <= len(make) <= 30:   message = 'Make must be 1 to 30 characters long ({})'.format(len(make))
                 if not 1 <= len(model) <= 30:  message = 'Model must be 1 to 30 characters long ({})'.format(len(model))
                 if len(year) != 4:             message = 'Year must be 4 characters long ({})'.format(len(year))
@@ -123,7 +123,7 @@ def carmod():
                 retail = request.form["retail"]
 
                 # validate the form
-                if len(new_vin) != 20:         message = 'VIN must be 20 characters long ({})'.format(len(new_vin))
+                if len(new_vin) != 17:         message = 'VIN must be 17 characters long ({})'.format(len(new_vin))
                 if not 1 <= len(make) <= 30:   message = 'Make must be 1 to 30 characters long ({})'.format(len(make))
                 if not 1 <= len(model) <= 30:  message = 'Model must be 1 to 30 characters long ({})'.format(len(model))
                 if len(year) != 4:             message = 'Year must be 4 characters long ({})'.format(len(year))
