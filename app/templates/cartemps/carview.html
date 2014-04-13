@@ -1,44 +1,149 @@
 {% extends 'layout2.html' %}
-{% block mainbody %}
-    <br><br><br><br>
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-4 col-lg-offset-3">
-                <div class="form-group custom-search-form">
-                  <form class="form-horizontal" name="search" method="GET" action="/carview">
-                        <input type="text" name="keywords" placeholder="Search" class="form-control">
-                        <button type="submit" class="btn btn-default">Submit</button>
-                  </form>
-                </div>
-            </div>
-        </div>
-    </div>
 
-    <div class="container">
-        {% if vins %}
-            {% if len %} <h1>{{ len }} Cars Found In Inventory</h1>{% endif %}
-            {% for car in Car.query.all() %} 
-                {% for vin in vins %}
-                    {% if car.vin == vin %}
-                    <br><br>
-                    <div class="row">
-                        <div class="col-md-4">
-                                <a href="#" class="thumbnail">
-                                <img src=static/images/{{ CarPics.query.filter_by(vin=vin).first().picname }} alt="Generic placeholder thumbnail">
-                                </a>
-                        </div>
-                                <div class="col-md-4">
-                                <p><b>Vin:</b> {{ car.vin }} <br> 
-                                   <b>Make:</b> {{ car.make }} <b>Model:</b> {{ car.model }} <br>
-                                   <b>Year:</b> {{ car.year }}
-                                </p>
-                                </div>
-                        </div>
-                    </div>
-                    {% endif %}
-                {% endfor %}
-            {% endfor %}
+{% block toplinks %}
+    <li><a href="/">Home</a></li>
+    {% if not session['username'] %}
+        <li><a href="/login">Login</a></li>
+        <li><a href="/register">Register</a></li>
+    {% else %}
+        {% if session['isadmin'] %}
+            <li><a href="/roles">Manage Roles</a></li>
         {% endif %}
-    </div>    
+        {% if session['role'] == "Admin" or session['role'] == "Sales" %}
+            <li><a href="/carmanage">Manage Cars</a></li>
+            <li><a href="/orders">Orders</a></li>
+            <li><a href="/service">Service</a><li>
+        {% endif %}
+        <li class="active"><a href="/carview">View Cars</a></li>
+        <li><a href="/logout">Logout</a></li>
+    {% endif %}
+{% endblock %}
 
+{% block addcss %} <link href="{{ url_for('static', filename='signin.css') }}" rel="stylesheet"> {% endblock %}
+
+{% block mainbody %}
+    <div class="row">
+      <div class="col-md-7">
+         <h3>Search Form</h3>
+         <p class="text-left">
+            Wolf-fencing search procedure.
+         </p>
+      </div>
+   </div>
+
+   <form   name = "viewcar" 
+           class = "form-horizontal" 
+           role = "form"
+           method = "POST"
+           action = "/carview">
+
+      <div class="form-group">
+         <label class="col-sm-3 control-label">
+             <p class="text-left">
+                 Automobile Make
+             </p>
+         </label>
+         {% if not make is defined %}
+            <div class="col-sm-5">
+               <select class="form-control" name = "make">
+                  {% for make in make_list %}
+                     <option>{{make[0]}}</option>
+                  {% endfor %}
+               </select>
+            </div>
+         {% else %}
+            <div class="col-sm-5">
+               <select class="form-control" name = "make">
+                  <option selected>{{make}}</option>
+               </select>
+            </div>
+         {% endif %}
+      </div>
+
+      <div class="form-group">
+         <label class="col-sm-3 control-label">
+             <p class="text-left">
+                 Automobile Model
+             </p>
+         </label>
+         {% if not model is defined %}
+            <div class="col-sm-5">
+               <select class="form-control" name = "model">
+                  {% for model in model_list %}
+                     <option>{{model[1]}}</option>
+                  {% endfor %}
+               </select>
+            </div>
+         {% else %}
+            <div class="col-sm-5">
+               <select class="form-control" name = "model">
+                  <option selected>{{model}}</option>
+               </select>
+            </div>
+         {% endif %}
+      </div>   
+      
+      <div class="form-group">
+         <label class="col-sm-3 control-label">
+             <p class="text-left">
+                 Automobile Year
+             </p>
+         </label>
+         {% if not year is defined %}
+            <div class="col-sm-5">
+               <select class="form-control" name = "year">
+                  {% for year in year_list %}
+                     <option>{{year[2]}}</option>
+                  {% endfor %}
+               </select>
+            </div>
+         {% else %}
+            <div class="col-sm-5">
+               <select class="form-control" name = "year">
+                  <option selected>{{year}}</option>
+               </select>
+            </div>
+         {% endif %}
+      </div>
+
+      {% if not year is defined %}
+         <div class = "form-group">
+            <div class="col-sm-8">
+                <button type="submit" class="btn btn-sm btn-block btn-primary btn-default">Refine Search</button>
+            </div>
+         </div>
+      {% else %}
+         <div class = "form-group">
+            <div class="col-sm-8">
+                <a href="/carview">Start new search.</a>
+            </div>
+         </div>
+         {% for car in vin_list %}
+            <div class="row">
+               {% if car.pics %}
+                  <div class="col-md-7">
+                     <a class="thumbnail" href="#"><img alt="" src="static/images/{{ car.pics[0].picname }}"></a>
+                  </div>
+               {% endif %}
+
+               <div class="col-md-7">
+                  <p class="text-left">
+                     <h2>{{ car.vin }} at ${{ car.retail }}</h2>
+                  </p>
+               </div>
+
+               {% for feat in car.features %}
+                  <div class="col-md-7">
+                     <p class="text-left">
+                        <dl class="dl-horizontal">
+                           <dt>{{ feat.feat_type }}</dt>
+                           <dd>{{ feat.descr }}</dd> 
+                        </dl>
+                     </p>
+                  </div>
+               {% endfor %}
+            </div>
+         {% endfor %}
+      {% endif %}
+   </form>
 {% endblock %}

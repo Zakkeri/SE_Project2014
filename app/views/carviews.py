@@ -5,6 +5,7 @@
 #
 # Changelog
 #    * Minor improvements.
+#    * Implemented wolf-fence search procedure for carview.
 #==============================================================================
 from flask import render_template, request, session, abort, redirect, url_for
 from werkzeug.utils import secure_filename
@@ -327,60 +328,44 @@ def addfeatures():
     else:
         return redirect(url_for("home"))
 
-#Page for viewing and searching for cars in the inventory
-@app.route("/carview", methods=['GET'])
+@app.route("/carview", methods=['GET', 'POST'])
 def carview():
-    """This function satisfies the requirement for a user
-       being able to search for specific cars in inventory
-       that have certain features.
-
-       The search algorithm can definitely tweaked a lot better
-       as I wrote it rapidly.
-
-       The central idea is for a user to be able to type in words
-       into a search bar and retrieve entries in the car inventory 
-       system that are most closely related to those words.
-
-       So far, we have cars only that are in inventory and not in 
-       maintenance being returned.  Each result is accompanied by a 
-       thumbnailed picture and the basic information of the car.
-    """ 
-    if "role" not in session:
-        abort(401)
-
-    #Only allow Admins and Sales Users for accessing
-    if session["role"] not in ["Admin", "Sales"]:
+    'Search the car inventory; accessible by everyone.'
+    # check if user is login in, otherwise go to home
+    if 'role' in session.keys():
+        # user initially chooses a make
+        if request.method == 'GET':
+            # get a list of all unique make
+            make_list = db.session.query(Car.make).from_statement("SELECT DISTINCT * FROM car").all()
+            # eliminate duplicates
+            make_list = set(make_list)
+            # render init make list
+            return render_template('cartemps/carview.html', make_list = make_list)
+        # gradually refine search
+        elif request.method == 'POST':
+            # check if make is selected
+            if 'make' in request.form:
+                if 'model' in request.form:
+                    if 'year' in request.form:
+                        vin_list = db.session.query(Car).from_statement("SELECT DISTINCT * FROM car WHERE car.make = :make AND car.model = :model AND car.year = :year").params(make = request.form['make'], model = request.form['model'], year = request.form['year']).all()
+                        return render_template('cartemps/carview.html', make = request.form['make'], model = request.form['model'], year = request.form['year'], vin_list = vin_list)
+                    # remake the form to get Year
+                    else:
+                        year_list = db.session.query(Car.make, Car.model, Car.year).from_statement("SELECT DISTINCT * FROM car WHERE car.make = :make AND car.model = :model").params(make = request.form['make'], model = request.form['model']).all()
+                        year_list = set(year_list)
+                        return render_template('cartemps/carview.html', make = request.form['make'], model = request.form['model'], year_list = year_list)
+                # remake the form to get Model
+                else:
+                    model_list = db.session.query(Car.make, Car.model).from_statement("SELECT DISTINCT * FROM car WHERE car.make = :make").params(make = request.form['make']).all()
+                    model_list = set(model_list)
+                    return render_template('cartemps/carview.html', make = request.form['make'], model_list = model_list)
+            # remake the form to get Make
+            else:
+                # get a list of all unique make
+                make_list = db.session.query(Car.make).from_statement("SELECT DISTINCT * FROM car").all()
+                # eliminate duplicates
+                make_list = set(make_list)
+                # render init make list
+                return render_template('cartemps/carview.html', make_list = make_list)
+    else:
         return redirect(url_for("home"))
-
-    #Split supplied keywords from GET request into individual words
-    kwds = request.args.get("keywords")
-
-
-    if not kwds:
-        return render_template("cartemps/carview.html")
-
-    #keywords from HTTP Get Request
-    kwds = kwds.split(" ") 
-    #List of cars to be displayed, in vin form
-    vins = []
-    
-    #Search through relevant tables Car and CarFeatures
-    #Terrible O(n^2) search
-    #Probably can be heavily modified with little impact, we should just be able to pass car objects to 
-    #template and load results that way
-    '''for word in kwds:
-        #Search through Car Table
-        for car in Car.query.all():
-            if word.lower() == car.vin.lower() or word.lower() == car.make.lower() or word.lower() == car.model.lower() or word == car.year.lower() or word.lower() == car.retail.lower():
-                if car.vin not in vins:
-                    vins.append(car.vin)    
-             
-        #Search through CarFeatures Table
-        for feat in CarFeatures.query.all():
-            if word.lower() in feat.descr.lower() and feat.vin not in vins:
-                vins.append(feat.vin)'''
-
-    #Will need to pass in rows from Car table and CarFeatures to display in template
-    #should probably figure out how to paginate this
-    #return render_template("cartemps/carview.html", Car=Car, CarPics=CarPics, vins=vins, len=len(vins))
-    pass

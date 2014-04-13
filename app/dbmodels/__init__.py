@@ -51,6 +51,8 @@ class Car(db.Model):
         self.year = year
         self.retail = retail 
         self.avail_purchase = avail_purchase
+    def __repr__(self):
+        return 'vin: {} make: {} model: {} year: {}'.format(self.vin, self.make, self.model, self.year)
 
 class CarFeatures(db.Model):
     """Class that holds performance data for a car if available.
