@@ -7,6 +7,7 @@
 #       will be set accordingly.
 #
 # Changelog
+#    * Consistency and removing some logic.
 #==============================================================================
 from flask import render_template, request, session, abort, redirect, url_for
 from app.dbmodels import CustomerInfo, OrderInfo, Car, db 
@@ -88,70 +89,67 @@ def ordergen():
     # present the original order generation form
     return render_template("ordertemps/ordergen.html",cars = Car.query)
 
-@app.route("/orderproc", methods=["GET"])
-def orderproc():
-
-    if "role" not in session:
-        return redirect(url_for("home"))
-
-    if session["role"] not in ["Admin", "Sales"]:
-        return redirect(url_for("home"))
-
-    action = request.args.get("action")
-    if not action or action not in ["deliver", "cancel"]:
-        return redirect(url_for("ordermanage"))
-    oid = request.args.get("oid")
-    if not oid:
-        return redirect(url_for("ordermanage"))
-
-    order = OrderInfo.query.filter_by(oid=oid).first()
-
-    if not order:
-        return redirect(url_for("ordermanage"))
-
-
-    if action == "deliver":
-        
-        order.status = "Delivered"
-        order.update = datetime.now()
-        db.session.commit()
-
-    elif action == "cancel":
-        #If Cancelled make avail_purchase = True
-        #and update time of change as well as
-        #change status to Canceled    
-
-        car_exists = Car.query.filter_by(vin=order.vin).first()
-        if not car_exists:
-            return redirect(url_for("ordermanage"))
-
-        car_exists.avail_purchase = True
-
-        order.status = "Canceled"
-        order.update = datetime.now()
-        db.session.commit()
-        
-
-    return redirect(url_for("ordermanage"))
-
 @app.route("/orderhistory", methods=["GET"])
 @app.route("/orderhistory/<int:page>", methods=['GET'])
 def orderhistory(page = 1):
-    '''Generates a list of past orders.
-       These past orders can either be delivered
-       or cancelled.
-        
-       As of now no functionality exists to reinstate
-       a cancelled a order.  A new order must be 
-       created.
-    '''
-
-    if "role" not in session:
+    'List of cancel and delivered orders; restrict to admin or sales only.'
+    # check if user is login in, otherwise go to home
+    if 'role' in session.keys():
+        # check if role is admin or sales, otherwise go to home
+        if session['role'] in ['Admin','Sales']:
+            block = OrderInfo.query.paginate(page, 10, False)
+        else:
+            return redirect(url_for("home"))
+    else:
         return redirect(url_for("home"))
 
-    if session["role"] not in ["Admin", "Sales"]:
-        return redirect(url_for("home"))
-
-    block = OrderInfo.query.paginate(page, 10, False)
-
+    # return order manage
     return render_template("ordertemps/orderhistory.html", orders=block)
+
+@app.route("/orderproc", methods=["GET"])
+def orderproc():
+    'Deliver or cancel a customer order; restrict to admin or sales only.'
+    # check if user is login in, otherwise go to home
+    if 'role' in session.keys():
+        # check if role is admin or sales, otherwise go to home
+        if session['role'] in ['Admin','Sales']:
+            # check action exist
+            message = ''
+            action = request.args.get("action")
+            if action and action in ["deliver", "cancel"]:
+                # check if order exist
+                oid = request.args.get("oid")
+                if oid:
+                    # check if order exist in DB
+                    order = OrderInfo.query.filter_by(oid = oid).first()
+                    if order:
+                        # deliver the order
+                        if action == "deliver":
+                            order.status = "Delivered"
+                            order.update = datetime.now()
+                            db.session.commit()
+                            message = 'Customer order successfully delivered.'
+                        elif action == "cancel":
+                            # check if car exist
+                            car = Car.query.filter_by(vin = order.vin).first()
+                            if car:
+                                car.avail_purchase = True
+                                order.status = "Canceled"
+                                order.update = datetime.now()
+                                db.session.commit()
+                            else:
+                                message = 'Invalid VIN for order ID on customer order; car does not exist.'
+                        else:
+                            message = 'Invalid action on customer order.'
+                    else:
+                        message = 'Invalid order ID on customer order; order does not exist.'
+                else:
+                    message = 'Invalid order ID on customer order.'
+            else:
+                message = 'Invalid action on customer order.'
+
+            return redirect(url_for("ordermanage", message = message))
+        else:
+            return redirect(url_for("home"))
+    else:
+        return redirect(url_for("home"))

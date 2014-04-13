@@ -51,8 +51,6 @@ class Car(db.Model):
         self.year = year
         self.retail = retail 
         self.avail_purchase = avail_purchase
-    def __repr__(self):
-        return 'vin: {} make: {} model: {} year: {}'.format(self.vin, self.make, self.model, self.year)
 
 class CarFeatures(db.Model):
     """Class that holds performance data for a car if available.
@@ -66,8 +64,6 @@ class CarFeatures(db.Model):
         self.vin = vin
         self.feat_type = feat_type
         self.descr = descr
-    def __repr__(self):
-        return 'vin: {} type: {} desc: {}'.format(self.vin, self.feat_type, self.descr)
 
 class CarPics(db.Model):
     """Class that holds pictures of all cars.
@@ -79,8 +75,6 @@ class CarPics(db.Model):
     def __init__(self, vin, picname):
         self.vin = vin
         self.picname = picname
-    def __repr__(self):
-        return '{}'.format(self.picname)
 
 class CustomerInfo(db.Model):
     """Class that holds customer information table.

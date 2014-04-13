@@ -42,7 +42,7 @@ CREATE TABLE `car` (
 
 LOCK TABLES `car` WRITE;
 /*!40000 ALTER TABLE `car` DISABLE KEYS */;
-INSERT INTO `car` VALUES ('12345672901234567890','Toyota','Venza','2014','32000',1),('12345678101234567890','Toyota','Venza','2010','27000',1),('12345678901234567290','Toyota','Venza','2009','26000',1),('12345678901234567890','Toyota','Venza','2009','25000',1),('12345678901234567897','Nissan','Nissan GTR','2014','100000',1),('12362595147894561235','Honda','Civic','2014','18000',1),('12365478973698527411','Toyota','Corolla','2014','17000',1),('75395145683571594568','Toyota','Prius','2010','40000',1);
+INSERT INTO `car` VALUES ('12345672901234567890','Toyota','Venza','2014','32000',0),('12345678101234567890','Toyota','Venza','2010','27000',0),('12345678901234567290','Toyota','Venza','2009','26000',1),('12345678901234567890','Toyota','Venza','2009','25000',1),('12345678901234567897','Nissan','Nissan GTR','2014','100000',1),('12362595147894561235','Honda','Civic','2014','18000',1),('12365478973698527411','Toyota','Corolla','2014','17000',1),('75395145683571594568','Toyota','Prius','2010','40000',1);
 /*!40000 ALTER TABLE `car` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -116,7 +116,7 @@ CREATE TABLE `customer_info` (
   `country` varchar(2) DEFAULT NULL,
   PRIMARY KEY (`cid`),
   UNIQUE KEY `cid` (`cid`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -125,6 +125,7 @@ CREATE TABLE `customer_info` (
 
 LOCK TABLES `customer_info` WRITE;
 /*!40000 ALTER TABLE `customer_info` DISABLE KEYS */;
+INSERT INTO `customer_info` VALUES (1,'Bo','123','123','Tampa','Florida','33600','US'),(2,'To','123','123','Tampa','Florida','33600','US'),(3,'Tio','123','123','Tampa','Florida','33610','US'),(4,'123','123','123','123','123','123123','AF'),(5,'1234','123','123','123','123','123123','AF'),(6,'Jim','1234 Fake Street','4321 Street Fake','Fake Town','Fake State','13337','AF');
 /*!40000 ALTER TABLE `customer_info` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -150,7 +151,7 @@ CREATE TABLE `order_info` (
   KEY `vin` (`vin`),
   CONSTRAINT `order_info_ibfk_1` FOREIGN KEY (`cid`) REFERENCES `customer_info` (`cid`) ON UPDATE CASCADE,
   CONSTRAINT `order_info_ibfk_2` FOREIGN KEY (`vin`) REFERENCES `car` (`vin`) ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -159,6 +160,7 @@ CREATE TABLE `order_info` (
 
 LOCK TABLES `order_info` WRITE;
 /*!40000 ALTER TABLE `order_info` DISABLE KEYS */;
+INSERT INTO `order_info` VALUES (1,1,'12345672901234567890','Sale Out','20000','March 2, 2014','2014-04-13','Canceled',0),(2,2,'12345678101234567890','Sale Out 2','20000','March 3, 2014','2014-04-13','Canceled',0),(3,4,'12345678901234567290','123','123','123','2014-04-13','Canceled',0),(4,5,'12345678901234567897','123','123','123','2014-04-13','Canceled',0),(5,6,'12345678901234567890','Ping Pong','300000','March 15, 2014','2014-04-13','Canceled',0),(6,4,'12345672901234567890','123','123','123','2014-04-13','Delivered',0),(7,4,'12345678101234567890','123','123','123','2014-04-13','Canceled',0),(8,4,'12345678101234567890','123','123','123','2014-04-13','Delivered',0);
 /*!40000 ALTER TABLE `order_info` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -201,4 +203,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2014-04-13  7:02:19
+-- Dump completed on 2014-04-13 18:43:19
