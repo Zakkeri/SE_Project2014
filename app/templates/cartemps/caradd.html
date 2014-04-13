@@ -1,60 +1,121 @@
 {% extends 'layout2.html' %}
+
+{% block toplinks %}
+    <li><a href="/">Home</a></li>
+    {% if not session['username'] %}
+        <li><a href="/login">Login</a></li>
+        <li><a href="/register">Register</a></li>
+    {% else %}
+        {% if session['isadmin'] %}
+            <li><a href="/roles">Manage Roles</a></li>
+        {% endif %}
+        {% if session['role'] == "Admin" or session['role'] == "Sales" %}
+            <li class="active"><a href="/carmanage">Manage Cars</a></li>
+            <li><a href="/orders">Orders</a></li>
+            <li><a href="/service">Service</a><li>
+        {% endif %}
+        <li><a href="/carview">View Cars</a></li>
+        <li><a href="/logout">Logout</a></li>
+    {% endif %}
+{% endblock %}
+
+{% block addcss %} <link href="{{ url_for('static', filename='signin.css') }}" rel="stylesheet"> {% endblock %}
+
 {% block mainbody %}
-    <br><br><br><br>
-
-    <form class="form-group col-lg-4 col-lg-offset-3" name="addcar" action="/caradd" method="POST"> 
-    
-      <form class="form-horizontal" role="form">
-      <fieldset>
-      <legend>Insert Information For New Car In Inventory</legend>
-      <div class="control-group">
-        <label class="control-label" for="textinput">Vin Number</label>
-        <div class="controls">
-          <input type="text" name="vin" placeholder="Vin Number">
-          <p class="help-block">Enter in the vin number.</p>
-        </div>
+   <div class="row">
+      <div class="col-md-7">
+         <h3>Car Form</h3>
+         <p class="text-left">
+            Remember to verified the automobile information.
+         </p>
       </div>
+   </div>
+   
+   <form   name = "addcar" 
+           class = "form-horizontal" 
+           role = "form"
+           method = "POST"
+           action = "/caradd">
 
-      <div class="control-group">
-        <label class="control-label" for="textinput">Make</label>
-        <div class="controls">
-          <input type="text" name="make" placeholder="Make">
-          <p class="help-block">Enter in the make of the car.</p>
-        </div>
-      </div>
+     <div class = "form-group">
+         <label class="col-sm-3 control-label">
+             <p class="text-left">
+                 VIN
+             </p>
+         </label>
+         <div class="col-sm-5">
+             <input  name = "vin"
+                     type = "text" 
+                     class = "form-control" 
+                     placeholder = "Vehicle Identification Number" 
+                     required autofocus>
+         </div>
+     </div>
 
-      <div class="control-group">
-        <label class="control-label" for="textinput">Model</label>
-        <div class="controls">
-          <input type="text" name="model" placeholder="Model">
-          <p class="help-block">Enter in the model of the car.</p>
-        </div>
-      </div>
+     <div class = "form-group">
+         <label class="col-sm-3 control-label">
+             <p class="text-left">
+                 Maker
+             </p>
+         </label>
+         <div class="col-sm-5">
+             <input  name = "make"
+                     type = "text" 
+                     class = "form-control" 
+                     placeholder = "Automobile Maker" 
+                     required autofocus>
+         </div>
+     </div>
 
-      <div class="control-group">
-        <label class="control-label" for="textinput">Year</label>
-        <div class="controls">
-          <input type="text" name="year" placeholder="Year">
-          <p class="help-block">Enter in the year of the car.</p>
-        </div>
-      </div>
+     <div class = "form-group">
+         <label class="col-sm-3 control-label">
+             <p class="text-left">
+                 Model
+             </p>
+         </label>
+         <div class="col-sm-5">
+             <input  name = "model"
+                     type = "text" 
+                     class = "form-control" 
+                     placeholder = "Automobile Model" 
+                     required autofocus>
+         </div>
+     </div>
 
-      <div class="control-group">
-        <label class="control-label" for="textinput">Retail Price</label>
-        <div class="controls">
-          <input type="text" name="retail" placeholder="Retail Price">
-          <p class="help-block">Enter in the retail price of the car.</p>
-        </div>
-      </div>
+     <div class = "form-group">
+         <label class="col-sm-3 control-label">
+             <p class="text-left">
+                 Year
+             </p>
+         </label>
+         <div class="col-sm-5">
+             <input  name = "year"
+                     type = "text" 
+                     class = "form-control" 
+                     placeholder = "Automobile Year" 
+                     required autofocus>
+         </div>
+     </div>
 
-      <div class="form-group">
-        <div class="col-lg-offset-3 col-lg-4">
-          <button type="submit" class="btn btn-default">Add Car</button>
-        </div>
-      </div>
-    </fieldset>
-      
-    </form>
+     <div class = "form-group">
+         <label class="col-sm-3 control-label">
+             <p class="text-left">
+                 Retail Price
+             </p>
+         </label>
+         <div class="col-sm-5">
+             <input  name = "retail"
+                     type = "text" 
+                     class = "form-control" 
+                     placeholder = "Retail Price" 
+                     required autofocus>
+         </div>
+     </div>
 
-
+     <div class = "form-group">
+         <div class="col-sm-8">
+             <button type="submit" class="btn btn-sm btn-block btn-primary btn-default">Add Car</button>
+         </div>
+     </div>
+   </form>
 {% endblock %}

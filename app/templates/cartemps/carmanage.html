@@ -1,65 +1,102 @@
 {% extends 'layout2.html' %}
-{% block mainbody %}
-    <br><br><br><br>
 
-    <div class="panel panel-default">
-        <div class="panel-heading">Car Manager</div>
-        <div class="panel-body">
-        <p>Here you can modify cars in inventory.<br>
-        
-           To add a car: <a href="/caradd">Add a car.</a> 
-
-        </p>
-        </div>
-
-        <table class="table">
-        <thead>
-            <tr>
-                <th><a href="{{ url_for("carmanage") + "/" + cars.page|string + "?sort=vin" }}">Vin</a></th>
-                <th><a href="{{ url_for("carmanage") + "/" + cars.page|string + "?sort=make" }}">Make</a></th>
-                <th><a href="{{ url_for("carmanage") + "/" + cars.page|string + "?sort=model" }}">Model</a></th>
-                <th><a href="{{ url_for("carmanage") + "/" + cars.page|string + "?sort=year" }}">Year</a></th>
-                <th><a href="{{ url_for("carmanage") + "/" + cars.page|string + "?sort=retail" }}">Retail Price</a></th>
-                <th>Action</th>
-            </tr>
-        </thead>
-        {% for car in cars.items %}
-        {% if car.avail_purchase %}
-        <tr>
-            <td><a href="{{ url_for("indicar") }}?vin={{ car.vin }}">{{ car.vin }}</a></td>
-            <td>{{ car.make }}</td>
-            <td>{{ car.model }}</td>
-            <td>{{ car.year }}</td>
-            <td>{{ car.retail }}</td>
-            <td>
-                <div class="btn-group">
-                  <button class="btn btn-default btn-sm dropdown-toggle" type="button" data-toggle="dropdown">
-                      Select... <span class="caret"></span>
-                  </button>
-                    <ul class="dropdown-menu">
-                         <li><a href="/carmod?vin={{ car.vin }}">Modify</a></li>
-                         <li><a href="/addfeatures?vin={{ car.vin }}">Add/Modify Features</a></li>
-                         <li><a href="/upload?vin={{ car.vin }}">Upload Pictures</a></li>
-                         <li><a href="/cardel?vin={{ car.vin }}">Delete</a></li>
-                    </ul>
-                </div>
-            </td>
- 
-        </tr>
+{% block toplinks %}
+    <li><a href="/">Home</a></li>
+    {% if not session['username'] %}
+        <li><a href="/login">Login</a></li>
+        <li><a href="/register">Register</a></li>
+    {% else %}
+        {% if session['isadmin'] %}
+            <li><a href="/roles">Manage Roles</a></li>
         {% endif %}
-        {% endfor %}
-        
-        </table>
-        </div>
+        {% if session['role'] == "Admin" or session['role'] == "Sales" %}
+            <li class="active"><a href="/carmanage">Manage Cars</a></li>
+            <li><a href="/orders">Orders</a></li>
+            <li><a href="/service">Service</a><li>
+        {% endif %}
+        <li><a href="/carview">View Cars</a></li>
+        <li><a href="/logout">Logout</a></li>
+    {% endif %}
+{% endblock %}
 
-        <div class="col-lg-4 col-lg-offset-5"> 
-        <ul class="pagination">
-        {% if cars.has_prev %}
-            <li class="previous"><a href="{{ url_for("carmanage", page=cars.prev_num) }}">Previous</a></li>{% endif %}
-        {% if cars.has_next %}
-            <li class="next"><a href="{{ url_for("carmanage", page=cars.next_num) }}">Next</a></li>{% endif %}
-        </ul>
-        </div>
-        
+{% block addcss %} <link href="{{ url_for('static', filename='signin.css') }}" rel="stylesheet"> {% endblock %}
 
+{% block mainbody %}
+    <div class="row">
+        <div class="panel panel-default">
+            <div class="col-md-7">
+                <h3>Car Inventory</h3>
+                <p class="text-left">
+                   General interface for handling the car inventory.
+                </p>
+                <dl class="dl-horizontal">
+                  <dt>Vin</dt>
+                  <dd>Automobile identification.</dd>
+                  <dt>Make</dt>
+                  <dd>Automobile maker, i.e. Toyota.</dd>
+                  <dt>Model</dt>
+                  <dd>Automobile name, i.e. Venza.</dd>
+                  <dt>Year</dt>
+                  <dd>Automobile year, i.e. 2010.</dd>
+                  <dt>Retail</dt>
+                  <dd>Automobile price, i.e. $25,000</dd>
+                  <dd><a href="/caradd">Add another automobile.</a></dd>
+                </dl>
+                {% if request.args.get('message') %}
+                    <h3>Car Inventory Modification</h3>
+                    <p class="text-left">
+                        <strong>{{request.args.get('message')}}</strong>
+                    </p>
+                {% endif %}
+            </div>
+
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th><a href="{{ url_for("carmanage") + "/" + cars.page|string + "?sort=vin" }}">Vin</a></th>
+                        <th><a href="{{ url_for("carmanage") + "/" + cars.page|string + "?sort=make" }}">Make</a></th>
+                        <th><a href="{{ url_for("carmanage") + "/" + cars.page|string + "?sort=model" }}">Model</a></th>
+                        <th><a href="{{ url_for("carmanage") + "/" + cars.page|string + "?sort=year" }}">Year</a></th>
+                        <th><a href="{{ url_for("carmanage") + "/" + cars.page|string + "?sort=retail" }}">Retail Price</a></th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+
+                {% for car in cars.items %}
+                    {% if car.avail_purchase %}
+                        <tr>
+                            <td><a href="{{ url_for("indicar") }}?vin={{ car.vin }}">{{ car.vin }}</a></td>
+                            <td>{{ car.make }}</td>
+                            <td>{{ car.model }}</td>
+                            <td>{{ car.year }}</td>
+                            <td>{{ car.retail }}</td>
+                            <td>
+                                <div class="btn-group">
+                                  <button class="btn btn-default btn-sm dropdown-toggle" type="button" data-toggle="dropdown">
+                                      Select... <span class="caret"></span>
+                                  </button>
+                                    <ul class="dropdown-menu">
+                                         <li><a href="/carmod?vin={{ car.vin }}">Modify Car</a></li>
+                                         <li><a href="/addfeatures?vin={{ car.vin }}">Modify Features</a></li>
+                                         <li><a href="/upload?vin={{ car.vin }}">Upload Picture</a></li>
+                                         <li><a href="/cardel?vin={{ car.vin }}">Delete Car</a></li>
+                                    </ul>
+                                </div>
+                            </td>
+                 
+                        </tr>
+                    {% endif %}
+                {% endfor %}
+            </table>
+
+            <div class="col-lg-4 col-lg-offset-5"> 
+                <ul class="pagination">
+                    {% if cars.has_prev %}
+                        <li class="previous"><a href="{{ url_for("carmanage", page=cars.prev_num) }}">Previous</a></li>{% endif %}
+                    {% if cars.has_next %}
+                        <li class="next"><a href="{{ url_for("carmanage", page=cars.next_num) }}">Next</a></li>{% endif %}
+                </ul>
+            </div>
+        </div>
+    </div>
 {% endblock %} 

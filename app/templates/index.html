@@ -1,4 +1,7 @@
 {% extends 'layout2.html' %}
+
+{% block addcss %} <link href="{{ url_for('static', filename='signin.css') }}" rel="stylesheet"> {% endblock %}
+
 {% block mainbody %}
    {% if session['role'] in ['Admin','Sales'] %}
       <div class="row">

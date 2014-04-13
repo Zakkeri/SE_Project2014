@@ -1,18 +1,42 @@
 {% extends 'layout2.html' %}
 
-{% block mainbody %}
-    <br><br><br><br> 
-
-    {% if success == 1 %}
-       <h3>Upload successful</h3> 
+{% block toplinks %}
+    <li><a href="/">Home</a></li>
+    {% if not session['username'] %}
+        <li><a href="/login">Login</a></li>
+        <li><a href="/register">Register</a></li>
+    {% else %}
+        {% if session['isadmin'] %}
+            <li><a href="/roles">Manage Roles</a></li>
+        {% endif %}
+        {% if session['role'] == "Admin" or session['role'] == "Sales" %}
+            <li class="active"><a href="/carmanage">Manage Cars</a></li>
+            <li><a href="/orders">Orders</a></li>
+            <li><a href="/service">Service</a><li>
+        {% endif %}
+        <li><a href="/carview">View Cars</a></li>
+        <li><a href="/logout">Logout</a></li>
     {% endif %}
+{% endblock %}
 
-    <h1>Upload file for {{ car.vin }}</h1>
+{% block addcss %} <link href="{{ url_for('static', filename='signin.css') }}" rel="stylesheet"> {% endblock %}
 
-    <form action="/upload?vin={{ car.vin }}" method=POST enctype=multipart/form-data>
-        <p>
-            <input type=file name=file>
-            <input type=submit value=Upload>
-        </p>
+{% block mainbody %}
+    <div class="row">
+        <div class="col-md-7">
+            <h3>Upload {{car.model}} Picture</h3>
+            <p class="text-left">
+                The following picture will be uploaded to our server.
+            </p>
+        </div>
+    </div>
+    <form action="/upload?vin={{ car.vin }}" method = "POST" enctype = "multipart/form-data">
+        <div class = "form-group">
+             <div class="col-sm-8">
+                 <input type = "file" class = "btn btn-block btn-primary btn-info" name = "file">
+                 <span class="help-block">Support only .jpg, .tiff, .jpeg, .bmp, and .gif extensions.</span>
+                 <button type = "submit" class = "btn btn-sm btn-block btn-primary btn-default">Upload Picture</button>
+             </div>
+         </div>
     </form>
 {% endblock %}

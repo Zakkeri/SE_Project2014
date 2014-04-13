@@ -16,6 +16,7 @@ from sys import exc_info
 
 @app.route('/')
 def home():
+    'System management home page.'
     # check if user is login
     if "role" not in session:
         return render_template('index.html')
@@ -36,7 +37,7 @@ chars = set(lower + upper + digit)                 # username character set
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
-
+    'Register the user by adding an entry to the User table.'
     # redirect signed in user to home page (already register)
     if 'username' in session: redirect(url_for("home"))
     
@@ -78,6 +79,7 @@ def register():
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    'Login the user by setting the session object.'
     # redirect signed in user to home page (already login)
     if 'username' in session: redirect(url_for("home"))
 
@@ -126,6 +128,7 @@ def login():
 
 @app.route('/roles', methods=['GET', 'POST'])
 def roles():
+    'Allow administrators to change the roles of other users.'
     # check if user is login in
     if not 'isadmin' in session.keys():
         return redirect(url_for("home"))
@@ -138,41 +141,39 @@ def roles():
     newrole = request.args.get("newrole")
     message = ""
 
-    # invalid username
-    if username == "":
-        message = 'Invalid username selected.'
-    # invalid role
-    elif newrole == "" or newrole not in ["Admin", "Guest", "Sales"]:
-        message = 'Invalid role selected.'
-    else:
-        # check if user exist
-        user_exists = User.query.filter_by(uname=username).first()
-        if user_exists == None:
-            message = 'Invalid username selected.'
-        # check if user is modifying his own permission level
-        elif user_exists.uname == session['username']:
-            message = 'Cannot modify your own permission level.'
-        else:
-            # set off administrator flag
-            if user_exists.role == "Admin" and newrole != "Admin":
-                user_exists.isadmin = 0
+    # check the username
+    if username != None:
+        # check the fole
+        if newrole != None and newrole in ['Admin','Sales', 'Guest']:
+            # check if user exist
+            user_exists = User.query.filter_by(uname=username).first()
+            if user_exists == None:
+                message = 'You\'ve modified an invalid user\'s role.'
+            # check if user is modifying his own permission level
+            elif user_exists.uname == session['username']:
+                message = 'You cannot modify your own permission level.'
+            else:
+                # set off administrator flag
+                if user_exists.role == "Admin" and newrole != "Admin":
+                    user_exists.isadmin = 0
 
-            # set new role
-            user_exists.role = newrole
+                # set new role
+                user_exists.role = newrole
 
-            # set on administrator flag
-            if user_exists.role == "Admin":
-                user_exists.isadmin = 1
-            
-            # commit the transaction
-            db.session.commit()
-            message = '{} role changed to {}.'.format(user_exists.uname, user_exists.role)
+                # set on administrator flag
+                if user_exists.role == "Admin":
+                    user_exists.isadmin = 1
+                
+                # commit the transaction
+                db.session.commit()
+                message = '{} role changed to {}.'.format(user_exists.uname, user_exists.role)
 
     # present user with initial table
     return render_template('accounttemps/roles.html', User = User, message = message)
 
 @app.route('/logout')
 def logout():
+    'Logout the user by clearing the session object.'
     # clear the user session
     if 'username' not in session: abort(401)
     session.clear()

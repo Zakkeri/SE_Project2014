@@ -12,9 +12,7 @@ from app import app
 class User(db.Model):
     """Class to represent the Users table.  This table
        contains all user data in the application.     
-       
-       UID | Username | Password | IsAdmin
-    """
+       UID | Username | Password | IsAdmin"""
     __tablename__ = "user"
     uid = db.Column(db.Integer, primary_key=True, autoincrement=True)
     uname = db.Column(db.String(45), unique=True)
@@ -30,28 +28,10 @@ class User(db.Model):
         self.role = role
         self.isadmin = isadmin
 
-class CarFeatures(db.Model):
-    """Class that holds performance data for a car if available.
-
-       VIN | feat_type | Description"""
-    __tablename__ = "car_features"
-    vin = db.Column(db.String(20), db.ForeignKey('car.vin', onupdate="cascade"), primary_key=True)
-    feat_type = db.Column(db.String(40), primary_key=True)
-    descr = db.Column(db.String(1000))
-
-    def __init__(self, vin, feat_type, descr):
-        self.vin = vin
-        self.feat_type = feat_type
-        self.descr = descr
-
-
 class Car(db.Model):
     """Class to represent the car inventory layout in the database.
        This will be used for all relations regarding cars
-
-       Table name will be "car"
-        
-        VIN | MAKE | MODEL | YEAR | RETAIL"""
+       VIN | MAKE | MODEL | YEAR | RETAIL"""
 
     __tablename__ = "car"
     vin = db.Column(db.String(20), primary_key=True, unique=True)#, onupdate="cascade")
@@ -72,14 +52,22 @@ class Car(db.Model):
         self.retail = retail 
         self.avail_purchase = avail_purchase
 
-    def __repr__(self):
-        return '<Car %r>' % self.vin
+class CarFeatures(db.Model):
+    """Class that holds performance data for a car if available.
+       VIN | feat_type | Description"""
+    __tablename__ = "car_features"
+    vin = db.Column(db.String(20), db.ForeignKey('car.vin', onupdate="cascade"), primary_key=True)
+    feat_type = db.Column(db.String(40), primary_key=True)
+    descr = db.Column(db.String(1000))
+
+    def __init__(self, vin, feat_type, descr):
+        self.vin = vin
+        self.feat_type = feat_type
+        self.descr = descr
 
 class CarPics(db.Model):
     """Class that holds pictures of all cars.
-       
-        VIN | PICTURENAME
-    """
+       VIN | PICTURENAME"""
     __tablename__ = "car_pics"
     picname = db.Column(db.String(100), primary_key = True)
     vin = db.Column(db.String(20), db.ForeignKey('car.vin', onupdate="cascade"))
@@ -90,15 +78,13 @@ class CarPics(db.Model):
 
 class CustomerInfo(db.Model):
     """Class that holds customer information table.
-
-        CID | Full Name | Addr1 | Addr2 | City | State | Country
+       CID | Full Name | Addr1 | Addr2 | City | State | Country
 
        Primary Key consists of cid,fullname, and addr1.  These values
        will be checked upon order creation to see if the customer 
        exists. If not then the customer will be added with new info. If
        they do exist the cid is retrieve and a new order is created in
-       the order_info table
-    """
+       the order_info table"""
     __tablename__ = "customer_info"
     cid = db.Column(db.Integer,  unique=True, primary_key=True)
     fname = db.Column(db.String(100))
@@ -111,7 +97,6 @@ class CustomerInfo(db.Model):
     order_info = db.relationship("OrderInfo", backref="CustomerInfo", cascade="all")
 
     def __init__(self, cid, fname, addr1, addr2, city, state, pcode, country):
-
         self.cid = cid
         self.fname = fname
         self.addr1 = addr1
@@ -123,9 +108,7 @@ class CustomerInfo(db.Model):
 
 class OrderInfo(db.Model):
     """Class that holds a given sale information.
-        
-       OID | CID | VIN | Sales Name | Final Price | Status | Delivery Date | Last Updated
-    """
+       OID | CID | VIN | Sales Name | Final Price | Status | Delivery Date | Last Updated"""
     __tablename__ = "order_info"
     oid = db.Column(db.Integer, primary_key=True, autoincrement=True)
     cid = db.Column(db.Integer, db.ForeignKey("customer_info.cid", onupdate="cascade"), nullable=False)
