@@ -4,6 +4,7 @@
 # Desc: Car inventory management pages
 #
 # Changelog
+#    * Minor improvements.
 #==============================================================================
 from flask import render_template, request, session, abort, redirect, url_for
 from werkzeug.utils import secure_filename
@@ -20,6 +21,21 @@ sort_table = {
     'year' : 'year desc',
     'retail' : 'retail desc'
 }
+
+# feature criteria table
+feat_table = [
+    'Performance',
+    'Handling',
+    'Instrumentation_and_Controls',
+    'Safety_and_Security',
+    'Exterior_Design',
+    'Interior_Design',
+    'Audio_System',
+    'Comfort_and_Convenience',
+    'Maintenance_Programs',
+    'Warranties',
+    'Extras_Package'
+]
 
 @app.route("/carmanage", methods=['GET'])
 @app.route("/carmanage/<int:page>", methods=['GET'])
@@ -69,8 +85,8 @@ def caradd():
                 # check if form is validated
                 if message == '':
                     # check if car already exist
-                    car_exists = Car.query.filter_by(vin = vin).first()
-                    if not car_exists:
+                    car = Car.query.filter_by(vin = vin).first()
+                    if not car:
                         # add the car
                         newcar = Car(vin, make, model, year, retail) 
                         db.session.add(newcar)
@@ -115,15 +131,15 @@ def carmod():
                 # check if form is validated
                 if message == '':
                     # check if car exist
-                    car_exists = Car.query.filter_by(vin = vin).first()
-                    if car_exists:
+                    car = Car.query.filter_by(vin = vin).first()
+                    if car:
                         # modified the car
-                        car_exists.vin = new_vin
-                        car_exists.make = make
-                        car_exists.model = model
-                        car_exists.year = year
-                        car_exists.retail = retail
-                        db.session.add(car_exists)
+                        car.vin = new_vin
+                        car.make = make
+                        car.model = model
+                        car.year = year
+                        car.retail = retail
+                        db.session.add(car)
                         db.session.commit()
                         message = 'Car has been successfully modified.'
                     else:
@@ -262,116 +278,54 @@ def indicar():
 
 @app.route("/addfeatures", methods=['GET', 'POST'])
 def addfeatures():
-    """This function implements the logic to add features
-       which will be attached to a given car in inventory.
-
-       The first step is to check if the car actually exists
-       in inventory that matches the vin supplied as a GET
-       argument.
-
-       If it does an entry will be made in the CarFeatures
-       table for every type of feature that the user chooses
-       to fill out for the given car.
-    """
+    'Add features to a car in inventory; restrict to admin or sales only.'
    
-    #If an anonymous user browses this page abort 
-    if "role" not in session:
-        abort(401)
-    
-    #Make sure the only users that can access addfeatures are 
-    #Admins and Sales
-    if session["role"] not in ["Admin", "Sales"]:
+    # check if user is login in, otherwise go to home
+    if 'role' in session.keys():
+        # check if role is admin or sales, otherwise go to home
+        if session['role'] in ['Admin','Sales']:
+            vin = request.args.get("vin")
+            message = ''
+            if vin:
+                car = Car.query.filter_by(vin = vin).first()
+                if car:
+                    # retrieve all car's features
+                    feat_car = CarFeatures.query.filter_by(vin = vin).all()
+                    # auto-fill the form
+                    if request.method == "GET":
+                        feat_dict = {fcar.feat_type:fcar.descr for fcar in feat_car}
+                        return render_template('cartemps/addfeature.html', vin = car.vin, feats = feat_dict, feats_list = feat_table) 
+                    # user submit features for car
+                    if request.method == "POST":
+                        # retrieve all entered features
+                        feat_list = [request.form[feat] for feat in feat_table]
+
+                        # update car features
+                        for ftype, feat in zip(feat_table,feat_list):
+                            override = False
+                            # check if feature already exist
+                            for fcar in feat_car:
+                               # override existing feature
+                               if ftype == fcar.feat_type:
+                                   fcar.descr = feat
+                                   override = True
+                                   break
+                            # check if feature does not exit
+                            if not override:
+                                feat_new = CarFeatures(car.vin, ftype, feat.strip())
+                                db.session.add(feat_new)
+                        db.session.commit()
+
+                        return redirect(url_for("addfeatures") + "?vin=" + car.vin)
+                else:
+                    message = 'Invalid VIN and car does not exist.'
+            else:
+                message = 'Invalid VIN; unable to add features to car.'
+            return redirect(url_for("carmanage", page = 1, message = message))
+        else:
+            return redirect(url_for("home"))       
+    else:
         return redirect(url_for("home"))
-  
-    #Expects a vin during get request, this vin will be the 
-    #car in inventory which is queried and modifiable
-    vin = request.args.get("vin")
-
-    #Make sure there is an existing car in the car inventory
-    #table for the supplied GET vin argument
-    car_exists = Car.query.filter_by(vin=vin).first()
-
-    #Make sure there is a VIN Get argument as well as 
-    #a matching car row in database
-    if not vin or not car_exists:
-        abort(404)
-
-    #Now we need to check if we have any existing data
-    #in the CarFeatures table for our queried car 
-    car_feats_list = CarFeatures.query.filter_by(vin=vin).all()
-
-    #Get logic to display values for features fields if they
-    #already exist
-    if request.method == "GET":
-        #Constructs a dictionary of available features that can be loaded
-        #into view by template using something like feats_dict['performance']
-        feats_dict = {feat.feat_type:feat.descr for feat in car_feats_list}
-        #Need to implement POST logic for when user supplies
-        #features data for a car in POST form
-
-        #If there are no existing car_feats then we will supply to
-        #Template anyway cause we have logic in template that expects this
-        return render_template('cartemps/addfeature.html', vin=car_exists.vin, feats=feats_dict) 
-
-    #Actually recieve the message from the web view and process accordingly updating or 
-    #creating entries in the CarFeatures table
-    if request.method == "POST":
-
-        #Try to recieve values from POST request if there is an issue
-        #this will redirect to the application home page
-        #Random idea: add alerts to home page for things like
-        #service deadlines and delivery dates
-        try:
-            #Retreive all potential features forms from POST
-            #request, if any are blank simply ignore them
-            perf = request.form["Performance"].encode('utf-8')
-            hand = request.form["Handling"].encode('utf-8')
-            instr = request.form["Instrument"].encode('utf-8')
-            safety = request.form["Safety"].encode('utf-8')
-            ext = request.form["Extdesign"].encode('utf-8')
-            intd = request.form["Intdesign"].encode('utf-8')
-            audio = request.form["Audio"].encode('utf-8')   
-            comfort = request.form["Comfort"].encode('utf-8')
-            maint = request.form["Maintenance"].encode('utf-8')
-            warr = request.form["Warranties"].encode('utf-8')
-            extra = request.form["Extras"].encode('utf-8') 
-
-            #Saves us some lines of code by allowing us to use a for loop in the following block of code
-            feats = [perf, hand, instr, safety, ext, intd, audio, comfort, maint, warr, extra]
-            names = ["Performance", "Handling", "Instrument", "Safety", "Extdesign", "Intdesign", 
-                     "Audio", "Comfort", "Maintenance", "Warranties", "Extras"]
-
-
-            #Hack to retrieve feature types from feature objects
-            feats_list = [x.feat_type for x in car_feats_list]
-
-            #This loop will loop through all features in POST request and create/modify objects
-            #and update the db session
-            for index in range(len(feats)):
-               
-                #If the value from post request is not empty and there is an existing entry
-                #for the car with the specific feature type from POST request, modify the 
-                #entry in the database 
-                if feats[index].strip() != "" and names[index] in feats_list:#car_feats_list.filter_by(feat_type=names[index]):
-                    #ugly hack to cycle through rows in query to find correct one to modify
-                    for x in car_feats_list:
-                        if x.feat_type == names[index]:
-                            x.descr = feats[index].strip()
-
-                elif feats[index].strip() != "" and names[index] not in feats_list:
-                    newrow = CarFeatures(car_exists.vin, names[index], feats[index].strip())
-                    db.session.add(newrow)
-
-
-            db.session.commit()
-
-            return redirect(url_for("addfeatures") + "?vin=" + car_exists.vin)
- 
-
-        #On any type of error redirect to the home page
-        except Exception, e:
-            print e
-            return redirect(url_for("home"))
 
 #Page for viewing and searching for cars in the inventory
 @app.route("/carview", methods=['GET'])

@@ -22,126 +22,36 @@
 {% block addcss %} <link href="{{ url_for('static', filename='signin.css') }}" rel="stylesheet"> {% endblock %}
 
 {% block mainbody %}
-    <form class="form-group col-lg-4 col-lg-offset-3" method="POST" action="/addfeatures?vin={{ vin }}">
-    <fieldset>
-
-    <legend>Add Features for {{ vin }}</legend>
-
-    <div class="control-group">
-      <label class="control-label" for="textinput">Performance</label>
-      <div class="controls">
-        <textarea name="Performance" placeholder="Performance" class="form-control" type="text">
-{% if 'Performance' in feats %}{{ feats['Performance'] }}{% endif %}
-        </textarea>
-        <p class="help-block">Enter in performance features.</p>
+   <div class="row">
+      <div class="col-md-7">
+         <h3>Feature Form</h3>
+         <p class="text-left">
+            All features of a automobile can be added here.
+         </p>
       </div>
-    </div>
+   </div>
 
-    <div class="control-group">
-      <label class="control-label" for="textinput">Handling</label>
-      <div class="controls">
-        <textarea name="Handling" placeholder="Handling" class="form-control" type="text">
-{% if 'Handling' in feats %}{{ feats['Handling'] }}{% endif %}
-        </textarea>
-        <p class="help-block">Enter in handling features</p>
-      </div>
-    </div>
+   <form   name = "addfeat" 
+           class = "form-horizontal" 
+           role = "form"
+           method = "POST"
+           action = "/addfeatures?vin={{ vin }}">
 
-    <div class="control-group">
-      <label class="control-label" for="textinput">Instrumentation and Controls</label>
-      <div class="controls">
-        <textarea name="Instrument" placeholder="Instrumentation and Controls" class="form-control" type="text">
-{% if 'Instrument' in feats %}{{ feats['Instrument'] }}{% endif %}
-        </textarea>
-        <p class="help-block">Enter in instrumentation and controls features.</p>
-      </div>
-    </div>
-
-    <div class="control-group">
-      <label class="control-label" for="textinput">Safety and Security</label>
-      <div class="controls">
-        <textarea name="Safety" placeholder="Safety and Security" class="form-control" type="text">
-{% if 'Safety' in feats %}{{ feats['Safety'] }}{% endif %}
-        </textarea>
-        <p class="help-block">Enter in safety and security features.</p>
-      </div>
-    </div>
-
-    <div class="control-group">
-      <label class="control-label" for="textinput">Exterior Design</label>
-      <div class="controls">
-        <textarea name="Extdesign" placeholder="Exterior Design" class="form-control" type="text">
-{% if 'Extdesign' in feats %}{{ feats['Extdesign'] }}{% endif %}
-        </textarea>
-        <p class="help-block">Enter in exterior design features</p>
-      </div>
-    </div>
-
-    <div class="control-group">
-      <label class="control-label" for="textinput">Interior Design</label>
-      <div class="controls">
-        <textarea name="Intdesign" placeholder="Interior Design" class="form-control" type="text">
-{% if 'Intdesign' in feats %}{{ feats['Intdesign'] }}{% endif %}
-        </textarea>
-        <p class="help-block">Enter in interior design features</p>
-      </div>
-    </div>
-
-    <div class="control-group">
-      <label class="control-label" for="textinput">Audio System</label>
-      <div class="controls">
-        <textarea name="Audio" placeholder="Audio System" class="form-control" type="text">
-{% if 'Audio' in feats %}{{ feats['Audio'] }}{% endif %}
-        </textarea>
-        <p class="help-block">Enter in audio system features</p>
-      </div>
-    </div>
-
-    <div class="control-group">
-      <label class="control-label" for="textinput">Comfort and Convenience</label>
-      <div class="controls">
-        <textarea name="Comfort" placeholder="Comfort and Convenience" class="form-control" type="text">
-{% if 'Comfort' in feats %}{{ feats['Comfort'] }}{% endif %}
-        </textarea>
-        <p class="help-block">Enter in comfort and convenience features</p>
-      </div>
-    </div>
-
-    <div class="control-group">
-      <label class="control-label" for="textinput">Maintenance Programs</label>
-      <div class="controls">
-        <textarea name="Maintenance" placeholder="Maintenance Programs" class="form-control" type="text">
-{% if 'Maintenance' in feats %}{{ feats['Maintenance'] }}{% endif %}
-        </textarea>
-        <p class="help-block">Enter in maintenance program features</p>
-      </div>
-    </div>
-
-    <div class="control-group">
-      <label class="control-label" for="textinput">Warranties</label>
-      <div class="controls">
-        <textarea name="Warranties" placeholder="Warranties" class="form-control" type="text">
-{% if 'Warranties' in feats %}{{ feats['Warranties'] }}{% endif %}
-        </textarea>
-        <p class="help-block">Enter in warranty features</p>
-      </div>
-    </div>
-
-    <div class="control-group">
-      <label class="control-label" for="textinput">Extra Packages</label>
-      <div class="controls">
-        <textarea name="Extras" placeholder="Extra Packages" class="form-control" type="text">
-{% if 'Extras' in feats %}{{ feats['Extras'] }}{% endif %}
-        </textarea>
-        <p class="help-block">Enter in extra package features</p>
-      </div>
-    </div>  
-    <div class="form-group">
-        <div class="col-lg-4">
-          <button type="submit" class="btn btn-default">Add/Mod Features</button>
-        </div>
-      </div>
-
-  </fieldset>
-  </form>
+      {% for feature in feats_list %}
+         <div class = "form-group">
+            <label class="col-sm-7 control-label">
+               <p class="text-left">
+                  {{feature}}
+               </p>
+            <textarea name={{feature}} class="form-control" type="text" rows="3">{% if feature in feats %}{{ feats[feature] }}{% endif %}</textarea>
+            <p class="help-block">Enter in {{feature}} features.</p>
+            </label>
+         </div>
+      {% endfor %}
+      <div class = "form-group">
+         <div class="col-sm-8">
+             <button type="submit" class="btn btn-sm btn-block btn-primary btn-default">Add Features</button>
+         </div>
+     </div>
+   </form>
 {% endblock %}

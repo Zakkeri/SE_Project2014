@@ -64,6 +64,8 @@ class CarFeatures(db.Model):
         self.vin = vin
         self.feat_type = feat_type
         self.descr = descr
+    def __repr__(self):
+        return 'vin: {} type: {} desc: {}'.format(self.vin, self.feat_type, self.descr)
 
 class CarPics(db.Model):
     """Class that holds pictures of all cars.

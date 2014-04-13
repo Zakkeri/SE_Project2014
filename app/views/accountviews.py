@@ -6,7 +6,6 @@
 # Changelog
 #    * Fixed Issue 2 and clean up the code.
 #==============================================================================
-
 from flask import render_template, request, session, abort, redirect, url_for
 from app.dbmodels import User, OrderInfo
 from app.util import getsalt, createhash
