@@ -23,24 +23,24 @@
 
 {% block mainbody %}
 <div class='row'>
-   <div class='col-md-8'>
-      <div class="carousel slide media-carousel" id="media">
-         <div class="carousel-inner">
-            {% if panels <= 1 %}
-               <div class="item  active">
-                  <div class="row">
-                     {% if panels == 1 %}
-                        {% for num in range(3) %}
-                           <div class="col-md-4">
-                              <a class="thumbnail" href="#"><img alt="" src="static/images/{{ pics[num].picname }}"></a>
-                           </div>          
-                        {% endfor %}
-                     {% endif %}
+   <div class="panel panel-default">
+      <div class='col-md-7'>
+         <div class="carousel slide media-carousel" id="media">
+            <div class="carousel-inner">
+               {% if panels <= 1 %}
+                  <div class="item active">
+                     <div class="row">
+                        {% if panels == 1 %}
+                           {% for num in range(3) %}
+                              <div class="col-md-4">
+                                 <a class="thumbnail" href="#"><img alt="" src="static/images/{{ pics[num].picname }}"></a>
+                              </div>          
+                           {% endfor %}
+                        {% endif %}
+                     </div>
                   </div>
-               </div>
 
-               {% if extras %}
-                  <div class="item">
+                  {% if extras %}
                      <div class="row">
                         {% for num in range(extras) %}
                            <div class="col-md-4">
@@ -48,56 +48,55 @@
                            </div>          
                         {% endfor %}
                      </div>
-                  </div>
-               {% endif %}
-
-            {% elif panels > 1 %}
-               <div class="item active">
-                  <div class="row">
-                     <div class="col-md-4">
-                        <a class="thumbnail" href="#"><img alt="" src="static/images/{{ pics[0].picname }}"></a>
-                     </div>          
-                     <div class="col-md-4">
-                        <a class="thumbnail" href="#"><img alt="" src="static/images/{{ pics[1].picname }}"></a>
-                     </div>
-                     <div class="col-md-4">
-                        <a class="thumbnail" href="#"><img alt="" src="static/images/{{ pics[2].picname }}"></a>
-                     </div>        
-                  </div>
-               </div>
-
-               {% for num in range(1,panels) %}
-                  <div class="item">
+                  {% endif %}
+               {% elif panels > 1 %}
+                  <div class="item active">
                      <div class="row">
                         <div class="col-md-4">
-                           <a class="thumbnail" href="#"><img alt="" src="static/images/{{ pics[num*3].picname }}"></a>
+                           <a class="thumbnail" href="#"><img alt="" src="static/images/{{ pics[0].picname }}"></a>
                         </div>          
                         <div class="col-md-4">
-                           <a class="thumbnail" href="#"><img alt="" src="static/images/{{ pics[num*3 + 1].picname }}"></a>
+                           <a class="thumbnail" href="#"><img alt="" src="static/images/{{ pics[1].picname }}"></a>
                         </div>
                         <div class="col-md-4">
-                           <a class="thumbnail" href="#"><img alt="" src="static/images/{{ pics[num*3 + 2].picname }}"></a>
+                           <a class="thumbnail" href="#"><img alt="" src="static/images/{{ pics[2].picname }}"></a>
                         </div>        
                      </div>
                   </div>
-               {% endfor %}
 
-               {% if extras %}
-                  <div class="item">
-                     <div class="row">
-                        {% for num in range(extras) %}
+                  {% for num in range(1,panels) %}
+                     <div class="item">
+                        <div class="row">
                            <div class="col-md-4">
-                              <a class="thumbnail" href="#"><img alt="" src="static/images/{{ pics[panels*3 + num].picname }}"></a>
+                              <a class="thumbnail" href="#"><img alt="" src="static/images/{{ pics[num*3].picname }}"></a>
                            </div>          
-                        {% endfor %}
+                           <div class="col-md-4">
+                              <a class="thumbnail" href="#"><img alt="" src="static/images/{{ pics[num*3 + 1].picname }}"></a>
+                           </div>
+                           <div class="col-md-4">
+                              <a class="thumbnail" href="#"><img alt="" src="static/images/{{ pics[num*3 + 2].picname }}"></a>
+                           </div>        
+                        </div>
                      </div>
-                 </div>
+                  {% endfor %}
+
+                  {% if extras %}
+                     <div class="item">
+                        <div class="row">
+                           {% for num in range(extras) %}
+                              <div class="col-md-4">
+                                 <a class="thumbnail" href="#"><img alt="" src="static/images/{{ pics[panels*3 + num].picname }}"></a>
+                              </div>          
+                           {% endfor %}
+                        </div>
+                    </div>
+                  {% endif %}
                {% endif %}
-            {% endif %}
-         </div>                          
+            </div>                          
+         </div>
+         <a data-slide="prev" href="#media" class="left carousel-control">‹</a>
+         <a data-slide="next" href="#media" class="right carousel-control">›</a>
       </div>
-      <a data-slide="prev" href="#media" class="left carousel-control">‹</a>
-      <a data-slide="next" href="#media" class="right carousel-control">›</a>
    </div>
 </div>
 
@@ -125,7 +124,10 @@
          {% for feat in feats %}
             <div class="col-md-7">
                <p class="text-left">
-                  <h4><b>{{ feat.feat_type }}:</b><p>{{ feat.descr }}</p></h4>
+                  <dl class="dl-horizontal">
+                     <dt>{{ feat.feat_type }}</dt>
+                     <dd>{{ feat.descr }}</dd> 
+                  </dl>
                </p>
             </div>
          {% endfor %}

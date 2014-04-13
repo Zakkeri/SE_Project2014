@@ -249,8 +249,7 @@ def indicar():
                     # display only three pictures at a time
                     panels, extras = divmod(pics.count(), 3)
                     # render the HTML
-                    return render_template("cartemps/indicarview.html", car=car,feats=feats, 
-                                            pics=pics, panels=panels, extras=extras)
+                    return render_template("cartemps/indicarview.html", car=car,feats=feats, pics=pics, panels=panels, extras=extras)
                 else:
                     message = 'Invalid VIN and car does not exist.'
             else:
@@ -260,64 +259,6 @@ def indicar():
             return redirect(url_for("home"))       
     else:
         return redirect(url_for("home"))
-
-#Page for viewing and searching for cars in the inventory
-@app.route("/carview", methods=['GET'])
-def carview():
-    """This function satisfies the requirement for a user
-       being able to search for specific cars in inventory
-       that have certain features.
-
-       The search algorithm can definitely tweaked a lot better
-       as I wrote it rapidly.
-
-       The central idea is for a user to be able to type in words
-       into a search bar and retrieve entries in the car inventory 
-       system that are most closely related to those words.
-
-       So far, we have cars only that are in inventory and not in 
-       maintenance being returned.  Each result is accompanied by a 
-       thumbnailed picture and the basic information of the car.
-    """ 
-    if "role" not in session:
-        abort(401)
-
-    #Only allow Admins and Sales Users for accessing
-    if session["role"] not in ["Admin", "Sales"]:
-        return redirect(url_for("home"))
-
-    #Split supplied keywords from GET request into individual words
-    kwds = request.args.get("keywords")
-
-
-    if not kwds:
-        return render_template("cartemps/carview.html")
-
-    #keywords from HTTP Get Request
-    kwds = kwds.split(" ") 
-    #List of cars to be displayed, in vin form
-    vins = []
-    
-    #Search through relevant tables Car and CarFeatures
-    #Terrible O(n^2) search
-    #Probably can be heavily modified with little impact, we should just be able to pass car objects to 
-    #template and load results that way
-    '''for word in kwds:
-        #Search through Car Table
-        for car in Car.query.all():
-            if word.lower() == car.vin.lower() or word.lower() == car.make.lower() or word.lower() == car.model.lower() or word == car.year.lower() or word.lower() == car.retail.lower():
-                if car.vin not in vins:
-                    vins.append(car.vin)    
-             
-        #Search through CarFeatures Table
-        for feat in CarFeatures.query.all():
-            if word.lower() in feat.descr.lower() and feat.vin not in vins:
-                vins.append(feat.vin)'''
-
-    #Will need to pass in rows from Car table and CarFeatures to display in template
-    #should probably figure out how to paginate this
-    #return render_template("cartemps/carview.html", Car=Car, CarPics=CarPics, vins=vins, len=len(vins))
-    pass
 
 @app.route("/addfeatures", methods=['GET', 'POST'])
 def addfeatures():
@@ -431,3 +372,61 @@ def addfeatures():
         except Exception, e:
             print e
             return redirect(url_for("home"))
+
+#Page for viewing and searching for cars in the inventory
+@app.route("/carview", methods=['GET'])
+def carview():
+    """This function satisfies the requirement for a user
+       being able to search for specific cars in inventory
+       that have certain features.
+
+       The search algorithm can definitely tweaked a lot better
+       as I wrote it rapidly.
+
+       The central idea is for a user to be able to type in words
+       into a search bar and retrieve entries in the car inventory 
+       system that are most closely related to those words.
+
+       So far, we have cars only that are in inventory and not in 
+       maintenance being returned.  Each result is accompanied by a 
+       thumbnailed picture and the basic information of the car.
+    """ 
+    if "role" not in session:
+        abort(401)
+
+    #Only allow Admins and Sales Users for accessing
+    if session["role"] not in ["Admin", "Sales"]:
+        return redirect(url_for("home"))
+
+    #Split supplied keywords from GET request into individual words
+    kwds = request.args.get("keywords")
+
+
+    if not kwds:
+        return render_template("cartemps/carview.html")
+
+    #keywords from HTTP Get Request
+    kwds = kwds.split(" ") 
+    #List of cars to be displayed, in vin form
+    vins = []
+    
+    #Search through relevant tables Car and CarFeatures
+    #Terrible O(n^2) search
+    #Probably can be heavily modified with little impact, we should just be able to pass car objects to 
+    #template and load results that way
+    '''for word in kwds:
+        #Search through Car Table
+        for car in Car.query.all():
+            if word.lower() == car.vin.lower() or word.lower() == car.make.lower() or word.lower() == car.model.lower() or word == car.year.lower() or word.lower() == car.retail.lower():
+                if car.vin not in vins:
+                    vins.append(car.vin)    
+             
+        #Search through CarFeatures Table
+        for feat in CarFeatures.query.all():
+            if word.lower() in feat.descr.lower() and feat.vin not in vins:
+                vins.append(feat.vin)'''
+
+    #Will need to pass in rows from Car table and CarFeatures to display in template
+    #should probably figure out how to paginate this
+    #return render_template("cartemps/carview.html", Car=Car, CarPics=CarPics, vins=vins, len=len(vins))
+    pass

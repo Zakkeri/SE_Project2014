@@ -75,6 +75,8 @@ class CarPics(db.Model):
     def __init__(self, vin, picname):
         self.vin = vin
         self.picname = picname
+    def __repr__(self):
+        return '{}'.format(self.picname)
 
 class CustomerInfo(db.Model):
     """Class that holds customer information table.
