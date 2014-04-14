@@ -25,3 +25,4 @@ app.secret_key = urandom(24)
 from views.accountviews import *
 from views.carviews import *
 from views.orderviews import *
+from views.serviceviews import *

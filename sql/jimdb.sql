@@ -42,7 +42,7 @@ CREATE TABLE `car` (
 
 LOCK TABLES `car` WRITE;
 /*!40000 ALTER TABLE `car` DISABLE KEYS */;
-INSERT INTO `car` VALUES ('12345672901234567890','Toyota','Venza','2014','32000',0),('12345678101234567890','Toyota','Venza','2010','27000',0),('12345678901234567290','Toyota','Venza','2009','26000',1),('12345678901234567890','Toyota','Venza','2009','25000',1),('12345678901234567897','Nissan','Nissan GTR','2014','100000',1),('12362595147894561235','Honda','Civic','2014','18000',1),('12365478973698527411','Toyota','Corolla','2014','17000',1),('75395145683571594568','Toyota','Prius','2010','40000',1);
+INSERT INTO `car` VALUES ('12345672901234567890','Toyota','Venza','2014','32000',0),('12345678101234567890','Toyota','Venza','2010','27000',0),('12345678901234567290','Toyota','Venza','2009','26000',0),('12345678901234567890','Toyota','Venza','2009','25000',0),('12345678901234567897','Nissan','Nissan GTR','2014','100000',0),('12362595147894561235','Honda','Civic','2014','18000',0),('12365478973698527411','Toyota','Corolla','2014','17000',0),('75395145683571594568','Toyota','Prius','2010','40000',1);
 /*!40000 ALTER TABLE `car` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -151,7 +151,7 @@ CREATE TABLE `order_info` (
   KEY `vin` (`vin`),
   CONSTRAINT `order_info_ibfk_1` FOREIGN KEY (`cid`) REFERENCES `customer_info` (`cid`) ON UPDATE CASCADE,
   CONSTRAINT `order_info_ibfk_2` FOREIGN KEY (`vin`) REFERENCES `car` (`vin`) ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -160,8 +160,41 @@ CREATE TABLE `order_info` (
 
 LOCK TABLES `order_info` WRITE;
 /*!40000 ALTER TABLE `order_info` DISABLE KEYS */;
-INSERT INTO `order_info` VALUES (1,1,'12345672901234567890','Sale Out','20000','March 2, 2014','2014-04-13','Canceled',0),(2,2,'12345678101234567890','Sale Out 2','20000','March 3, 2014','2014-04-13','Canceled',0),(3,4,'12345678901234567290','123','123','123','2014-04-13','Canceled',0),(4,5,'12345678901234567897','123','123','123','2014-04-13','Canceled',0),(5,6,'12345678901234567890','Ping Pong','300000','March 15, 2014','2014-04-13','Canceled',0),(6,4,'12345672901234567890','123','123','123','2014-04-13','Delivered',0),(7,4,'12345678101234567890','123','123','123','2014-04-13','Canceled',0),(8,4,'12345678101234567890','123','123','123','2014-04-13','Delivered',0);
+INSERT INTO `order_info` VALUES (1,1,'12345672901234567890','Sale Out','20000','March 2, 2014','2014-04-13','Canceled',0),(2,2,'12345678101234567890','Sale Out 2','20000','March 3, 2014','2014-04-13','Canceled',0),(3,4,'12345678901234567290','123','123','123','2014-04-13','Canceled',0),(4,5,'12345678901234567897','123','123','123','2014-04-13','Canceled',0),(5,6,'12345678901234567890','Ping Pong','300000','March 15, 2014','2014-04-13','Canceled',0),(6,4,'12345672901234567890','123','123','123','2014-04-13','Delivered',0),(7,4,'12345678101234567890','123','123','123','2014-04-13','Canceled',0),(8,4,'12345678101234567890','123','123','123','2014-04-13','Delivered',0),(9,6,'12345678901234567290','Discount Saving','20000','March 2, 2014','2014-04-13','Delivered',1),(10,6,'12345678901234567890','123','123','123','2014-04-14','Delivered',1),(11,4,'12345678901234567897','123','123','123','2014-04-14','Delivered',1),(12,4,'12362595147894561235','123','123','123','2014-04-14','Delivered',1),(13,5,'12365478973698527411','123','123','123','2014-04-14','Delivered',1);
 /*!40000 ALTER TABLE `order_info` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `service_info`
+--
+
+DROP TABLE IF EXISTS `service_info`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `service_info` (
+  `sid` int(11) NOT NULL AUTO_INCREMENT,
+  `cid` int(11) NOT NULL,
+  `vin` varchar(20) NOT NULL,
+  `sdesc` varchar(250) DEFAULT NULL,
+  `scost` int(11) DEFAULT NULL,
+  `sdate` varchar(100) DEFAULT NULL,
+  `stats` int(11) DEFAULT NULL,
+  PRIMARY KEY (`sid`),
+  KEY `cid` (`cid`),
+  KEY `vin` (`vin`),
+  CONSTRAINT `service_info_ibfk_1` FOREIGN KEY (`cid`) REFERENCES `customer_info` (`cid`) ON UPDATE CASCADE,
+  CONSTRAINT `service_info_ibfk_2` FOREIGN KEY (`vin`) REFERENCES `car` (`vin`) ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `service_info`
+--
+
+LOCK TABLES `service_info` WRITE;
+/*!40000 ALTER TABLE `service_info` DISABLE KEYS */;
+INSERT INTO `service_info` VALUES (1,6,'12345678901234567290','Oil Change',20,'March 1, 2014',2),(2,6,'12345678901234567290','Oil Change',20,'March 1, 2014',0),(3,6,'12345678901234567290','Oil Change',20,'March 1, 2014',2),(4,6,'12345678901234567290','Lol',1,'Never',0),(5,5,'12365478973698527411','123',123,'123',1);
+/*!40000 ALTER TABLE `service_info` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -190,7 +223,7 @@ CREATE TABLE `user` (
 
 LOCK TABLES `user` WRITE;
 /*!40000 ALTER TABLE `user` DISABLE KEYS */;
-INSERT INTO `user` VALUES (1,'admin','c90c87caf79cbd16856da621ca3a4c0e','7d36d3cfba9a69679716bec702c56888ba0ae210fbdbb471fff7b61dc5451c68','Admin',1),(2,'jimch','e3b04ce6e99cfd89e9fe6c33e171fef8','f09931ea4497a2d63e6018dca5c5f67eca94c2f3a74f0d1a877b88f174e38b33','Guest',0);
+INSERT INTO `user` VALUES (1,'admin','c90c87caf79cbd16856da621ca3a4c0e','7d36d3cfba9a69679716bec702c56888ba0ae210fbdbb471fff7b61dc5451c68','Admin',1),(2,'jimch','e3b04ce6e99cfd89e9fe6c33e171fef8','f09931ea4497a2d63e6018dca5c5f67eca94c2f3a74f0d1a877b88f174e38b33','Admin',1);
 /*!40000 ALTER TABLE `user` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -203,4 +236,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2014-04-13 18:43:19
+-- Dump completed on 2014-04-14  1:06:01

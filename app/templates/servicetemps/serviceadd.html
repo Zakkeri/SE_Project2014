@@ -1,0 +1,125 @@
+{% extends 'layout2.html' %}
+
+{% block toplinks %}
+    <li><a href="/">Home</a></li>
+    {% if not session['username'] %}
+        <li><a href="/login">Login</a></li>
+        <li><a href="/register">Register</a></li>
+    {% else %}
+        {% if session['isadmin'] %}
+            <li><a href="/roles">Manage Roles</a></li>
+        {% endif %}
+        {% if session['role'] == "Admin" or session['role'] == "Sales" %}
+            <li><a href="/carmanage">Manage Cars</a></li>
+            <li><a href="/orders">Orders</a></li>
+            <li class="active"><a href="/service">Service</a><li>
+        {% endif %}
+        <li><a href="/carview">View Cars</a></li>
+        <li><a href="/logout">Logout</a></li>
+    {% endif %}
+{% endblock %}
+
+{% block addcss %} <link href="{{ url_for('static', filename='signin.css') }}" rel="stylesheet"> {% endblock %}
+
+{% block mainbody %}
+    <div class="row">
+        <div class="col-md-7">
+            <h3>Service List Form</h3>
+            <p class="text-left">
+                Service cars solded by the dealership.
+            </p>
+        </div>
+    </div>
+
+    <form   name = "serviceadd" 
+            class = "form-horizontal" 
+            role = "form"
+            method = "POST"
+            action = "/serviceadd">
+        <div class="form-group">
+            <label class="col-sm-3 control-label">
+                <p class="text-left">
+                    CID
+                </p>
+            </label>
+            {% if not cid is defined %}
+                <div class="col-sm-5">
+                    <select class="form-control" name = "cid">
+                        {% for cid in cid_list %}
+                            <option>{{cid[0]}}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            {% else %}
+                <div class="col-sm-5">
+                    <select class="form-control" name = "cid">
+                        <option selected>{{cid}}</option>
+                    </select>
+                </div>
+            {% endif %}
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">
+                <p class="text-left">
+                    VIN
+                </p>
+            </label>
+            {% if not vin is defined %}
+                <div class="col-sm-5">
+                    <select class="form-control" name = "vin">
+                        {% for vin in vin_list %}
+                            <option>{{vin[1]}}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            {% else %}
+                <div class="col-sm-5">
+                    <select class="form-control" name = "vin">
+                        <option selected>{{vin}}</option>
+                    </select>
+                </div>
+            {% endif %}
+        </div>
+
+        {% if vin is defined %}
+            <div class = "form-group">
+                <label class="col-sm-3 control-label">
+                    <p class="text-left">
+                        Description
+                    </p>
+                </label>
+                <div class="col-sm-5">
+                    <textarea name="sdesc" class="form-control" type="text" rows="3"></textarea>
+                </div>
+            </div>
+
+            <div class = "form-group">
+                <label class="col-sm-3 control-label">
+                    <p class="text-left">
+                        Charge
+                    </p>
+                </label>
+                <div class="col-sm-5">
+                    <input  name = "scost" type = "text" class = "form-control">
+                </div>
+            </div>
+
+            <div class = "form-group">
+                <label class="col-sm-3 control-label">
+                    <p class="text-left">
+                        Date
+                    </p>
+                </label>
+                <div class="col-sm-5">
+                    <input  name = "sdate" type = "text" class = "form-control">
+                </div>
+            </div>
+        {% endif %}
+
+        <div class = "form-group">
+            <div class="col-sm-8">
+                <button type="submit" class="btn btn-sm btn-block btn-primary btn-default">Service Car</button>
+            </div>
+        </div>
+    </form>
+{% endblock %}

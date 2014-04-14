@@ -128,3 +128,23 @@ class OrderInfo(db.Model):
         self.update = update
         self.status = status
         self.delivered = delivered
+
+class ServiceInfo(db.Model):
+    'Service class containing service history.'
+    'SID | CID | VIN | Description | Charge | Date | Status'
+    __tablename__ = 'service_info'
+    sid = db.Column(db.Integer, primary_key = True, autoincrement = True)
+    cid = db.Column(db.Integer, db.ForeignKey("customer_info.cid", onupdate="cascade"), nullable = False)
+    vin = db.Column(db.String(20), db.ForeignKey("car.vin", onupdate="cascade"), nullable = False)
+    sdesc = db.Column(db.String(250))
+    scost = db.Column(db.String(100))
+    sdate = db.Column(db.String(100))
+    stats = db.Column(db.Integer)
+
+    def __init__(self, cid, vin, sdesc, scost, sdate, stats = 1):
+        self.cid = cid
+        self.vin = vin
+        self.sdesc = sdesc
+        self.scost = scost
+        self.sdate = sdate
+        self.stats = stats

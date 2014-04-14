@@ -1,0 +1,101 @@
+{% extends 'layout2.html' %}
+
+{% block toplinks %}
+    <li><a href="/">Home</a></li>
+    {% if not session['username'] %}
+        <li><a href="/login">Login</a></li>
+        <li><a href="/register">Register</a></li>
+    {% else %}
+        {% if session['isadmin'] %}
+            <li><a href="/roles">Manage Roles</a></li>
+        {% endif %}
+        {% if session['role'] == "Admin" or session['role'] == "Sales" %}
+            <li><a href="/carmanage">Manage Cars</a></li>
+            <li><a href="/orders">Orders</a></li>
+            <li class="active"><a href="/service">Service</a><li>
+        {% endif %}
+        <li><a href="/carview">View Cars</a></li>
+        <li><a href="/logout">Logout</a></li>
+    {% endif %}
+{% endblock %}
+
+{% block addcss %} <link href="{{ url_for('static', filename='signin.css') }}" rel="stylesheet"> {% endblock %}
+
+{% block mainbody %}
+   <div class="row">
+     <div class="panel panel-default">
+         <div class="col-md-7">
+             <h3>Customer Order</h3>
+             <p class="text-left">
+                General interface for handling the customer orders.
+             </p>
+
+             <dl class="dl-horizontal">
+               <dt>Service ID</dt>
+               <dd>Service identification.</dd>
+               <dt>Customer ID</dt>
+               <dd>Customer identification.</dd>
+               <dt>Vehicle ID</dt>
+               <dd>Vehicle identification.</dd>
+               <dt>Description</dt>
+               <dd>List the services performed.</dd>
+               <dt>Charge</dt>
+               <dd>Total cost of the service.</dd>
+               <dt>Date</dt>
+               <dd>Date of service.</dd>
+               <dt>Status</dt>
+               <dd>Current status of the service.</dd>
+
+               <dd><a href="/serviceadd">Add a service order.</a></dd>
+               <dd><a href="/servicehistory">View service history.</a></dd>
+             </dl>
+
+             {% if request.args.get('message') %}
+                 <h3>Service Modification</h3>
+                 <p class="text-left">
+                     <strong>{{request.args.get('message')}}</strong>
+                 </p>
+             {% endif %}
+         </div>
+         <table class="table">
+             <thead>
+                 <tr>
+                     <th>SID</th>
+                     <th>CID</th>
+                     <th>VIN</th>
+                     <th>Description</th>
+                     <th>Charge</th>
+                     <th>Date</th>
+                     <th>Status</th>
+                 </tr>
+             </thead>
+             {% for service in service_list.items %}
+                 {% if service.stats == 2 or service.stats == 0 %}
+                     <tr>
+                         <td>{{ service.sid }}</td>
+                         <td>{{ service.cid }}</td>
+                         <td><a href="{{ url_for("indicar") }}?vin={{ service.vin }}">{{ service.vin }}</a></td>
+                         <td>{{ service.sdesc }}</td>
+                         <td>{{ service.scost }}</td>
+                         <td>{{ service.sdate }}</td>
+                         {% if service.stats == 2 %}
+                           <td>Completed</td>
+                         {% else %}
+                           <td>Canceled</td>
+                         {% endif%}
+                     </tr>
+                 {% endif %}
+             {% endfor %}
+         </table>
+             
+         <div class="col-lg-4 col-lg-offset-5"> 
+             <ul class="pagination">
+                 {% if service_list.has_prev %}
+                     <li class="previous"><a href="{{ url_for("service", page=service_list.prev_num) }}">Previous</a></li>{% endif %}
+                 {% if service_list.has_next %}
+                     <li class="next"><a href="{{ url_for("service", page=service_list.next_num) }}">Next</a></li>{% endif %}
+             </ul>
+         </div>
+     </div>
+   </div>
+{% endblock %}

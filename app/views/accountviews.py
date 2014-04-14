@@ -7,7 +7,7 @@
 #    * Fixed Issue 2 and clean up the code.
 #==============================================================================
 from flask import render_template, request, session, abort, redirect, url_for
-from app.dbmodels import User, OrderInfo
+from app.dbmodels import User, OrderInfo, ServiceInfo
 from app.util import getsalt, createhash
 from app.db import db
 from app import app
@@ -22,7 +22,8 @@ def home():
     # user login as admin or sales
     elif session["role"] in ["Admin", "Sales"]:
         return render_template('index.html', order_count = \
-            OrderInfo.query.filter_by(status="Ready to Process").count())
+            OrderInfo.query.filter_by(status="Ready to Process").count(), \
+            service_count = ServiceInfo.query.filter_by(stats=1).count())
     # user login as guest
     elif session["role"] in ["Guest"]:
         return render_template('index.html')

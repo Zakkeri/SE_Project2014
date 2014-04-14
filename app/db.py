@@ -20,7 +20,7 @@ def init_db():
     'Initializes the SQL tables using SqlAlchemy\'s declarative system.'
     # import the ORM classes
     from app.dbmodels import User, CarFeatures, Car, CarPics, \
-                             CustomerInfo, OrderInfo
+                             CustomerInfo, OrderInfo, ServiceInfo
 
     # create the SQL tables
     db.create_all()

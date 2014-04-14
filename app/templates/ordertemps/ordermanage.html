@@ -34,7 +34,7 @@
                   <dt>Vin</dt>
                   <dd>Automobile identification.</dd>
                   <dt>Customer ID</dt>
-                  <dd>Customer identication.</dd>
+                  <dd>Customer identification.</dd>
                   <dt>Sales Name</dt>
                   <dd>Description of the sale.</dd>
                   <dt>Sales Price</dt>
@@ -93,9 +93,11 @@
             <div class="col-lg-4 col-lg-offset-5"> 
                 <ul class="pagination">
                     {% if orders.has_prev %}
-                        <li class="previous"><a href="{{ url_for("orders", page=orders.prev_num) }}">Previous</a></li>{% endif %}
+                        <li class="previous"><a href="{{ url_for("ordermanage", page=orders.prev_num) }}">Previous</a></li>
+                    {% endif %}
                     {% if orders.has_next %}
-                        <li class="next"><a href="{{ url_for("orders", page=orders.next_num) }}">Next</a></li>{% endif %}
+                        <li class="next"><a href="{{ url_for("ordermanage", page=orders.next_num) }}">Next</a></li>
+                    {% endif %}
                 </ul>
             </div>
         </div>

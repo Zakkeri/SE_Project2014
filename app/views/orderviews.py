@@ -33,7 +33,7 @@ def ordermanage(page = 1):
 
 @app.route("/ordergen", methods=["GET", "POST"])
 def ordergen():
-    'Add a customer order; restruct to admin or sales only.'
+    'Add a customer order; restrict to admin or sales only.'
     # check if user is login in, otherwise go to home
     if 'role' in session.keys():
         # check if role is admin or sales, otherwise go to home
@@ -125,6 +125,7 @@ def orderproc():
                     if order:
                         # deliver the order
                         if action == "deliver":
+                            order.delivered = True
                             order.status = "Delivered"
                             order.update = datetime.now()
                             db.session.commit()
