@@ -23,10 +23,10 @@
    10.2: Don't lose your root and password. 
    10.3: Open MySQL Workbench 6.0 
    10.4: Start MySQL server if you need to 
-   10.5: Open the script SE_Project2014/dbcreate.sql and run it. 
+   10.5: Open the script SE_Project2014/sql/jimdb.sql and run it. 
 11. Run the project on python and view on browser 
-   11.0: Change line 5 of __init__.py in dbmodel 'mysql://root:(YOUR ROOT PASSWORD HERE)@127.0.0.1/cardb'
+   11.0: Change line 1 of app.cfg in dbmodel 'mysql://root:(YOUR ROOT PASSWORD HERE)@127.0.0.1/cardb'
    11.1: Open command prompt 
    11.2: 'cd C:/Users/<YOUR HOME>/Documents/GitHub/SE_Project2014' 
-   11.3: 'python27 app.py' or 'python app.py' 
-   11.4: Open browser and point to 'localhost:5000' 
+   11.3: 'python27 run.py' or 'python run.py' 
+   11.4: Open browser and point to '127.0.0.1:5000' 
