@@ -40,7 +40,7 @@ chars = set(lower + upper + digit)                 # username character set
 def register():
     'Register the user by adding an entry to the User table.'
     # redirect signed in user to home page (already register)
-    if 'username' in session: redirect(url_for("home"))
+    if 'username' in session: return redirect(url_for("home"))
     
     # user has submitted a registration form
     if request.method == "POST":
@@ -83,7 +83,7 @@ def register():
 def login():
     'Login the user by setting the session object.'
     # redirect signed in user to home page (already login)
-    if 'username' in session: redirect(url_for("home"))
+    if 'username' in session: return redirect(url_for("home"))
 
     # user has submitted credentials
     if request.method == "POST":
