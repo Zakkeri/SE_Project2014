@@ -168,13 +168,10 @@ def roles():
                     message = '{} role changed to {}.'.format(user_exists.uname, user_exists.role)
             else:
                 message = 'Role action denied; invalid role({}).'.format(newrole)
-        else:
-            message = 'Role action denied; missing form entry.'
-    else:
-      message = 'Role action denied; invalid form method.'
+            return render_template('accounttemps/roles.html', User = User, message = message)
 
     # present user with initial table
-    return render_template('accounttemps/roles.html', User = User, message = message)
+    return render_template('accounttemps/roles.html', User = User)
 
 @app.route('/logout')
 def logout():

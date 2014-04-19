@@ -1,105 +1,99 @@
 {% extends 'layout2.html' %}
-
+{% block title %}Order Manager{% endblock %}
 {% block toplinks %}
-    <li><a href="/">Home</a></li>
-    {% if not session['username'] %}
-        <li><a href="/login">Login</a></li>
-        <li><a href="/register">Register</a></li>
-    {% else %}
-        {% if session['isadmin'] %}
-            <li><a href="/roles">Manage Roles</a></li>
-        {% endif %}
-        {% if session['role'] == "Admin" or session['role'] == "Sales" %}
-            <li><a href="/carmanage">Manage Cars</a></li>
-            <li class="active"><a href="/orders">Orders</a></li>
-            <li><a href="/service">Service</a><li>
-        {% endif %}
-        <li><a href="/carview">View Cars</a></li>
-        <li><a href="/logout">Logout</a></li>
-    {% endif %}
+   <li><a href="/">Home</a></li>
+   {% if not session['username'] %}
+      <li><a href="/login">Login</a></li>
+      <li><a href="/register">Register</a></li>
+   {% else %}
+      {% if session['isadmin'] %}
+         <li><a href="/roles">Manage Roles</a></li>
+      {% endif %}
+      {% if session['role'] == "Admin" or session['role'] == "Sales" %}
+         <li><a href="/carmanage">Manage Cars</a></li>
+         <li class="active"><a href="/orders">Orders</a></li>
+         <li><a href="/service">Service</a><li>
+      {% endif %}
+      <li><a href="/carview">View Cars</a></li>
+      <li><a href="/logout">Logout</a></li>
+   {% endif %}
 {% endblock %}
 
 {% block addcss %} <link href="{{ url_for('static', filename='signin.css') }}" rel="stylesheet"> {% endblock %}
 
 {% block mainbody %}
-    <div class="row">
-        <div class="panel panel-default">
-            <div class="col-md-7">
-                <h3>Customer Order</h3>
-                <p class="text-left">
-                   General interface for handling the customer orders.
-                </p>
+   <div class="row">
+      <div class="panel panel-default">
+         <div class="col-md-7">
+            <h3>Customer Order</h3>
+            <p class="text-left">General interface for handling the customer orders.</p>
 
-                <dl class="dl-horizontal">
-                  <dt>Vin</dt>
-                  <dd>Automobile identification.</dd>
-                  <dt>Customer ID</dt>
-                  <dd>Customer identification.</dd>
-                  <dt>Sales Name</dt>
-                  <dd>Description of the sale.</dd>
-                  <dt>Sales Price</dt>
-                  <dd>Price of the sale.</dd>
-                  <dt>Delivery Date</dt>
-                  <dd>Date of car delivery.</dd>
+            <dl class="dl-horizontal">
+               <dt>Vin</dt>
+               <dd>Automobile identification.</dd>
+               <dt>Customer ID</dt>
+               <dd>Customer identification.</dd>
+               <dt>Sales Name</dt>
+               <dd>Description of the sale.</dd>
+               <dt>Sales Price</dt>
+               <dd>Price of the sale.</dd>
+               <dt>Delivery Date</dt>
+               <dd>Date of car delivery.</dd>
+            </dl>
 
-                  <dd><a href="/ordergen">Add a customer order.</a></dd>
-                  <dd><a href="/orderhistory">View customer order history.</a></dd>
-                </dl>
+            <h3>Customer Order Action</h3>
+            <p class="text-left">
+               <h4><a href="/ordergen">Add a customer order</a></h4>
+               <h4><a href="/orderhistory">View customer order history</a></h4>
+            </p>
 
-                {% if request.args.get('message') %}
-                    <h3>Customer Order Modification</h3>
-                    <p class="text-left">
-                        <strong>{{request.args.get('message')}}</strong>
-                    </p>
-                {% endif %}
-            </div>
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>Vin</th>
-                        <th>Customer ID</th>
-                        <th>Sales Name</th>
-                        <th>Sale Price</th>
-                        <th>Last Modified</th>
-                        <th>Delivery Date</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                {% for order in orders.items %}
-                    {% if order.status == "Ready to Process" %}
-                        <tr>
-                            <td><a href="{{ url_for("indicar") }}?vin={{ order.vin }}">{{ order.vin }}</a></td>
-                            <td>{{ order.cid }}</td>
-                            <td>{{ order.sname }}</td>
-                            <td>{{ order.fprice }}</td>
-                            <td>{{ order.update }}</td>
-                            <td>{{ order.ddate }}</td>
-                            <td>
-                                    <div class="btn-group">
-                                      <button class="btn btn-default btn-sm dropdown-toggle" type="button" data-toggle="dropdown">
-                                          Select... <span class="caret"></span>
-                                      </button>
-                                        <ul class="dropdown-menu">
-                                             <li><a href="/orderproc?action=deliver&oid={{ order.oid }}">Deliver</a></li>
-                                             <li><a href="/orderproc?action=cancel&oid={{ order.oid }}">Cancel</a></li>
-                                        </ul>
-                                    </div>
-                            </td>
-                        </tr>
-                    {% endif %}
-                {% endfor %}
-            </table>
+            {% if request.args.get('message') %}
+            <h3>Customer Order Modification</h3>
+               <p class="text-left"><strong>{{request.args.get('message')}}</strong></p>
+            {% endif %}
+         </div>
+
+         <table class="table">
+            <thead>
+               <tr>
+                  <th>Vin</th>
+                  <th>Customer ID</th>
+                  <th>Sales Name</th>
+                  <th>Sale Price</th>
+                  <th>Last Modified</th>
+                  <th>Delivery Date</th>
+                  <th>Action</th>
+               </tr>
+            </thead>
+            {% for order in orders.items %}
+               {% if order.status == "Ready to Process" %}
+                  <tr>
+                     <td><a href="{{ url_for("indicar") }}?vin={{ order.vin }}">{{ order.vin }}</a></td>
+                     <td>{{ order.cid }}</td>
+                     <td>{{ order.sname }}</td>
+                     <td>{{ order.fprice }}</td>
+                     <td>{{ order.update }}</td>
+                     <td>{{ order.ddate }}</td>
+                     <td>
+                     <div class="btn-group">
+                        <button class="btn btn-default btn-sm dropdown-toggle" type="button" data-toggle="dropdown">Select... <span class="caret"></span></button>
+                           <ul class="dropdown-menu">
+                              <li><a href="/orderproc?action=deliver&oid={{ order.oid }}">Deliver</a></li>
+                              <li><a href="/orderproc?action=cancel&oid={{ order.oid }}">Cancel</a></li>
+                           </ul>
+                     </div>
+                     </td>
+                  </tr>
+               {% endif %}
+            {% endfor %}
+         </table>
                 
-            <div class="col-lg-4 col-lg-offset-5"> 
-                <ul class="pagination">
-                    {% if orders.has_prev %}
-                        <li class="previous"><a href="{{ url_for("ordermanage", page=orders.prev_num) }}">Previous</a></li>
-                    {% endif %}
-                    {% if orders.has_next %}
-                        <li class="next"><a href="{{ url_for("ordermanage", page=orders.next_num) }}">Next</a></li>
-                    {% endif %}
-                </ul>
-            </div>
-        </div>
-    </div>
+         <div class="col-lg-4 col-lg-offset-5"> 
+            <ul class="pagination">
+               {% if orders.has_prev %}<li class="previous"><a href="{{ url_for("ordermanage", page=orders.prev_num) }}">Previous</a></li>{% endif %}
+               {% if orders.has_next %}<li class="next"><a href="{{ url_for("ordermanage", page=orders.next_num) }}">Next</a></li>{% endif %}
+            </ul>
+         </div>
+      </div>
+   </div>
 {% endblock %}             

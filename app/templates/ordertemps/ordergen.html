@@ -1,132 +1,67 @@
 {% extends 'layout2.html' %}
-
+{% block title %}Order Add{% endblock %}
 {% block toplinks %}
-    <li><a href="/">Home</a></li>
-    {% if not session['username'] %}
-        <li><a href="/login">Login</a></li>
-        <li><a href="/register">Register</a></li>
-    {% else %}
-        {% if session['isadmin'] %}
-            <li><a href="/roles">Manage Roles</a></li>
-        {% endif %}
-        {% if session['role'] == "Admin" or session['role'] == "Sales" %}
-            <li><a href="/carmanage">Manage Cars</a></li>
-            <li class="active"><a href="/orders">Orders</a></li>
-            <li><a href="/service">Service</a><li>
-        {% endif %}
-        <li><a href="/carview">View Cars</a></li>
-        <li><a href="/logout">Logout</a></li>
-    {% endif %}
+   <li><a href="/">Home</a></li>
+   {% if not session['username'] %}
+      <li><a href="/login">Login</a></li>
+      <li><a href="/register">Register</a></li>
+   {% else %}
+      {% if session['isadmin'] %}
+         <li><a href="/roles">Manage Roles</a></li>
+      {% endif %}
+      {% if session['role'] == "Admin" or session['role'] == "Sales" %}
+         <li><a href="/carmanage">Manage Cars</a></li>
+         <li class="active"><a href="/orders">Orders</a></li>
+         <li><a href="/service">Service</a><li>
+      {% endif %}
+      <li><a href="/carview">View Cars</a></li>
+      <li><a href="/logout">Logout</a></li>
+   {% endif %}
 {% endblock %}
 
 {% block addcss %} <link href="{{ url_for('static', filename='signin.css') }}" rel="stylesheet"> {% endblock %}
 
 {% block mainbody %}
-   <form   name = "addorder" 
-           class = "form-horizontal" 
-           role = "form"
-           method = "POST"
-           action = "/ordergen">
+   <div class="row">
+      <div class="col-md-7">
+         <h3>Customer Form</h3>
+         <p class="text-left">Remember to verified the customer information.</p>
+      </div>
+   </div>
 
-      <div class="row">
-         <div class="col-md-7">
-            <h3>Customer Form</h3>
-            <p class="text-left">
-               Remember to verified the customer information.
-            </p>
-         </div>
+   <form name = "addorder" class = "form-horizontal" role = "form" method = "POST" action = "/ordergen">
+      <div class = "form-group">
+         <label class="col-sm-3 control-label"><p class="text-left">Full Name</p></label>
+         <div class="col-sm-5"><input name = "full-name" type = "text" class = "form-control" placeholder = "Full Name"></div>
       </div>
 
       <div class = "form-group">
-         <label class="col-sm-3 control-label">
-             <p class="text-left">
-                 Full Name
-             </p>
-         </label>
-         <div class="col-sm-5">
-            <input  name = "full-name"
-                     type = "text" 
-                     class = "form-control" 
-                     placeholder = "Full Name">
-         </div>
+         <label class="col-sm-3 control-label"><p class="text-left">Address Line 1</p></label>
+         <div class="col-sm-5"><input  name = "address-line1" type = "text" class = "form-control" placeholder = "Address Line 1"></div>
       </div>
 
       <div class = "form-group">
-         <label class="col-sm-3 control-label">
-             <p class="text-left">
-                 Address Line 1
-             </p>
-         </label>
-         <div class="col-sm-5">
-            <input  name = "address-line1"
-                     type = "text" 
-                     class = "form-control" 
-                     placeholder = "Address Line 1">
-         </div>
+         <label class="col-sm-3 control-label"><p class="text-left">Address Line 2</p></label>
+         <div class="col-sm-5"><input  name = "address-line2" type = "text" class = "form-control" placeholder = "Address Line 2"></div>
       </div>
 
       <div class = "form-group">
-         <label class="col-sm-3 control-label">
-             <p class="text-left">
-                 Address Line 2
-             </p>
-         </label>
-         <div class="col-sm-5">
-            <input  name = "address-line2"
-                     type = "text" 
-                     class = "form-control" 
-                     placeholder = "Address Line 2">
-         </div>
+         <label class="col-sm-3 control-label"><p class="text-left">City / Town</p></label>
+         <div class="col-sm-5"><input name = "city" type = "text" class = "form-control" placeholder = "City"></div>
       </div>
 
       <div class = "form-group">
-         <label class="col-sm-3 control-label">
-             <p class="text-left">
-                 City / Town
-             </p>
-         </label>
-         <div class="col-sm-5">
-            <input  name = "city"
-                     type = "text" 
-                     class = "form-control" 
-                     placeholder = "City">
-         </div>
+         <label class="col-sm-3 control-label"><p class="text-left">State / Province / Region</p></label>
+         <div class="col-sm-5"><input name = "region" type = "text" class = "form-control" placeholder = "State / Province / Region"></div>
       </div>
 
       <div class = "form-group">
-         <label class="col-sm-3 control-label">
-             <p class="text-left">
-                 State / Province / Region
-             </p>
-         </label>
-         <div class="col-sm-5">
-            <input  name = "region"
-                     type = "text" 
-                     class = "form-control" 
-                     placeholder = "State / Province / Region">
-         </div>
+         <label class="col-sm-3 control-label"><p class="text-left">Zip / Postal Code</p></label>
+         <div class="col-sm-5"><input  name = "postal-code" type = "text" class = "form-control" placeholder = "Zip Or Postal Code"></div>
       </div>
 
       <div class = "form-group">
-         <label class="col-sm-3 control-label">
-             <p class="text-left">
-                 Zip / Postal Code
-             </p>
-         </label>
-         <div class="col-sm-5">
-            <input  name = "postal-code"
-                     type = "text" 
-                     class = "form-control" 
-                     placeholder = "Zip Or Postal Code">
-         </div>
-      </div>
-
-      <div class = "form-group">
-         <label class="col-sm-3 control-label">
-             <p class="text-left">
-                 Country
-             </p>
-         </label>
+         <label class="col-sm-3 control-label"><p class="text-left">Country</p></label>
          <div class="col-sm-5">
             <select id="country" name="country" class="form-control">
                <option value="" selected="selected">(Select a Country)</option>
@@ -376,19 +311,13 @@
       <div class="row">
          <div class="col-md-7">
             <h3>Sales Form</h3>
-            <p class="text-left">
-               Remember to verified the sales information.
-            </p>
+            <p class="text-left">Remember to verified the sales information.</p>
          </div>
       </div>
    
 
       <div class = "form-group">
-         <label class="col-sm-3 control-label">
-             <p class="text-left">
-                 VIN
-             </p>
-         </label>
+         <label class="col-sm-3 control-label"><p class="text-left">VIN</p></label>
          <div class="col-sm-5">
             <select id="vin" name="vin" class="form-control">
                <option value="" selected="selected">(Select a VIN)</option>
@@ -402,51 +331,22 @@
       </div>
 
       <div class = "form-group">
-         <label class="col-sm-3 control-label">
-             <p class="text-left">
-                 Sales Name
-             </p>
-         </label>
-         <div class="col-sm-5">
-             <input  name = "sname"
-                     type = "text" 
-                     class = "form-control" 
-                     placeholder = "Sales Name">
-         </div>
+         <label class="col-sm-3 control-label"><p class="text-left">Sales Name</p></label>
+         <div class="col-sm-5"><input name = "sname" type = "text" class = "form-control" placeholder = "Sales Name"></div>
       </div>
 
       <div class = "form-group">
-         <label class="col-sm-3 control-label">
-             <p class="text-left">
-                 Final Sales Price
-             </p>
-         </label>
-         <div class="col-sm-5">
-             <input  name = "price"
-                     type = "text" 
-                     class = "form-control" 
-                     placeholder = "Final Sale Price">
-         </div>
+         <label class="col-sm-3 control-label"><p class="text-left">Final Sales Price</p></label>
+         <div class="col-sm-5"><input  name = "price" type = "text" class = "form-control" placeholder = "Final Sale Price"></div>
       </div>
 
       <div class = "form-group">
-         <label class="col-sm-3 control-label">
-             <p class="text-left">
-                 Delivery Date
-             </p>
-         </label>
-         <div class="col-sm-5">
-             <input  name = "ddate"
-                     type = "text" 
-                     class = "form-control" 
-                     placeholder = "Delivery Date">
-         </div>
+         <label class="col-sm-3 control-label"><p class="text-left">Delivery Date</p></label>
+         <div class="col-sm-5"><input name = "ddate" type = "text" class = "form-control" placeholder = "Delivery Date"></div>
       </div>
 
       <div class = "form-group">
-         <div class="col-sm-8">
-             <button type="submit" class="btn btn-sm btn-block btn-primary btn-default">Add Customer Order</button>
-         </div>
+         <div class="col-sm-8"><button type="submit" class="btn btn-sm btn-block btn-primary btn-default">Add Customer Order</button></div>
       </div>
    </form>
 {% endblock %}
