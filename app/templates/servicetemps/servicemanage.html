@@ -1,5 +1,5 @@
 {% extends 'layout2.html' %}
-
+{% block title %}Service Manager{% endblock %}
 {% block toplinks %}
     <li><a href="/">Home</a></li>
     {% if not session['username'] %}
@@ -23,14 +23,12 @@
 
 {% block mainbody %}
    <div class="row">
-     <div class="panel panel-default">
+      <div class="panel panel-default">
          <div class="col-md-7">
-             <h3>Customer Service</h3>
-             <p class="text-left">
-                General interface for handling the customer orders.
-             </p>
+            <h3>Customer Service</h3>
+            <p class="text-left">General interface for handling the customer orders.</p>
 
-             <dl class="dl-horizontal">
+            <dl class="dl-horizontal">
                <dt>Service ID</dt>
                <dd>Service identification.</dd>
                <dt>Customer ID</dt>
@@ -45,66 +43,60 @@
                <dd>Date of service.</dd>
                <dt>Status</dt>
                <dd>Current status of the service.</dd>
-             </dl>
+            </dl>
 
-             <h3>Customer Service Action</h3>
-             <p class="text-left">
+            <h3>Customer Service Action</h3>
+            <p class="text-left">
                <h4><a href="/serviceadd">Add a service order</a></h4>
                <h4><a href="/servicehistory">View service history</a></h4>
-             </p>
+            </p>
 
-             {% if message %}
-                 <h3>Customer Order Modification</h3>
-                 <p class="text-left">
-                     {{message}}
-                 </p>
-             {% endif %}
+            {% if message %}
+               <h3>Customer Order Modification</h3>
+               <p class="text-left">{{message}}</p>
+            {% endif %}
          </div>
          <table class="table">
-             <thead>
-                 <tr>
-                     <th>SID</th>
-                     <th>CID</th>
-                     <th>VIN</th>
-                     <th>Description</th>
-                     <th>Charge</th>
-                     <th>Date</th>
-                     <th>Status</th>
-                     <th>Action</th>
-                 </tr>
-             </thead>
-             {% for service in service_list.items %}
-                 {% if service.stats == 1 %}
-                     <tr>
-                         <td>{{ service.sid }}</td>
-                         <td>{{ service.cid }}</td>
-                         <td><a href="{{ url_for("indicar") }}?vin={{ service.vin }}">{{ service.vin }}</a></td>
-                         <td>{{ service.sdesc }}</td>
-                         <td>{{ service.scost }}</td>
-                         <td>{{ service.sdate }}</td>
-                         <td>{{ service.stats }}</td>
-                         <td>
-                              <div class="btn-group">
-                                <button class="btn btn-default btn-sm dropdown-toggle" type="button" data-toggle="dropdown">
-                                    Select... <span class="caret"></span>
-                                </button>
-                                  <ul class="dropdown-menu">
-                                       <li><a href="/servicechange?action=completed&sid={{ service.sid }}">Completed</a></li>
-                                       <li><a href="/servicechange?action=cancel&sid={{ service.sid }}">Cancel</a></li>
-                                  </ul>
-                              </div>
-                         </td>
-                     </tr>
-                 {% endif %}
-             {% endfor %}
+            <thead>
+               <tr>
+                  <th>SID</th>
+                  <th>CID</th>
+                  <th>VIN</th>
+                  <th>Description</th>
+                  <th>Charge</th>
+                  <th>Date</th>
+                  <th>Status</th>
+                  <th>Action</th>
+               </tr>
+            </thead>
+            {% for service in service_list.items %}
+               {% if service.stats == 1 %}
+                  <tr>
+                     <td>{{ service.sid }}</td>
+                     <td>{{ service.cid }}</td>
+                     <td>{{ service.vin }}</td>
+                     <td>{{ service.sdesc }}</td>
+                     <td>{{ service.scost }}</td>
+                     <td>{{ service.sdate }}</td>
+                     <td>{{ service.stats }}</td>
+                     <td><div class="btn-group">
+                        <button class="btn btn-default btn-sm dropdown-toggle" type="button" data-toggle="dropdown">Select... <span class="caret"></span></button>
+                        <ul class="dropdown-menu">
+                           <li><a href="/servicechange?action=completed&sid={{ service.sid }}">Completed</a></li>
+                           <li><a href="/servicechange?action=cancel&sid={{ service.sid }}">Cancel</a></li>
+                        </ul></div>
+                     </td>
+                  </tr>
+               {% endif %}
+            {% endfor %}
          </table>
              
          <div class="col-lg-4 col-lg-offset-5"> 
-             <ul class="pagination">
-                 {% if service_list.has_prev %}<li class="previous"><a href="{{ url_for("service", page=service_list.prev_num) }}">Previous</a></li>{% endif %}
-                 {% if service_list.has_next %}<li class="next"><a href="{{ url_for("service", page=service_list.next_num) }}">Next</a></li>{% endif %}
-             </ul>
+            <ul class="pagination">
+               {% if service_list.has_prev %}<li class="previous"><a href="{{ url_for("service", page=service_list.prev_num) }}">Previous</a></li>{% endif %}
+               {% if service_list.has_next %}<li class="next"><a href="{{ url_for("service", page=service_list.next_num) }}">Next</a></li>{% endif %}
+            </ul>
          </div>
-     </div>
+      </div>
    </div>
 {% endblock %}

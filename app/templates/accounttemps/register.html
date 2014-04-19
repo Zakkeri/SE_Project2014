@@ -1,7 +1,5 @@
 {% extends 'layout.html' %}
-{% block title %}
-Registration
-{% endblock %}
+{% block title %}Registration{% endblock %}
 {% block toplinks %}
             <li><a href="/">Home</a></li>
             <li><a href="/login">Login</a></li>
@@ -25,67 +23,28 @@ Registration
         </div>
     </div>
 
-    <form     name = "register" 
-              class = "form-horizontal" 
-              role = "form"
-              method = "POST"
-              action = "/register">
-
+    <form name = "register" class = "form-horizontal" role = "form" method = "POST" action = "/register">
         <div class = "form-group">
-            <label class="col-sm-3 control-label">
-                <p class="text-left">
-                    Username:
-                </p>
-            </label>
-            <div class="col-sm-5">
-                <input  name = "username"
-                        type = "text" 
-                        class = "form-control" 
-                        placeholder = "Username" 
-                        required autofocus>
-            </div>
+            <label class="col-sm-3 control-label"><p class="text-left">Username:</p></label>
+            <div class="col-sm-5"><input name = "username" type = "text" class = "form-control" placeholder = "Username" required autofocus></div>
         </div>
 
         <div class = "form-group">
-            <label class="col-sm-3 control-label">
-                <p class="text-left">
-                    Password:
-                </p>
-            </label>
-            <div class="col-sm-5">
-                <input  name = "password"
-                        type = "password" 
-                        class = "form-control" 
-                        placeholder = "Password" 
-                        required autofocus>
-            </div>
+            <label class="col-sm-3 control-label"><p class="text-left">Password:</p></label>
+            <div class="col-sm-5"><input name = "password" type = "password" class = "form-control" placeholder = "Password"></div>
         </div>
 
         <div class = "form-group">
-            <label class="col-sm-3 control-label">
-                <p class="text-left">
-                    Verify Password:
-                </p>
-            </label>
-            <div class="col-sm-5">
-                <input  name = "check"
-                        type = "password" 
-                        class = "form-control" 
-                        placeholder = "Retype Password" 
-                        required autofocus>
-            </div>
+            <label class="col-sm-3 control-label"><p class="text-left">Verify Password:</p></label>
+            <div class="col-sm-5"><input name = "check" type = "password" class = "form-control" placeholder = "Retype Password" ></div>
         </div>
         
         {% if request.args.get('message') %}
-            <p class="text-left">
-                <strong>{{request.args.get('message')}}</strong>
-            </p>
+            <p class="text-left"><strong>{{request.args.get('message')}}</strong></p>
         {% endif %}
 
         <div class = "form-group">
-            <div class="col-sm-8">
-                <button type="submit" class="btn btn-sm btn-block btn-primary btn-default">Register</button>
-            </div>
+            <div class="col-sm-8"><button type="submit" class="btn btn-sm btn-block btn-primary btn-default">Register</button></div>
         </div>
     </form>
 {% endblock %}

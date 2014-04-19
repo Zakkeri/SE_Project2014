@@ -1,17 +1,18 @@
 #==============================================================================
 # File: accountviews.py
 # Auth: Andrew Calvano / Jim Ching
-# Desc: Account management pages
-#
-# Changelog
-#    * Fixed Issue 2 and clean up the code.
+# Desc: Account management interface
 #==============================================================================
 from flask import render_template, request, session, abort, redirect, url_for
 from app.dbmodels import User, OrderInfo, ServiceInfo
-from app.util import getsalt, createhash
+from app.util import getsalt, createhash, validate_table
 from app.db import db
 from app import app
-from sys import exc_info
+
+# form tables (validation purposes)
+accountreg_ft = ['username', 'password', 'check']
+accountlog_ft = ['username', 'password']
+accountroe_ft = ['username', 'newrole']
 
 @app.route('/')
 def home():
@@ -43,36 +44,37 @@ def register():
     
     # user has submitted a registration form
     if request.method == "POST":
-        # extract form entries
-        username = request.form['username']
-        password = request.form['password']
-        verified = request.form['check']
-        status = 0x0000
+        if validate_table(accountreg_ft, request.form):
+            # extract form entries
+            username = request.form[accountreg_ft[0]]
+            password = request.form[accountreg_ft[1]]
+            verified = request.form[accountreg_ft[2]]
+            status = 0x0000
 
-        # validate registration
-        if not 5 <= len(username) <= 25:                         status += 0x0002  # username must be 5 - 25 characters long
-        if set(username) - chars:                                status += 0x0004  # username must contain only letters and digits
-        if not 5 <= len(password) <= 25:                         status += 0x0008  # password must be 5 - 25 characters long
-        if len(set(password) & set(digit)) < 1:                  status += 0x0010  # must contain digit character
-        if len(set(password) & set(upper)) < 1:                  status += 0x0020  # must contain capital character
-        if len(set(password) & set(speci)) < 1:                  status += 0x0040  # must contain special character
-        if password != verified:                                 status += 0x0080  # password is not verified
-        if User.query.filter_by(uname=username).first() != None: status += 0x0100  # username already exist
+            # validate registration
+            if not 5 <= len(username) <= 25:                         status += 0x0002  # username must be 5 - 25 characters long
+            if set(username) - chars:                                status += 0x0004  # username must contain only letters and digits
+            if not 5 <= len(password) <= 25:                         status += 0x0008  # password must be 5 - 25 characters long
+            if len(set(password) & set(digit)) < 1:                  status += 0x0010  # must contain digit character
+            if len(set(password) & set(upper)) < 1:                  status += 0x0020  # must contain capital character
+            if len(set(password) & set(speci)) < 1:                  status += 0x0040  # must contain special character
+            if password != verified:                                 status += 0x0080  # password is not verified
+            if User.query.filter_by(uname=username).first() != None: status += 0x0100  # username already exist
 
-        # create the user if it does not exist
-        if not status:
-            salt = getsalt() 
-            passhash = createhash(salt,password)
-            newuser = User(username, salt, passhash, "Guest", 0)            
-            db.session.add(newuser)
-            db.session.commit()
-            return redirect(url_for("login", message="Registration successful, please sign in!"))
-        # report password does not match
-        elif status & 0x0080: return redirect(url_for("register", message = "Passwords do not match."))
-        # report username already exist
-        elif status & 0x0100: return redirect(url_for("register", message = "Username already exist."))
-        # report validation error
-        else: return redirect(url_for("register", message = "Invalid username or password."))
+            # create the user if it does not exist
+            if not status:
+                salt = getsalt() 
+                passhash = createhash(salt,password)
+                newuser = User(username, salt, passhash, "Guest", 0)            
+                db.session.add(newuser)
+                db.session.commit()
+                return redirect(url_for("login", message="Registration successful, please sign in!"))
+            # report password does not match
+            elif status & 0x0080: return redirect(url_for("register", message = "Unable to verified password, please re-enter password."))
+            # report username already exist
+            elif status & 0x0100: return redirect(url_for("register", message = "{} has already been taken, please choose another username.".format(username)))
+            # report validation error
+            else: return redirect(url_for("register", message = "Invalid username or password, please re-read the registration form rules."))
 
     # present user with initial registration
     return render_template('accounttemps/register.html')
@@ -85,88 +87,91 @@ def login():
 
     # user has submitted credentials
     if request.method == "POST":
-        # extract form entries
-        username = request.form['username']
-        password = request.form['password']
-        status = 0x0000
+        if validate_table(accountlog_ft, request.form):
+            # extract form entries
+            username = request.form[accountlog_ft[0]]
+            password = request.form[accountlog_ft[1]]
+            status = 0x0000
 
-        # check whether the fields are empty
-        if not 5 <= len(username) <= 25: status += 0x0001  # username must be 5 - 25 characters long
-        if not 5 <= len(password) <= 25: status += 0x0002  # password must be 5 - 25 characters long
+            # check whether the fields are empty
+            if not 5 <= len(username) <= 25: status += 0x0001  # username must be 5 - 25 characters long
+            if not 5 <= len(password) <= 25: status += 0x0002  # password must be 5 - 25 characters long
 
-        # check whether the user exist
-        try:
-            user_exists = User.query.filter_by(uname=username).first()
-        except Exception, e:
-            user_exists = None
-        if user_exists:
-            # check whether the password matches
-            if createhash(user_exists.salt,password) == user_exists.password:
+            # check whether the user exist
+            try:
+                user_exists = User.query.filter_by(uname=username).first()
+            except Exception, e:
+                user_exists = None
+            if user_exists:
+                # check whether the password matches
+                if createhash(user_exists.salt,password) == user_exists.password:
 
-                session['username'] = user_exists.uname
-                session['role'] = user_exists.role
+                    session['username'] = user_exists.uname
+                    session['role'] = user_exists.role
 
-                if user_exists.isadmin:
-                    session['isadmin'] = True
+                    if user_exists.isadmin:
+                        session['isadmin'] = True
+                    else:
+                        session['isadmin'] = False
+                    status += 0x0010
                 else:
-                    session['isadmin'] = False
-                status += 0x0010
+                    status += 0x0008
             else:
-                status += 0x0008
-        else:
-            status += 0x0004
+                status += 0x0004
 
-        if status & 0x0001 or status & 0x0002:
-            return redirect(url_for("login", message = 'Empty username or password.'))
-        elif status & 0x0004 or status & 0x0008:
-            return redirect(url_for("login", message = 'Invalid username or password.'))
-        elif status & 0x0010:
-            return redirect(url_for("home"))
+            if status & 0x0001 or status & 0x0002:
+                return redirect(url_for("login", message = 'Short username or password; must be at least length 5 or greater.'))
+            elif status & 0x0004 or status & 0x0008:
+                return redirect(url_for("login", message = 'Invalid username or password.'))
+            elif status & 0x0010:
+                return redirect(url_for("home"))
 
     # present user with initial sign in form
     return render_template("accounttemps/login.html")
 
-@app.route('/roles', methods=['GET', 'POST'])
+@app.route('/roles', methods=['GET'])
 def roles():
     'Allow administrators to change the roles of other users.'
-    # check if user is login in
-    if not 'isadmin' in session.keys():
-        return redirect(url_for("home"))
-    # check if user is administrator
-    elif session['isadmin'] == False: 
+    # check if user is login in and check if user is administrator
+    if 'isadmin' not in session.keys() or session['isadmin'] == False:
         return redirect(url_for("home"))
 
-    # extract GET form entries
-    username = request.args.get("username")
-    newrole = request.args.get("newrole")
-    message = ""
+    if request.method == 'GET':
+        if validate_table(accountroe_ft, request.args):
+            username = request.args.get(accountroe_ft[0])
+            newrole = request.args.get(accountroe_ft[1])
+            message = ''
 
-    # check the username
-    if username != None:
-        # check the fole
-        if newrole != None and newrole in ['Admin','Sales', 'Guest']:
-            # check if user exist
-            user_exists = User.query.filter_by(uname=username).first()
-            if user_exists == None:
-                message = 'You\'ve modified an invalid user\'s role.'
-            # check if user is modifying his own permission level
-            elif user_exists.uname == session['username']:
-                message = 'You cannot modify your own permission level.'
+            # check the role
+            if newrole in ['Admin','Sales', 'Guest']:
+                # check if user exist
+                user_exists = User.query.filter_by(uname = username).first()
+                if user_exists == None:
+                    message = 'You\'ve modified an invalid user\'s role.'
+                # check if user is modifying his own permission level
+                elif user_exists.uname == session['username']:
+                    message = 'You cannot modify your own permission level.'
+                else:
+                    # set off administrator flag
+                    if user_exists.role == "Admin" and newrole != "Admin":
+                        user_exists.isadmin = 0
+
+                    # set new role
+                    user_exists.role = newrole
+
+                    # set on administrator flag
+                    if user_exists.role == "Admin":
+                        user_exists.isadmin = 1
+                    
+                    # commit the transaction
+                    db.session.commit()
+                    message = '{} role changed to {}.'.format(user_exists.uname, user_exists.role)
             else:
-                # set off administrator flag
-                if user_exists.role == "Admin" and newrole != "Admin":
-                    user_exists.isadmin = 0
-
-                # set new role
-                user_exists.role = newrole
-
-                # set on administrator flag
-                if user_exists.role == "Admin":
-                    user_exists.isadmin = 1
-                
-                # commit the transaction
-                db.session.commit()
-                message = '{} role changed to {}.'.format(user_exists.uname, user_exists.role)
+                message = 'Role action denied; invalid role({}).'.format(newrole)
+        else:
+            message = 'Role action denied; missing form entry.'
+    else:
+      message = 'Role action denied; invalid form method.'
 
     # present user with initial table
     return render_template('accounttemps/roles.html', User = User, message = message)
@@ -174,7 +179,5 @@ def roles():
 @app.route('/logout')
 def logout():
     'Logout the user by clearing the session object.'
-    # clear the user session
-    if 'username' not in session: abort(401)
-    session.clear()
+    if 'username' in session: session.clear()
     return redirect(url_for("home"))

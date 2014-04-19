@@ -1,5 +1,5 @@
 {% extends 'layout2.html' %}
-
+{% block title %}Service History{% endblock %}
 {% block toplinks %}
     <li><a href="/">Home</a></li>
     {% if not session['username'] %}
@@ -23,12 +23,12 @@
 
 {% block mainbody %}
    <div class="row">
-     <div class="panel panel-default">
+      <div class="panel panel-default">
          <div class="col-md-7">
-             <h3>Customer Service History</h3>
-             <p class="text-left">List of all customer orders; either completed or canceled.</p>
+            <h3>Customer Service History</h3>
+            <p class="text-left">List of all customer orders; either completed or canceled.</p>
 
-             <dl class="dl-horizontal">
+            <dl class="dl-horizontal">
                <dt>Service ID</dt>
                <dd>Service identification.</dd>
                <dt>Customer ID</dt>
@@ -43,37 +43,37 @@
                <dd>Date of service.</dd>
                <dt>Status</dt>
                <dd>Current status of the service.</dd>
-             </dl>
+            </dl>
          </div>
          <table class="table">
-             <thead>
-                 <tr>
-                     <th>SID</th>
-                     <th>CID</th>
-                     <th>VIN</th>
-                     <th>Description</th>
-                     <th>Charge</th>
-                     <th>Date</th>
-                     <th>Status</th>
-                 </tr>
-             </thead>
-             {% for service in service_list.items %}
-                 {% if service.stats == 2 or service.stats == 0 %}
-                     <tr>
-                         <td>{{ service.sid }}</td>
-                         <td>{{ service.cid }}</td>
-                         <td><a href="{{ url_for("indicar") }}?vin={{ service.vin }}">{{ service.vin }}</a></td>
-                         <td>{{ service.sdesc }}</td>
-                         <td>{{ service.scost }}</td>
-                         <td>{{ service.sdate }}</td>
-                         {% if service.stats == 2 %}
-                           <td>Completed</td>
-                         {% else %}
-                           <td>Canceled</td>
-                         {% endif%}
-                     </tr>
-                 {% endif %}
-             {% endfor %}
+            <thead>
+               <tr>
+                  <th>SID</th>
+                  <th>CID</th>
+                  <th>VIN</th>
+                  <th>Description</th>
+                  <th>Charge</th>
+                  <th>Date</th>
+                  <th>Status</th>
+               </tr>
+            </thead>
+            {% for service in service_list.items %}
+               {% if service.stats == 2 or service.stats == 0 %}
+                  <tr>
+                     <td>{{ service.sid }}</td>
+                     <td>{{ service.cid }}</td>
+                     <td>{{ service.vin }}</td>
+                     <td>{{ service.sdesc }}</td>
+                     <td>{{ service.scost }}</td>
+                     <td>{{ service.sdate }}</td>
+                     {% if service.stats == 2 %}
+                        <td>Completed</td>
+                     {% else %}
+                        <td>Canceled</td>
+                     {% endif%}
+                  </tr>
+               {% endif %}
+            {% endfor %}
          </table>
              
          <div class="col-lg-4 col-lg-offset-5"> 
