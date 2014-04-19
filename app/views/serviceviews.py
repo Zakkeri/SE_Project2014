@@ -6,131 +6,130 @@
 from flask import render_template, request, session, abort, redirect, url_for
 from app.dbmodels import ServiceInfo, CustomerInfo, OrderInfo, Car
 from app.db import db
-from app import app
+from app import app, vin_cache, vin_tsize, vin_table
+from app.util import editdistance, validate_table
+
+# form tables (validation purposes)
+serviceadd_ft = ['vin', 'cid', 'sdesc', 'scost', 'sdate']
+servicechg_ft = ['action', 'sid']
 
 @app.route("/service", methods=['GET'])
 @app.route("/service/<int:page>", methods=['GET'])
 def service(page = 1):
    'Central service management interface; restrict to admin or sales only.'
-   # check if user is login in, otherwise go to home
-   if 'role' in session.keys():
-      # check if role is admin or sales, otherwise go to home
-      if session['role'] in ['Admin','Sales']:
-         service_list = ServiceInfo.query.paginate(page, 10, False)
-      else:
-         return redirect(url_for("home"))
-   else:
+   # check if user is login and check if role is admin or sales
+   if 'role' not in session.keys() or session['role'] not in ['Admin','Sales']: 
       return redirect(url_for("home"))
+   service_list = ServiceInfo.query.paginate(page, 10, False)
    return render_template("servicetemps/servicemanage.html", service_list = service_list)
+
+@app.route('/servicehistory', methods = ['GET'])
+@app.route("/servicehistory/<int:page>", methods=['GET'])
+def servicehistory(page = 1):
+   'View history of orders; restricted to admin or sales only.'
+   # check if user is login and check if role is admin or sales
+   if 'role' not in session.keys() or session['role'] not in ['Admin','Sales']: 
+      return redirect(url_for("home"))
+   service_list = ServiceInfo.query.paginate(page, 10, False)
+   return render_template("servicetemps/servicehistory.html", service_list = service_list)
+
 
 @app.route('/serviceadd', methods = ['GET','POST'])
 def serviceadd():
    'Add a service order; restrict to admin or sales only.'
-   # check if user is login in, otherwise go to home
-   if 'role' in session.keys():
-      # check if role is admin or sales, otherwise go to home
-      if session['role'] in ['Admin','Sales']:
-         # user have submitted a service form
-         if request.method == 'POST':
-            # check if cid is selected
-            if 'cid' in request.form:
-               # check if vid is selected
-               if 'vin' in request.form:
-                  # check if service information is given
-                  if 'sdesc' in request.form:
-                     if 'scost' in request.form:
-                        if 'sdate' in request.form:
-                           # create the service
-                           cid = request.form['cid']
-                           vin = request.form['vin']
-                           sdesc = request.form['sdesc']
-                           scost = request.form['scost']
-                           sdate = request.form['sdate']
-                           message = ''
-
-                           # check if car exist
-                           car = Car.query.filter_by(vin = vin).first()
-                           if car:
-                              # check if customer exist
-                              cust = CustomerInfo.query.filter_by(cid = cid).first()
-                              if cust:
-                                 # add service
-                                 new_service = ServiceInfo(cid, vin, sdesc, scost, sdate)
-                                 db.session.add(new_service)
-                                 db.session.commit()
-                                 message = 'Customer service order added successfully.'
-                              else:
-                                 message = 'Customer does not exist, cannot service.'
-                           else:
-                              message = 'Car does not exist, cannot service.'
-                           service_list = ServiceInfo.query.paginate(1, 10, False)
-                           return render_template("servicetemps/servicemanage.html", service_list = service_list, message = message)
-
-                  # ask for service information
-                  return render_template('servicetemps/serviceadd.html', cid = request.form['cid'], vin = request.form['vin'])
-               # ask for the vid
-               else:
-                  vin_list = db.session.query(OrderInfo.cid, OrderInfo.vin, OrderInfo.delivered).from_statement("SELECT DISTINCT * FROM order_info WHERE order_info.cid = :cid AND order_info.delivered = True").params(cid = request.form['cid']).all()
-                  vin_list = set(vin_list)
-                  return render_template('servicetemps/serviceadd.html', cid = request.form['cid'], vin_list = vin_list)
-            # ask for the cid again
-            else:
-               cid_list = db.session.query(OrderInfo.cid, OrderInfo.delivered).from_statement("SELECT DISTINCT * FROM order_info WHERE order_info.delivered = True").all()
-               cid_list = set(cid_list)
-               return render_template('servicetemps/serviceadd.html', cid_list = cid_list)   
-         # present user with initial form
-         elif request.method == 'GET':
-            cid_list = db.session.query(OrderInfo.cid, OrderInfo.delivered).from_statement("SELECT DISTINCT * FROM order_info WHERE order_info.delivered = True").all()
-            cid_list = set(cid_list)
-            return render_template('servicetemps/serviceadd.html', cid_list = cid_list)
-      else:
-         return redirect(url_for("home"))
-   else:
+   # check if user is login and check if role is admin or sales
+   if 'role' not in session.keys() or session['role'] not in ['Admin','Sales']: 
       return redirect(url_for("home"))
+
+   # service add template data
+   vin_search = ''
+   vin_status = 0
+   vin_match = []
+   vin_ord = None
+   vin_car = None
+   vin_cus = None
+
+   # user submit a VIN
+   if request.method == 'POST':
+      if validate_table(serviceadd_ft, request.form):
+         # extract form entries
+         vin = request.form[serviceadd_ft[0]]
+         cid = request.form[serviceadd_ft[1]]
+         sdesc = request.form[serviceadd_ft[2]]
+         scost = request.form[serviceadd_ft[3]]
+         sdate = request.form[serviceadd_ft[4]]
+         message = ''
+
+         # double check the form
+         car = Car.query.filter_by(vin = vin).first()
+         if car:
+            customer = CustomerInfo.query.filter_by(cid = cid).first()
+            if customer:
+               new_service = ServiceInfo(cid, vin, sdesc, scost, sdate)
+               db.session.add(new_service)
+               db.session.commit()
+               message = 'Customer service added; review the car management list.'
+            else:
+               message = 'Customer service failed; customer({}) cannot be found.'.format(cid)
+         else:
+            message = 'Customer service failed; car({}) cannot be found.'.format(vin)
+         service_list = ServiceInfo.query.paginate(1, 10, False)
+         return render_template("servicetemps/servicemanage.html", service_list = service_list, message = message)
+
+      # user supplying the vin (searching)
+      if vin_cache == True and 'vin' in request.form:
+         vin_search = request.form['vin']
+         if 16 <= len(vin_search) <= 18:
+            # check if vin is in vin table
+            if vin_search in vin_table:
+               vin_car = Car.query.filter_by(vin = vin_search).first()                                 # check if car exist
+               if vin_car != None: vin_ord = OrderInfo.query.filter_by(vin = vin_search).first()       # check if car solded
+               if vin_ord != None: vin_cus = CustomerInfo.query.filter_by(cid = vin_ord.cid).first()   # check if customer exist
+               if vin_cus != None: vin_status = 1
+            # check possible matches
+            else:
+               for vin in vin_table:
+                  if editdistance(vin, vin_search) <= 2:
+                     vin_match.append(vin)
+                     if len(vin_match) > 5: break
+               if len(vin_match): vin_status = 2
+
+      return render_template('servicetemps/serviceadd.html', info = [vin_search, vin_status, vin_match, vin_ord, vin_cus, vin_car])
+
+   # display initial user form
+   return render_template('servicetemps/serviceadd.html')
 
 @app.route('/servicechange', methods = ['GET','POST'])
 def servicechange():
    'Process a service order; restrict to admin or sales only.'
-   # check if user is login in, otherwise go to home
-   if 'role' in session.keys():
-      # check if role is admin or sales, otherwise go to home
-      if session['role'] in ['Admin','Sales']:
-         # retrieve sid and process!
-         action = request.args.get("action")
-         sid = request.args.get("sid")
-         if action and sid:
-            # process the service
-            service = ServiceInfo.query.filter_by(sid = sid).first()
+   # check if user is login and check if role is admin or sales
+   if 'role' not in session.keys() or session['role'] not in ['Admin','Sales']: 
+      return redirect(url_for("home"))
+   
+   # user attempt to process customer service
+   if request.method == 'GET':
+      if validate_table(servicechg_ft, request.args):
+         # extract form entries
+         action = request.args.get(servicechg_ft[0])
+         sid = request.args.get(servicechg_ft[1])
+
+         # double check form
+         service = ServiceInfo.query.filter_by(sid = sid).first()
+         if service:
             if service.stats == 1:
                if action == 'completed':
-                  message = 'Service completed!'
+                  message = 'Customer service completed!'
                   service.stats = 2
                elif action == 'cancel':
-                  message = 'Service canceled!'
+                  message = 'Customer service canceled!'
                   service.stats = 0
                else:
-                  message = 'Service denied!'
+                  message = 'Customer service action denied; invalid service process action.'
                db.session.commit()
-            else:
-               message = 'Service already completed or canceled.'
-
-         service_list = ServiceInfo.query.paginate(1, 10, False)
-         return render_template("servicetemps/servicemanage.html", service_list = service_list, message = message)
-      else:
-         return redirect(url_for("home"))
+         else:
+            message = 'Customer service action denied; invalid service identification.'
    else:
-      return redirect(url_for("home"))
+      message = 'Customer service action denied; invalid form method.'
 
-@app.route('/servicehistory', methods = ['GET','POST'])
-def servicehistory(page = 1):
-   'View history of orders; restricted to admin or sales only.'
-   # check if user is login in, otherwise go to home
-   if 'role' in session.keys():
-      # check if role is admin or sales, otherwise go to home
-      if session['role'] in ['Admin','Sales']:
-         service_list = ServiceInfo.query.paginate(page, 10, False)
-      else:
-         return redirect(url_for("home"))
-   else:
-      return redirect(url_for("home"))
-   return render_template("servicetemps/servicehistory.html", service_list = service_list)
+   service_list = ServiceInfo.query.paginate(1, 10, False)
+   return render_template("servicetemps/servicemanage.html", service_list = service_list, message = message)

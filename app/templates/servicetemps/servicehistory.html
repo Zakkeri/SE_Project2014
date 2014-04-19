@@ -25,10 +25,8 @@
    <div class="row">
      <div class="panel panel-default">
          <div class="col-md-7">
-             <h3>Customer Order</h3>
-             <p class="text-left">
-                General interface for handling the customer orders.
-             </p>
+             <h3>Customer Service History</h3>
+             <p class="text-left">List of all customer orders; either completed or canceled.</p>
 
              <dl class="dl-horizontal">
                <dt>Service ID</dt>
@@ -45,17 +43,7 @@
                <dd>Date of service.</dd>
                <dt>Status</dt>
                <dd>Current status of the service.</dd>
-
-               <dd><a href="/serviceadd">Add a service order.</a></dd>
-               <dd><a href="/servicehistory">View service history.</a></dd>
              </dl>
-
-             {% if request.args.get('message') %}
-                 <h3>Service Modification</h3>
-                 <p class="text-left">
-                     <strong>{{request.args.get('message')}}</strong>
-                 </p>
-             {% endif %}
          </div>
          <table class="table">
              <thead>
@@ -90,10 +78,8 @@
              
          <div class="col-lg-4 col-lg-offset-5"> 
              <ul class="pagination">
-                 {% if service_list.has_prev %}
-                     <li class="previous"><a href="{{ url_for("service", page=service_list.prev_num) }}">Previous</a></li>{% endif %}
-                 {% if service_list.has_next %}
-                     <li class="next"><a href="{{ url_for("service", page=service_list.next_num) }}">Next</a></li>{% endif %}
+                 {% if service_list.has_prev %}<li class="previous"><a href="{{ url_for("servicehistory", page=service_list.prev_num) }}">Previous</a></li>{% endif %}
+                 {% if service_list.has_next %}<li class="next"><a href="{{ url_for("servicehistory", page=service_list.next_num) }}">Next</a></li>{% endif %}
              </ul>
          </div>
      </div>

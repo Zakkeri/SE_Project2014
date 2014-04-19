@@ -24,102 +24,91 @@
 {% block mainbody %}
     <div class="row">
         <div class="col-md-7">
-            <h3>Service List Form</h3>
-            <p class="text-left">
-                Service cars solded by the dealership.
-            </p>
+            <h3>Customer Service Form</h3>
+            <p class="text-left">Please enter the VIN of the vehicle to be service.</p>
         </div>
     </div>
 
-    <form   name = "serviceadd" 
-            class = "form-horizontal" 
-            role = "form"
-            method = "POST"
-            action = "/serviceadd">
-        <div class="form-group">
-            <label class="col-sm-3 control-label">
-                <p class="text-left">
-                    CID
-                </p>
-            </label>
-            {% if not cid is defined %}
-                <div class="col-sm-5">
-                    <select class="form-control" name = "cid">
-                        {% for cid in cid_list %}
-                            <option>{{cid[0]}}</option>
-                        {% endfor %}
-                    </select>
+    <form name = "serviceadd" class = "form-horizontal" rolez = "form" method = "POST" action = "/serviceadd">
+        <!-- Submitted VIN search form -->
+        {% if info is defined %}
+            <!-- Display service form and information -->
+            {% if info[1] == 1%}<div class="form-group has-success">{% else %}<div class="form-group has-error">{% endif %}
+                <label class="col-sm-3 control-label"><p class="text-left">VIN</p></label>
+                <div class="col-sm-5"><input name = "vin" type = "text" class = "form-control" value = "{{info[0]}}"></div>
+            </div>
+            {% if info[1] == 1%}
+                <div class="row">
+                    <div class="col-md-7">
+                        <p class = "text-left">
+                            <h4>Customer Information</h4>
+                            <dl class="dl-horizontal">
+                                <dt>VIN</dt><dd>{{info[5].vin}}</dd>
+                                <dt>Make</dt><dd>{{info[5].make}}</dd>
+                                <dt>Model</dt><dd>{{info[5].model}}</dd>
+                                <dt>Year</dt><dd>{{info[5].year}}</dd>
+                            </dl>
+                        </p>
+                    </div>
                 </div>
-            {% else %}
-                <div class="col-sm-5">
-                    <select class="form-control" name = "cid">
-                        <option selected>{{cid}}</option>
-                    </select>
+
+                {% if info[1] == 1%}<div class="form-group has-success">{% else %}<div class="form-group has-error">{% endif %}
+                    <label class="col-sm-3 control-label"><p class="text-left">CID</p></label>
+                    <div class="col-sm-5"><input name = "cid" type = "text" class = "form-control" value = "{{info[4].cid}}"></div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-7">
+                        <p class = "text-left">
+                            <h4>Customer Information</h4>
+                            <dl class="dl-horizontal">
+                                <dt>CID</dt><dd>{{info[4].cid}}</dd>
+                                <dt>Name</dt><dd>{{info[4].fname}}</dd>
+                                <dt>Address 1</dt><dd>{{info[4].addr1}}</dd>
+                                <dt>Address 2</dt><dd>{{info[4].addr2}}</dd>
+                                <dt>City</dt><dd>{{info[4].city}}</dd>
+                                <dt>State</dt><dd>{{info[4].state}}</dd>
+                            </dl>
+                        </p>
+                    </div>
+                </div>
+
+                <div class = "form-group">
+                    <label class="col-sm-3 control-label"><p class="text-left">Description</p></label>
+                    <div class="col-sm-5"><textarea name="sdesc" class="form-control" type="text" rows="5"></textarea></div>
+                </div>
+
+                <div class = "form-group">
+                    <label class="col-sm-3 control-label"><p class="text-left">Charge</p></label>
+                    <div class="col-sm-5"><input name = "scost" type = "text" class = "form-control"></div>
+                </div>
+
+                <div class = "form-group">
+                    <label class="col-sm-3 control-label"><p class="text-left">Date</p></label>
+                    <div class="col-sm-5"><input name = "sdate" type = "text" class = "form-control"></div>
                 </div>
             {% endif %}
-        </div>
-        <div class="form-group">
-            <label class="col-sm-3 control-label">
-                <p class="text-left">
-                    VIN
-                </p>
-            </label>
-            {% if not vin is defined %}
-                <div class="col-sm-5">
-                    <select class="form-control" name = "vin">
-                        {% for vin in vin_list %}
-                            <option>{{vin[1]}}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-            {% else %}
-                <div class="col-sm-5">
-                    <select class="form-control" name = "vin">
-                        <option selected>{{vin}}</option>
-                    </select>
-                </div>
+
+            <!-- User enter an invalid VIN, attempt to match with VIN -->
+            {% if info[1] == 2%}
+                <label class="col-sm-7 control-label">
+                    <p class="text-left">
+                        <h3>Did you meaning the following?</h3>
+                        {% for vin in info[2] %} <h5>{{vin}}</h5> {% endfor %}
+                    </p>
+                </label>
             {% endif %}
-        </div>
-
-        {% if vin is defined %}
-            <div class = "form-group">
-                <label class="col-sm-3 control-label">
-                    <p class="text-left">
-                        Description
-                    </p>
-                </label>
-                <div class="col-sm-5">
-                    <textarea name="sdesc" class="form-control" type="text" rows="3"></textarea>
-                </div>
-            </div>
-
-            <div class = "form-group">
-                <label class="col-sm-3 control-label">
-                    <p class="text-left">
-                        Charge
-                    </p>
-                </label>
-                <div class="col-sm-5">
-                    <input  name = "scost" type = "text" class = "form-control">
-                </div>
-            </div>
-
-            <div class = "form-group">
-                <label class="col-sm-3 control-label">
-                    <p class="text-left">
-                        Date
-                    </p>
-                </label>
-                <div class="col-sm-5">
-                    <input  name = "sdate" type = "text" class = "form-control">
-                </div>
+        <!-- Initial VIN search form -->
+        {% else %}
+            <div class="form-group">
+                <label class="col-sm-3 control-label"><p class="text-left">VIN</p></label>
+                <div class="col-sm-5"><input name = "vin" type = "text" class = "form-control"  placeholder = "Vehicle Identification Number" required autofocus></div>
             </div>
         {% endif %}
 
+        <!-- Form submission -->
         <div class = "form-group">
-            <div class="col-sm-8">
-                <button type="submit" class="btn btn-sm btn-block btn-primary btn-default">Service Car</button>
-            </div>
+            <div class="col-sm-8"><button type="submit" class="btn btn-sm btn-block btn-primary btn-default">Service Car</button></div>
         </div>
     </form>
 {% endblock %}
