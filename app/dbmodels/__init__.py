@@ -5,9 +5,10 @@
 #
 # Changelog
 #   * Removed redundant imports.
+#   * Added VIN table initialization.
 #==============================================================================
 from app.db import db
-from app import app
+from app import app, vin_table, vin_cache
 
 class User(db.Model):
     """Class to represent the Users table.  This table
@@ -42,7 +43,7 @@ class Car(db.Model):
     avail_purchase = db.Column(db.Boolean)
     features = db.relationship("CarFeatures", backref="Car", cascade="all")
     pics = db.relationship("CarPics", backref="Car", cascade="all")
-    order_info = db.relationship("OrderInfo", backref="Car", cascade="all")
+    order_info = db.relationship("OrderInfo", backref=db.backref('Car', uselist=False), cascade="all")
     
     def __init__(self, vin, make, model, year, retail,avail_purchase=True):
         self.vin = vin
@@ -51,6 +52,9 @@ class Car(db.Model):
         self.year = year
         self.retail = retail 
         self.avail_purchase = avail_purchase
+
+    def __repr__(self):
+        return '{} {} {}'.format(self.make, self.model, self.year)
 
 class CarFeatures(db.Model):
     """Class that holds performance data for a car if available.
@@ -104,6 +108,8 @@ class CustomerInfo(db.Model):
         self.state = state
         self.pcode = pcode
         self.country = country
+    def __repr__(self):
+        return '{} {}'.format(self.cid, self.fname)
 
 class OrderInfo(db.Model):
     """Class that holds a given sale information.
@@ -129,6 +135,9 @@ class OrderInfo(db.Model):
         self.status = status
         self.delivered = delivered
 
+    def __repr__(self):
+        return '{} {} {}'.format(self.oid, self.cid, self.vin)
+
 class ServiceInfo(db.Model):
     'Service class containing service history.'
     'SID | CID | VIN | Description | Charge | Date | Status'
@@ -148,3 +157,11 @@ class ServiceInfo(db.Model):
         self.scost = scost
         self.sdate = sdate
         self.stats = stats
+
+#==============================================================================
+# The VIN table is a in-memory cache to increase searching efficiency.
+#==============================================================================
+if vin_cache == True:
+    for car in Car.query:
+        vin_table.append(car.vin)
+    vin_tsize = len(vin_table)
