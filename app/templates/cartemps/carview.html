@@ -22,27 +22,41 @@
 {% block addcss %} <link href="{{ url_for('static', filename='signin.css') }}" rel="stylesheet"> {% endblock %}
 
 {% block mainbody %}
-    <div class="row">
+   {% if car_list is defined %}
+      <table class="table">
+         <thead>
+            <tr>
+               <th>Vin</th>
+               <th>Make</th>
+               <th>Model</th>
+               <th>Year</th>
+               <th>Retail Price</th>
+            </tr>
+         </thead>
+
+         {% for car in car_list %}
+            {% if car.avail_purchase %}
+               <tr>
+                  <td><a href="{{ url_for("indicar") }}?vin={{ car.vin }}">{{ car.vin }}</a></td>
+                  <td>{{ car.make }}</td>
+                  <td>{{ car.model }}</td>
+                  <td>{{ car.year }}</td>
+                  <td>{{ car.retail }}</td>
+               </tr>
+            {% endif %}
+         {% endfor %}
+      </table>
+   {% endif %}
+   <div class="row">
       <div class="col-md-7">
          <h3>Search Form</h3>
-         <p class="text-left">
-            Wolf-fencing search procedure.
-         </p>
+         <p class="text-left">Wolf-fencing search procedure.</p>
       </div>
    </div>
 
-   <form   name = "viewcar" 
-           class = "form-horizontal" 
-           role = "form"
-           method = "POST"
-           action = "/carview">
-
+   <form name = "viewcar" class = "form-horizontal" role = "form" method = "POST" action = "/carview">
       <div class="form-group">
-         <label class="col-sm-3 control-label">
-             <p class="text-left">
-                 Automobile Make
-             </p>
-         </label>
+         <label class="col-sm-3 control-label"><p class="text-left">Automobile Make</p></label>
          {% if not make is defined %}
             <div class="col-sm-5">
                <select class="form-control" name = "make">
@@ -61,11 +75,7 @@
       </div>
 
       <div class="form-group">
-         <label class="col-sm-3 control-label">
-             <p class="text-left">
-                 Automobile Model
-             </p>
-         </label>
+         <label class="col-sm-3 control-label"><p class="text-left">Automobile Model</p></label>
          {% if not model is defined %}
             <div class="col-sm-5">
                <select class="form-control" name = "model">
@@ -76,19 +86,13 @@
             </div>
          {% else %}
             <div class="col-sm-5">
-               <select class="form-control" name = "model">
-                  <option selected>{{model}}</option>
-               </select>
+               <select class="form-control" name = "model"><option selected>{{model}}</option></select>
             </div>
          {% endif %}
       </div>   
       
       <div class="form-group">
-         <label class="col-sm-3 control-label">
-             <p class="text-left">
-                 Automobile Year
-             </p>
-         </label>
+         <label class="col-sm-3 control-label"><p class="text-left">Automobile Year</p></label>
          {% if not year is defined %}
             <div class="col-sm-5">
                <select class="form-control" name = "year">
@@ -115,7 +119,7 @@
       {% else %}
          <div class = "form-group">
             <div class="col-sm-8">
-                <a href="/carview">Start new search.</a>
+                <a href="/carview" class = "btn btn-block btn-primary btn-info">Start new search.</a>
             </div>
          </div>
          {% for car in vin_list %}
@@ -135,7 +139,7 @@
                {% for feat in car.features %}
                   <div class="col-md-7">
                      <p class="text-left">
-                        <dl class="dl-horizontal">
+                        <dl>
                            <dt>{{ feat.feat_type }}</dt>
                            <dd>{{ feat.descr }}</dd> 
                         </dl>

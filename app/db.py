@@ -4,10 +4,6 @@
 # Desc: SqlAlchemy DB initialization.
 # Note: DB connection string is defined in app.cfg, DB uses Flask-SQLAlchemy
 #       to interface, and create tables and initial administrator account.
-#
-# Changelog
-#   * Improve logic for creating the administrator account.
-#   * Import all tables in dbmodels instead of just User table.
 #==============================================================================
 from flask.ext.sqlalchemy import SQLAlchemy
 from app import app

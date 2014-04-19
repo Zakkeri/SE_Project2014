@@ -2,9 +2,6 @@
 # File: run.py
 # Auth: Andrew Calvano / Jim Ching
 # Desc: Start the Flask Application
-#
-# Changelog
-#	* Improved logic for checking argv, otherwise key error when ending app.
 #==============================================================================
 from app import app 				# __init__.py globals
 from app.db import init_db    # db.py globals

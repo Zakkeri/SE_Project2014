@@ -2,10 +2,6 @@
 # File: util.py
 # Auth: Andrew Calvano / Jim Ching
 # Desc: General utility functions.
-#
-# Changelog
-#	* Fixed getvin; randint(0,len(alphanumeric) - 1) otherwise index error.
-#	* Added pydoc comment headers.
 #==============================================================================
 from os import urandom
 from binascii import hexlify

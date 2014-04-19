@@ -2,13 +2,10 @@
 # File: __init__.py
 # Auth: Andrew Calvano / Jim Ching
 # Desc: Map classes to DB tables using declarative system.
-#
-# Changelog
-#   * Removed redundant imports.
-#   * Added VIN table initialization.
 #==============================================================================
 from app.db import db
 from app import app, vin_table, vin_cache
+from sys import argv
 
 class User(db.Model):
     """Class to represent the Users table.  This table
@@ -161,7 +158,8 @@ class ServiceInfo(db.Model):
 #==============================================================================
 # The VIN table is a in-memory cache to increase searching efficiency.
 #==============================================================================
-if vin_cache == True:
-    for car in Car.query:
-        vin_table.append(car.vin)
-    vin_tsize = len(vin_table)
+if len(argv) <= 1:
+    if vin_cache == True:
+        for car in Car.query:
+            vin_table.append(car.vin)
+        vin_tsize = len(vin_table)

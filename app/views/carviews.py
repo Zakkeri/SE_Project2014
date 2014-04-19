@@ -5,10 +5,10 @@
 #==============================================================================
 from flask import render_template, request, session, abort, redirect, url_for
 from werkzeug.utils import secure_filename
-from app.util import validate_table
+from app.util import validate_table, genvin
 from app.dbmodels import Car, CarPics, CarFeatures
 from app.db import db
-from app import app
+from app import app, vin_cache, vin_tsize, vin_table
 import os
 
 # sorting criteria table
@@ -60,6 +60,7 @@ def carmanage(page = 1):
 @app.route("/caradd", methods=['GET', 'POST'])
 def caradd():
     'Add a car to inventory; restrict to admin or sales only.'
+    global vin_cache, vin_tsize, vin_table
     if 'role' not in session.keys() or session['role'] not in ['Admin','Sales']: 
         return redirect(url_for("home"))
 
@@ -88,12 +89,16 @@ def caradd():
                     newcar = Car(vin, make, model, year, retail) 
                     db.session.add(newcar)
                     db.session.commit()
+
+                    if vin_cache == True:
+                        vin_table.append(vin)
+                        vin_tsize += 1
                     message = 'Car added; review the car management list.'
                 else:
                     message = 'Car failed; {} already exist in database.'.format(vin)
             return redirect(url_for("carmanage", page = 1, message = message))
         
-    return render_template('cartemps/caradd.html')
+    return render_template('cartemps/caradd.html', vin = genvin())
 
 @app.route("/carmod", methods=['GET', 'POST'])
 def carmod():
@@ -177,7 +182,7 @@ def upload():
             car = Car.query.filter_by(vin = vin).first()
             if car and 'file' in request.files:
                 file = request.files['file']
-                if file and file.filename.rsplit('.', 1)[1] in ["jpg", "tiff", "jpeg", "bmp", "gif"]:
+                if file and file.filename.rsplit('.', 1)[1] in ["jpg", "tiff", "jpeg", "bmp", "gif", "png"]:
                     #check if filename is already in database
                     filename = secure_filename(vin + file.filename)
                     file_exists = CarPics.query.filter_by(vin = vin, picname = filename).first()
@@ -198,10 +203,7 @@ def upload():
 
 @app.route("/indicar", methods=["GET"])
 def indicar():
-    'Display car information and pictures; restrict to admin or sales only.'
-    if 'role' not in session.keys() or session['role'] not in ['Admin','Sales']: 
-        return redirect(url_for("home"))
-        
+    'Display car information and pictures.'
     message = ''
     if request.method == "GET":
         if validate_table(carind_ft, request.args):
@@ -265,9 +267,10 @@ def carview():
     if 'role' in session.keys():
         # user initially chooses a make
         if request.method == 'GET':
+            # search form
             make_list = db.session.query(Car.make).from_statement("SELECT DISTINCT * FROM car").all()
             make_list = set(make_list)
-            return render_template('cartemps/carview.html', make_list = make_list)
+            return render_template('cartemps/carview.html', make_list = make_list, car_list = Car.query)
         # gradually refine search
         elif request.method == 'POST':
             # check if make is selected

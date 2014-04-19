@@ -79,6 +79,11 @@ def ordergen():
          else:
             message = 'Customer order failed; car({}) cannot be found.'.format(vin)
          return redirect(url_for("ordermanage", message = message))
+   
+   # add order from car management
+   if 'vin' in request.args:
+      vin = request.args.get('vin')
+      return render_template("ordertemps/ordergen.html", cars = Car.query, vin = vin)
 
    # present the original order generation form
    return render_template("ordertemps/ordergen.html", cars = Car.query)
