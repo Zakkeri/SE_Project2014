@@ -1,22 +1,22 @@
 {% extends 'layout2.html' %}
-
+{% block title %}Car Add{% endblock %}
 {% block toplinks %}
-    <li><a href="/">Home</a></li>
-    {% if not session['username'] %}
-        <li><a href="/login">Login</a></li>
-        <li><a href="/register">Register</a></li>
-    {% else %}
-        {% if session['isadmin'] %}
-            <li><a href="/roles">Manage Roles</a></li>
-        {% endif %}
-        {% if session['role'] == "Admin" or session['role'] == "Sales" %}
-            <li class="active"><a href="/carmanage">Manage Cars</a></li>
-            <li><a href="/orders">Orders</a></li>
-            <li><a href="/service">Service</a><li>
-        {% endif %}
-        <li><a href="/carview">View Cars</a></li>
-        <li><a href="/logout">Logout</a></li>
-    {% endif %}
+   <li><a href="/">Home</a></li>
+   {% if not session['username'] %}
+      <li><a href="/login">Login</a></li>
+      <li><a href="/register">Register</a></li>
+   {% else %}
+      {% if session['isadmin'] %}
+         <li><a href="/roles">Role</a></li>
+      {% endif %}
+      {% if session['role'] == "Admin" or session['role'] == "Sales" %}
+         <li class="active"><a href="/carmanage">Car</a></li>
+         <li><a href="/orders">Order</a></li>
+         <li><a href="/service">Service</a><li>
+      {% endif %}
+      <li><a href="/carview">Catalog</a></li>
+      <li><a href="/logout">Logout</a></li>
+   {% endif %}
 {% endblock %}
 
 {% block addcss %} <link href="{{ url_for('static', filename='signin.css') }}" rel="stylesheet"> {% endblock %}
@@ -25,97 +25,38 @@
    <div class="row">
       <div class="col-md-7">
          <h3>Car Form</h3>
-         <p class="text-left">
-            Remember to verified the automobile information.
-         </p>
+         <p class="text-left">Remember to verified the automobile information.</p>
       </div>
    </div>
    
-   <form   name = "addcar" 
-           class = "form-horizontal" 
-           role = "form"
-           method = "POST"
-           action = "/caradd">
-
+   <form name = "addcar" class = "form-horizontal" role = "form" method = "POST" action = "/caradd">
      <div class = "form-group">
-         <label class="col-sm-3 control-label">
-             <p class="text-left">
-                 VIN
-             </p>
-         </label>
-         <div class="col-sm-5">
-             <input  name = "vin"
-                     type = "text" 
-                     class = "form-control" 
-                     placeholder = "Vehicle Identification Number" 
-                     required autofocus>
-         </div>
+         <label class="col-sm-3 control-label"><p class="text-left">VIN</p></label>
+         <div class="col-sm-5"><input name = "vin" type = "text" class = "form-control" placeholder = "Vehicle Identification Number"></div>
      </div>
 
      <div class = "form-group">
-         <label class="col-sm-3 control-label">
-             <p class="text-left">
-                 Maker
-             </p>
-         </label>
-         <div class="col-sm-5">
-             <input  name = "make"
-                     type = "text" 
-                     class = "form-control" 
-                     placeholder = "Automobile Maker" 
-                     required autofocus>
-         </div>
+         <label class="col-sm-3 control-label"><p class="text-left">Maker</p></label>
+         <div class="col-sm-5"><input name = "make" type = "text" class = "form-control" placeholder = "Automobile Maker"></div>
      </div>
 
      <div class = "form-group">
-         <label class="col-sm-3 control-label">
-             <p class="text-left">
-                 Model
-             </p>
-         </label>
-         <div class="col-sm-5">
-             <input  name = "model"
-                     type = "text" 
-                     class = "form-control" 
-                     placeholder = "Automobile Model" 
-                     required autofocus>
-         </div>
+         <label class="col-sm-3 control-label"><p class="text-left">Model</p></label>
+         <div class="col-sm-5"><input name = "model" type = "text" class = "form-control" placeholder = "Automobile Model"></div>
      </div>
 
      <div class = "form-group">
-         <label class="col-sm-3 control-label">
-             <p class="text-left">
-                 Year
-             </p>
-         </label>
-         <div class="col-sm-5">
-             <input  name = "year"
-                     type = "text" 
-                     class = "form-control" 
-                     placeholder = "Automobile Year" 
-                     required autofocus>
-         </div>
+         <label class="col-sm-3 control-label"><p class="text-left">Year</p></label>
+         <div class="col-sm-5"><input name = "year" type = "text" class = "form-control" placeholder = "Automobile Year"></div>
      </div>
 
      <div class = "form-group">
-         <label class="col-sm-3 control-label">
-             <p class="text-left">
-                 Retail Price
-             </p>
-         </label>
-         <div class="col-sm-5">
-             <input  name = "retail"
-                     type = "text" 
-                     class = "form-control" 
-                     placeholder = "Retail Price" 
-                     required autofocus>
-         </div>
+         <label class="col-sm-3 control-label"><p class="text-left">Retail Price</p></label>
+         <div class="col-sm-5"><input name = "retail" type = "text" class = "form-control" placeholder = "Retail Price"></div>
      </div>
 
      <div class = "form-group">
-         <div class="col-sm-8">
-             <button type="submit" class="btn btn-sm btn-block btn-primary btn-default">Add Car</button>
-         </div>
+         <div class="col-sm-8"><button type="submit" class="btn btn-sm btn-block btn-primary btn-default">Add Car</button></div>
      </div>
    </form>
 {% endblock %}

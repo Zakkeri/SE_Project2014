@@ -7,14 +7,14 @@
       <li><a href="/register">Register</a></li>
    {% else %}
       {% if session['isadmin'] %}
-         <li><a href="/roles">Manage Roles</a></li>
+         <li><a href="/roles">Role</a></li>
       {% endif %}
       {% if session['role'] == "Admin" or session['role'] == "Sales" %}
-         <li><a href="/carmanage">Manage Cars</a></li>
-         <li class="active"><a href="/orders">Orders</a></li>
+         <li><a href="/carmanage">Car</a></li>
+         <li class="active"><a href="/orders">Order</a></li>
          <li><a href="/service">Service</a><li>
       {% endif %}
-      <li><a href="/carview">View Cars</a></li>
+      <li><a href="/carview">Catalog</a></li>
       <li><a href="/logout">Logout</a></li>
    {% endif %}
 {% endblock %}
@@ -43,8 +43,8 @@
 
             <h3>Customer Order Action</h3>
             <p class="text-left">
-               <h4><a href="/ordergen">Add a customer order</a></h4>
-               <h4><a href="/orderhistory">View customer order history</a></h4>
+               <h4><a href="/ordergen" class = "btn btn-block btn-primary btn-info">Add a customer order</a></h4>
+               <h4><a href="/orderhistory" class = "btn btn-block btn-primary btn-info">View customer order history</a></h4>
             </p>
 
             {% if request.args.get('message') %}

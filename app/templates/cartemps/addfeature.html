@@ -1,22 +1,22 @@
 {% extends 'layout2.html' %}
-
+{% block title %}Car Features{% endblock %}
 {% block toplinks %}
-    <li><a href="/">Home</a></li>
-    {% if not session['username'] %}
-        <li><a href="/login">Login</a></li>
-        <li><a href="/register">Register</a></li>
-    {% else %}
-        {% if session['isadmin'] %}
-            <li><a href="/roles">Manage Roles</a></li>
-        {% endif %}
-        {% if session['role'] == "Admin" or session['role'] == "Sales" %}
-            <li class="active"><a href="/carmanage">Manage Cars</a></li>
-            <li><a href="/orders">Orders</a></li>
-            <li><a href="/service">Service</a><li>
-        {% endif %}
-        <li><a href="/carview">View Cars</a></li>
-        <li><a href="/logout">Logout</a></li>
-    {% endif %}
+   <li><a href="/">Home</a></li>
+   {% if not session['username'] %}
+      <li><a href="/login">Login</a></li>
+      <li><a href="/register">Register</a></li>
+   {% else %}
+      {% if session['isadmin'] %}
+         <li><a href="/roles">Role</a></li>
+      {% endif %}
+      {% if session['role'] == "Admin" or session['role'] == "Sales" %}
+         <li class="active"><a href="/carmanage">Car</a></li>
+         <li><a href="/orders">Order</a></li>
+         <li><a href="/service">Service</a><li>
+      {% endif %}
+      <li><a href="/carview">Catalog</a></li>
+      <li><a href="/logout">Logout</a></li>
+   {% endif %}
 {% endblock %}
 
 {% block addcss %} <link href="{{ url_for('static', filename='signin.css') }}" rel="stylesheet"> {% endblock %}
@@ -25,26 +25,18 @@
    <div class="row">
       <div class="col-md-7">
          <h3>Feature Form</h3>
-         <p class="text-left">
-            All features of a automobile can be added here.
-         </p>
+         <p class="text-left">All features of a automobile can be added here.</p>
       </div>
    </div>
 
-   <form   name = "addfeat" 
-           class = "form-horizontal" 
-           role = "form"
-           method = "POST"
-           action = "/addfeatures?vin={{ vin }}">
+   <form name = "addfeat" class = "form-horizontal" role = "form" method = "POST" action = "/addfeatures?vin={{ vin }}">
 
       {% for feature in feats_list %}
          <div class = "form-group">
             <label class="col-sm-7 control-label">
-               <p class="text-left">
-                  {{feature}}
-               </p>
-            <textarea name={{feature}} class="form-control" type="text" rows="3">{% if feature in feats %}{{ feats[feature] }}{% endif %}</textarea>
-            <p class="help-block">Enter in {{feature}} features.</p>
+               <p class="text-left">{{feature}}</p>
+               <textarea name = "{{feature}}" class="form-control" type="text" rows="3">{% if feature in feats %}{{ feats[feature] }}{% endif %}</textarea>
+               <p class="help-block">Enter in {{feature}} features.</p>
             </label>
          </div>
       {% endfor %}

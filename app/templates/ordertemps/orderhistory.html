@@ -7,14 +7,14 @@
       <li><a href="/register">Register</a></li>
    {% else %}
       {% if session['isadmin'] %}
-         <li><a href="/roles">Manage Roles</a></li>
+         <li><a href="/roles">Role</a></li>
       {% endif %}
       {% if session['role'] == "Admin" or session['role'] == "Sales" %}
-         <li><a href="/carmanage">Manage Cars</a></li>
-         <li class="active"><a href="/orders">Orders</a></li>
+         <li><a href="/carmanage">Car</a></li>
+         <li class="active"><a href="/orders">Order</a></li>
          <li><a href="/service">Service</a><li>
       {% endif %}
-      <li><a href="/carview">View Cars</a></li>
+      <li><a href="/carview">Catalog</a></li>
       <li><a href="/logout">Logout</a></li>
    {% endif %}
 {% endblock %}
