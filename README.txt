@@ -30,3 +30,8 @@
    11.2: 'cd C:/Users/<YOUR HOME>/Documents/GitHub/SE_Project2014' 
    11.3: 'python27 run.py' or 'python run.py' 
    11.4: Open browser and point to '127.0.0.1:5000' 
+
+[Linux Installation Instructions]
+sudo apt-get install python python-flask
+
+sudo pip install flask-sqlalchemy
