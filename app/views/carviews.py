@@ -52,9 +52,9 @@ def carmanage(page = 1):
 
     # sort the table, otherwise display normally
     if 'sort' in request.args and request.args.get('sort') in sort_table.keys():
-        block = Car.query.order_by(sort_table[request.args.get('sort')]).paginate(page, 10, False)
+        block = Car.query.filter_by(avail_purchase = True).order_by(sort_table[request.args.get('sort')]).paginate(page, 10, False)
     else:
-        block = Car.query.paginate(page, 10, False)
+        block = Car.query.filter_by(avail_purchase = True).paginate(page, 10, False)
     return render_template("cartemps/carmanage.html", cars = block)
 
 @app.route("/caradd", methods=['GET', 'POST'])
@@ -195,7 +195,7 @@ def upload():
                     else:
                         message = 'Upload picture failed; file name already exist.'
                 else:
-                    message = 'Upload picture failed; invalid file extension({}).'.format(file.filename.rsplit('.', 1)[1])
+                    message = 'Upload picture failed; invalid file or file extension.'
             else:
                 message = 'Upload picture failed; invalid car({}) identification.'.format(vin)
         return redirect(url_for("carmanage", page = 1, message = message))
@@ -255,7 +255,7 @@ def addfeatures():
                         db.session.add(feat_new)
                 db.session.commit()
 
-                return redirect(url_for("addfeatures") + "?vin=" + car.vin)
+                return redirect(url_for("carmanage", page = 1, message = "Feature added; please review the car information."))
         else:
             message = 'Add feature failed; invalid car({}) identification.'.format(vin)
         return redirect(url_for("carmanage", page = 1, message = message))
@@ -270,7 +270,7 @@ def carview():
             # search form
             make_list = db.session.query(Car.make).from_statement("SELECT DISTINCT * FROM car").all()
             make_list = set(make_list)
-            return render_template('cartemps/carview.html', make_list = make_list, car_list = Car.query)
+            return render_template('cartemps/carview.html', make_list = make_list, car_list = Car.query.filter_by(avail_purchase = True))
         # gradually refine search
         elif request.method == 'POST':
             # check if make is selected

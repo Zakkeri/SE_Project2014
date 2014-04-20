@@ -21,7 +21,7 @@ def ordermanage(page = 1):
    if 'role' not in session.keys() or session['role'] not in ['Admin','Sales']: 
       return redirect(url_for("home"))
             
-   block = OrderInfo.query.paginate(page, 10, False)        
+   block = OrderInfo.query.filter_by(status = 'Ready to Process').paginate(page, 10, False)        
    return render_template("ordertemps/ordermanage.html", orders = block)    
 
 @app.route("/orderhistory", methods=["GET"])

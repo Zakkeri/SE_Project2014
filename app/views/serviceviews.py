@@ -20,7 +20,7 @@ def service(page = 1):
    # check if user is login and check if role is admin or sales
    if 'role' not in session.keys() or session['role'] not in ['Admin','Sales']: 
       return redirect(url_for("home"))
-   service_list = ServiceInfo.query.paginate(page, 10, False)
+   service_list = ServiceInfo.query.filter_by(stats = 1).paginate(page, 10, False)
    return render_template("servicetemps/servicemanage.html", service_list = service_list)
 
 @app.route('/servicehistory', methods = ['GET'])
