@@ -283,12 +283,12 @@ def carview():
                     else:
                         year_list = db.session.query(Car.make, Car.model, Car.year).from_statement("SELECT DISTINCT * FROM car WHERE car.make = :make AND car.model = :model").params(make = request.form['make'], model = request.form['model']).all()
                         year_list = set(year_list)
-                        return render_template('cartemps/carview.html', make = request.form['make'], model = request.form['model'], year_list = year_list)
+                        return render_template('cartemps/carview.html', make = request.form['make'], model = request.form['model'], year_list = year_list, car_list = Car.query.filter_by(avail_purchase = True, make = request.form['make'], model = request.form['model']))
                 # remake the form to get Model
                 else:
                     model_list = db.session.query(Car.make, Car.model).from_statement("SELECT DISTINCT * FROM car WHERE car.make = :make").params(make = request.form['make']).all()
                     model_list = set(model_list)
-                    return render_template('cartemps/carview.html', make = request.form['make'], model_list = model_list)
+                    return render_template('cartemps/carview.html', make = request.form['make'], model_list = model_list, car_list = Car.query.filter_by(avail_purchase = True, make = request.form['make']))
             # remake the form to get Make
             else:
                 make_list = db.session.query(Car.make).from_statement("SELECT DISTINCT * FROM car").all()
